@@ -1,0 +1,27 @@
+{
+  "name": "monitoring-v5-simple",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^2.0.0",
+    "svelte": "^3.54.0",
+    "vite": "^4.0.0"
+  },
+  "dependencies": {
+    "@square/svelte-store": "^1.0.13",
+    "air-monitor": "github:MazamaScience/air-monitor",
+    "air-monitor-algorithms": "github:MazamaScience/air-monitor-algorithms",
+    "air-monitor-plots": "github:pnwairfire/air-monitor-plots",
+    "arquero": "^5.1.0",
+    "highcharts": "^10.3.3",
+    "leaflet": "^1.9.3",
+    "moment-timezone": "^0.5.40",
+    "suncalc": "^1.9.0"
+  }
+}
