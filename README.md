@@ -39,7 +39,7 @@ And view the page at http://localhost:5173/
 Ctrl-C to stop serving the Svelte app. Copy in various files from the relevant development directory. These will include at least:
 
 ```
-./src/App.js
+./src/App.svelte
 ./src/components/
 ./src/stores/
 ```
