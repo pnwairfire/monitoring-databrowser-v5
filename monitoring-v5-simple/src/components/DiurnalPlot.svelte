@@ -1,6 +1,6 @@
 <script>
 	// Exports
-	export let element_id = 'default-daily-barplot';
+	export let element_id = 'default-diurnal-plot';
   export let width = '400px';
   export let height = '300px';
   export let size = 'big';
