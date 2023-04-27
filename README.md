@@ -13,11 +13,35 @@ Reading at https://svelte.dev/docs#getting-started we see:
 
 We will be building frontend-only applications and so will use Svelte (without Kit).
 
-## Generic setup
+# Setup
+
+These instructions are for people who have just cloned the repository and want
+to install npm packages and run the app interactively.
+
+At the command line, download source code and install npm packages with:
+
+```
+git clone git@github.com:pnwairfire/coding-challenge.git
+...
+cd real-time
+npm install
+```
+
+To run the app interactively, you need to be in the `real-time/`
+subdirectory:
+
+```
+cd real-time
+npm run dev
+```
+
+The app should be visible at: http://localhost:5173
+
+# Generic setup
 
 These instructions are for setting up a new Svelte project from scratch.
 
-### Initial setup
+## Initial setup
 
 At the command line:
 
@@ -34,7 +58,7 @@ This will create a default Svelte app visible at:
 
 And view the page at http://localhost:5173/
 
-### Copy in code
+## Copy in code
 
 Ctrl-C to stop serving the Svelte app. Copy in various files from the relevant development directory. These will include at least:
 
@@ -44,7 +68,7 @@ Ctrl-C to stop serving the Svelte app. Copy in various files from the relevant d
 ./src/stores/
 ```
 
-### Remove/modify example files/code
+## Remove/modify example files/code
 
 Remove unneeded files that came with the example app:
 
@@ -59,7 +83,7 @@ Modify `./index.html` by removing this line:
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
 ```
 
-### Install required packages
+## Install required packages
 
 For monitoring v5 apps, the following packages need to be installed. At the
 command line:
@@ -77,12 +101,12 @@ npm install github:pnwairfire/air-monitor-plots
 
 Now `npm run dev` to see the monitoring Svelte app.
 
-### Build the static site
+## Build the static site
 
-Compile/build the static site with:
+Compile/build the static site (on OSX) with:
 
 ```
-npm run build
+npm run build_osx
 ```
 
 Files will be found in the `dist/` directory:
@@ -92,19 +116,9 @@ dist
 ├── assets
 │   ├── index-ad776a4e.js
 │   └── index-f9ecc00f.css
-├── index.html
-└── vite.svg
+└── index.html
 ```
 
-### Deploy the static site
-
-Before copying `index.html` and the `assets/` subdirectory to a web server, you
-will need to modify the references in `index.html` so they are relative rather
-than absolute. Just begin the paths with `./` rather than `/`:
-
-```
-    <script type="module" crossorigin src="./assets/index-ad776a4e.js"></script>
-    <link rel="stylesheet" href="./assets/index-f9ecc00f.css">
-```
+## Deploy the static site
 
 Now just copy these files to your favorite web server!

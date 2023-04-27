@@ -1,7 +1,7 @@
 <script>
   // Svelte stores
   import { all_monitors } from './stores/monitor-data-store.js';
-  import { selected_id } from './stores/gui-store.js';
+  import { VERSION, selected_id } from './stores/gui-store.js';
   // Svelte Components
   // import SelectRandomButton from "./components/SelectRandomButton.svelte";
   // import PlotTypeButton from "./components/PlotTypeButton.svelte";
@@ -13,7 +13,7 @@
 
 <main>
 
-	<h1>Monitoring v5 Development Interface</h1>
+	<h1>Monitoring v5 ({$VERSION})</h1>
 
 	{#await all_monitors.load()}
 		<p>Loading monitoring data...</p>
