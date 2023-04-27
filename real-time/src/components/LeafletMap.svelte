@@ -8,7 +8,12 @@
 	import { onMount, onDestroy } from 'svelte';
   // Svelte stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-  import { selected_id } from '../stores/gui-store.js';
+  import {
+    selected_id,
+    centerLon,
+    centerLat,
+    zoom
+  } from '../stores/gui-store.js';
   // Leaflet (NOTE:  Don't put {} around the 'L'!)
   import L from "leaflet";
   // Plotting helper functions
@@ -22,7 +27,7 @@
     const monitor = $all_monitors;
 
     // Create the map
-    map = L.map('map').setView([40, -120], 8);
+    map = L.map('map').setView([$centerLat, $centerLon], $zoom);
 
     // Add background tiles
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
