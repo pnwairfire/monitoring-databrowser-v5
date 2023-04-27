@@ -47,7 +47,7 @@
     if ( id !== "" ) {
 
       // Special method to get an object containing diurnal averages
-      const diurnal = monitor.getDiurnalAverage(id);
+      const diurnal = monitor.getDiurnalStats(id);
 
       // Assemble required plot data
       const plotData = {
@@ -58,7 +58,7 @@
         timezone: monitor.getMetadata(id, 'timezone'),
         title: undefined, // use default title
         // unique to this chart
-        hour_average: diurnal.average,
+        hour_average: diurnal.mean,
         longitude: monitor.getMetadata(id, 'longitude'),
         latitude: monitor.getMetadata(id, 'latitude'),
       }

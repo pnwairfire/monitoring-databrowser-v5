@@ -43,12 +43,12 @@
     if ( id !== "" ) {
 
       // Special method to get an object containing daily averages
-      const daily = monitor.getDailyAverage(id);
+      const daily = monitor.getDailyStats(id);
 
       // Assemble required plot data
       const plotData = {
         daily_datetime: daily.datetime,
-        daily_average: daily.average,
+        daily_mean: daily.mean,
         daily_nowcast: undefined, // not required
         locationName: monitor.getMetadata(id, 'locationName'),
         timezone: monitor.getMetadata(id, 'timezone'),
