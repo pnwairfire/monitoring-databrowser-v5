@@ -18,7 +18,7 @@ import { selected_id } from '../stores/gui-store.js';
   ID:&nbsp;&nbsp;{$selected_id}<br>
   AQSID:&nbsp;&nbsp;{$all_monitors.getMetadata($selected_id, 'AQSID')}<br>
   Source:&nbsp;&nbsp;{$all_monitors.getMetadata($selected_id, 'dataIngestSource')}<br>
-  <!-- Deployment type:&nbsp;&nbsp;{$all_monitors.getMetadata($selected_id, 'deploymentType')}<br> TODO:  Should add this to air-monitor package -->
+  Deployment type:&nbsp;&nbsp;{$all_monitors.getMetadata($selected_id, 'deploymentType')}<br>
   <!-- Contains data through {$all_monitors.getMetadata($selected_id, 'last_validTime')}<br> TODO:  Need to keep a list/dict of monitor properties found in .geojson -->
   Timezone:&nbsp;&nbsp;{$all_monitors.getMetadata($selected_id, 'timezone')}<br>
 </div>

@@ -14,6 +14,7 @@
   import MetadataBox from "./components/MetadataBox.svelte";
   import MiniMap from "./components/MiniMap.svelte";
 	import TimeseriesPlot from "./components/TimeseriesPlot.svelte";
+	import HourlyBarplot from "./components/HourlyBarplot.svelte";
 	import DailyBarplot from "./components/DailyBarplot.svelte";
 	import DiurnalPlot from "./components/DiurnalPlot.svelte";
 
@@ -56,7 +57,7 @@
 
 		{#if $selected_id !== "" }
 			<div class="plot-row">
-				<TimeseriesPlot element_id="r0_timeseries" width="1200px"/>
+				<HourlyBarplot element_id="r0_hourly" width="1200px"/>
 			</div>
 		{/if}
 
@@ -64,7 +65,8 @@
 			<div class="plot-row">
 				<MetadataBox element_id="r1_metadata" width="300px" height="200px"/>
 				<MiniMap width="200px" height="200px"/>
-				<TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" size="small"/>
+				<!-- <TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" size="small"/> -->
+				<HourlyBarplot element_id="r1_hourly" width="200px" height="200px" size="small"/>
 				<DailyBarplot element_id="r1_daily" width="200px" height="200px"  size="small"/>
 				<DiurnalPlot element_id="r1_diurnal" width="200px" height="200px"  size="small"/>
 			</div>

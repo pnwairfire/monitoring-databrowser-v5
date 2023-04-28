@@ -11,10 +11,6 @@ import { afterUpdate, onDestroy } from 'svelte';
 import { all_monitors } from '../stores/monitor-data-store.js';
 import { selected_id } from '../stores/gui-store.js';
 
-const lat = $all_monitors.getMetadata($selected_id, 'latitude');
-const lon = $all_monitors.getMetadata($selected_id, 'longitude');
-const zoom = 9;
-
 // We need these variables to live on after an individual chart is destroyed
 let map;
 
@@ -28,7 +24,7 @@ async function createMap() {
       $all_monitors.getMetadata($selected_id, 'latitude'),
       $all_monitors.getMetadata($selected_id, 'longitude')
     ],
-    zoom);
+    10);
 
   // Add background tiles
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
