@@ -65,6 +65,7 @@
 
       // Create the chartConfig
       if ( size === 'small' ) {
+        plotData.title = "Diurnal NowCast";
         chartConfig = small_diurnalPlotConfig(plotData);
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);

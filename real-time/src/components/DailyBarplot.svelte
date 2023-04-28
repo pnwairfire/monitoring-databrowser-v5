@@ -57,6 +57,7 @@
 
       // Create the chartConfig
       if ( size === 'small' ) {
+        plotData.title = "Daily Average PM2.5";
         chartConfig = small_dailyBarplotConfig(plotData);
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);

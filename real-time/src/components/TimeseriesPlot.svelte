@@ -54,6 +54,7 @@
 
       // Create the chartConfig
       if ( size === 'small' ) {
+        plotData.title = "PM2.5 & Nowcast";
         chartConfig = small_timeseriesPlotConfig(plotData);
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);

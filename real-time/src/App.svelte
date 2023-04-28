@@ -9,16 +9,16 @@
     zoom
 	} from './stores/gui-store.js';
   // Svelte Components
-  // import SelectRandomButton from "./components/SelectRandomButton.svelte";
-  // import PlotTypeButton from "./components/PlotTypeButton.svelte";
+  import AlertBox from "./components/AlertBox.svelte";
+  import LeafletMap from "./components/LeafletMap.svelte";
+  import MetadataBox from "./components/MetadataBox.svelte";
+  import MiniMap from "./components/MiniMap.svelte";
 	import TimeseriesPlot from "./components/TimeseriesPlot.svelte";
 	import DailyBarplot from "./components/DailyBarplot.svelte";
 	import DiurnalPlot from "./components/DiurnalPlot.svelte";
-  import LeafletMap from "./components/LeafletMap.svelte";
 
 	// Initialize the leaflet map from URL parameters
-	// Example parameters from Mv4
-	// ?monitors=410610120_01&category=PM2.5_nowcast&centerlat=42.2936&centerlon=-118.8281&zoom=4
+	// ?centerlat=42.2936&centerlon=-118.8281&zoom=4
 	const urlParams = new URLSearchParams(window.location.search);
   if ( urlParams.has('centerLon') ) {
 	  $centerLon = urlParams.get('centerLon');
@@ -36,6 +36,10 @@
 
 	<h1>Monitoring v5 ({$VERSION})</h1>
 
+	<AlertBox>
+		<b>This working prototype is  for evaluation purposes only.</b>
+	</AlertBox>
+
 	{#await all_monitors.load()}
 		<p>Loading monitoring data...</p>
 	{:then}
@@ -50,11 +54,19 @@
 			<LeafletMap width="1200px" height="400px"/>
 		</div>
 
-		{#if selected_id !== "" }
+		{#if $selected_id !== "" }
 			<div class="plot-row">
-				<TimeseriesPlot element_id="r1_timeseries" width="400px"/>
-				<DailyBarplot element_id="r1_daily" width="400px"/>
-				<DiurnalPlot element_id="r1_diurnal" width="400px"/>
+				<TimeseriesPlot element_id="r0_timeseries" width="1200px"/>
+			</div>
+		{/if}
+
+		{#if $selected_id !== "" }
+			<div class="plot-row">
+				<MetadataBox element_id="r1_metadata" width="300px" height="200px"/>
+				<MiniMap element_id="r1_minimap" width="200px" height="200px"/>
+				<TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" size="small"/>
+				<DailyBarplot element_id="r1_daily" width="200px" height="200px"  size="small"/>
+				<DiurnalPlot element_id="r1_diurnal" width="200px" height="200px"  size="small"/>
 			</div>
 		{/if}
 
@@ -65,6 +77,7 @@
 </main>
 
 <style>
+
   h1 {
     color: coral;
   }
