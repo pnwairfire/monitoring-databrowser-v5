@@ -63,7 +63,7 @@
 		{#if $selected_id !== "" }
 			<div class="plot-row">
 				<MetadataBox element_id="r1_metadata" width="300px" height="200px"/>
-				<MiniMap element_id="r1_minimap" width="200px" height="200px"/>
+				<MiniMap width="200px" height="200px"/>
 				<TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" size="small"/>
 				<DailyBarplot element_id="r1_daily" width="200px" height="200px"  size="small"/>
 				<DiurnalPlot element_id="r1_diurnal" width="200px" height="200px"  size="small"/>
