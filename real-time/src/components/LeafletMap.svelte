@@ -7,7 +7,12 @@
   // Svelte methods
 	import { onMount, onDestroy } from 'svelte';
   // Svelte stores
-  import { all_monitors } from '../stores/monitor-data-store.js';
+  import {
+    all_monitors,
+    airnow_geojson,
+    airsis_geojson,
+    wrcc_geojson,
+  } from '../stores/monitor-data-store.js';
   import {
     selected_id,
     centerLon,
@@ -21,9 +26,9 @@
 
   let map;
 
-  function createMap() {
+  async function createMap() {
 
-    // Get a copy of the reactive data and id
+    // Get a copy of the reactive data
     const monitor = $all_monitors;
 
     // Create the map
@@ -36,8 +41,24 @@
     }).addTo(map);
 
     // Create and add geojson created from
-    let monitorGeoJSON = monitor.createGeoJSON();
-    createMonitorLayer(monitorGeoJSON).addTo(map);
+    // // //let monitorGeoJSON = monitor.createGeoJSON();
+
+    // let monitorGeoJSON = $airsis_geojson;
+    // console.log(monitorGeoJSON);
+
+    // // //createMonitorLayer($airsis_geojson).addTo(map);
+    airnow_geojson.load().then(function(geojsonData) {
+      createMonitorLayer(geojsonData).addTo(map);
+    });
+
+    airsis_geojson.load().then(function(geojsonData) {
+      createMonitorLayer(geojsonData).addTo(map);
+    });
+
+    wrcc_geojson.load().then(function(geojsonData) {
+      createMonitorLayer(geojsonData).addTo(map);
+    });
+
 
   }
 
@@ -57,7 +78,7 @@
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, {
           radius: 8,
-          fillColor: pm25ToColor(feature.properties.last_pm25),
+          fillColor: pm25ToColor(feature.properties['last_PM2.5']),
           color: '#000',
           weight: 1,
           opacity: 1,
@@ -68,10 +89,10 @@
       // Icon behavior
       onEachFeature: function (feature, layer) {
         let valueText;
-        if (isNaN(feature.properties.last_pm25)) {
+        if (isNaN(feature.properties['last_PM2.5'])) {
           valueText = "<span style='font-style:italic'> no data</span>";
         } else {
-          valueText = feature.properties.last_pm25 + ' &#xb5;g/m<sup>3</sup>';
+          valueText = feature.properties['last_PM2.5'] + ' &#xb5;g/m<sup>3</sup>';
         }
         layer.bindPopup(feature.properties.locationName + '<br>' + valueText);
 
