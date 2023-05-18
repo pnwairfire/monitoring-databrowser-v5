@@ -14,6 +14,7 @@
     wrcc_geojson,
   } from '../stores/monitor-data-store.js';
   import {
+    hovered_id,
     selected_id,
     centerLon,
     centerLat,
@@ -97,17 +98,16 @@
         layer.bindPopup(feature.properties.locationName + '<br>' + valueText);
 
         layer.on('mouseover', function (e) {
-          $selected_id = feature.properties.deviceDeploymentID;
-          // this.openPopup();
+          $hovered_id = feature.properties.deviceDeploymentID;
         });
 
-        layer.on('mouseout', function (e) {
-          // this.closePopup();
-        });
+        // layer.on('mouseout', function (e) {
 
-        // layer.on('click', function (e) {
-        //   selected_id.set(feature.properties.deviceDeploymentID);
         // });
+
+        layer.on('click', function (e) {
+          $selected_id = feature.properties.deviceDeploymentID;
+        });
       }
     });
     return this_layer;

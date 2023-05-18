@@ -4,7 +4,7 @@ import { readable, writable } from "svelte/store";
 export const VERSION = readable("0.0.2");
 
 // GUI state with user selections
-export let selected_plot_type = writable("");
+export let hovered_id = writable("");
 export let selected_id = writable("");
 
 // GUI state for the leaflet map

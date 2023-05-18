@@ -3,6 +3,7 @@
   import { all_monitors } from './stores/monitor-data-store.js';
   import {
 		VERSION,
+		hovered_id,
 		selected_id,
 		centerLon,
     centerLat,
@@ -38,7 +39,7 @@
 	<h1>Monitoring v5 ({$VERSION})</h1>
 
 	<AlertBox>
-		<b>This working prototype is  for evaluation purposes only.</b>
+		<b>This working prototype is for evaluation purposes only.</b>
 	</AlertBox>
 
 	{#await all_monitors.load()}
@@ -48,18 +49,20 @@
 		<p>
 			Showing {$all_monitors.count()} monitoring locations.
 			&nbsp;&nbsp;
-			Hover over a location to generate plots.
+			Click a location to generate plots.
 		</p>
+
+		{#if $hovered_id !== "" }
+			<div class="plot-row">
+				<HourlyBarplot element_id="r0_hourly" width="1200px"/>
+			</div>
+		{/if}
 
 		<div>
 			<LeafletMap width="1200px" height="400px"/>
 		</div>
 
-		{#if $selected_id !== "" }
-			<div class="plot-row">
-				<HourlyBarplot element_id="r0_hourly" width="1200px"/>
-			</div>
-		{/if}
+		<hr>
 
 		{#if $selected_id !== "" }
 			<div class="plot-row">
