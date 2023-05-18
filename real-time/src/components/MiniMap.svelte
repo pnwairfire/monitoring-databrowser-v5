@@ -40,6 +40,14 @@ async function createMap() {
     //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
 
+  // Add marker
+  L.marker(
+    [
+      $all_monitors.getMetadata($selected_id, 'latitude'),
+      $all_monitors.getMetadata($selected_id, 'longitude')
+    ]
+    ).addTo(map);
+
 }
 
 // Regenerate the chart after any update

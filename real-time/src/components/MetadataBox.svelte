@@ -7,6 +7,9 @@ export let height = '300px';
 // Svelte stores
 import { all_monitors } from '../stores/monitor-data-store.js';
 import { selected_id } from '../stores/gui-store.js';
+
+// Make this statement reactive
+$: location_report_url = 'https://tools.airfire.org/location/report?monitorid=' + $selected_id;
 </script>
 
 <!-- Note that sizing needs to be included as part of the element style. -->
@@ -14,7 +17,8 @@ import { selected_id } from '../stores/gui-store.js';
   <span class="bold">{$all_monitors.getMetadata($selected_id, 'locationName')}</span><br>
   <span class="bold">{$all_monitors.getMetadata($selected_id, 'countyName')} county </span>
   <span class="bold">{$all_monitors.getMetadata($selected_id, 'stateCode')}</span><br>
-  Elevation:&nbsp;&nbsp;{Math.round($all_monitors.getMetadata($selected_id, 'elevation'))}m<br>
+  <a class="location-report" target="_blank" rel=noreferrer href="{location_report_url}">Location Report</a><br>
+  Elevation:&nbsp;&nbsp;{Math.round($all_monitors.getMetadata($selected_id, 'elevation'))} m<br>
   ID:&nbsp;&nbsp;{$selected_id}<br>
   AQSID:&nbsp;&nbsp;{$all_monitors.getMetadata($selected_id, 'AQSID')}<br>
   Source:&nbsp;&nbsp;{$all_monitors.getMetadata($selected_id, 'dataIngestSource')}<br>
@@ -29,11 +33,16 @@ import { selected_id } from '../stores/gui-store.js';
     padding-left: 65px;
     text-align: left;
     font-size: 0.8rem;
+    line-height: 1.1rem;
   }
 
   span.bold {
     font-weight: bold;
     font-size: 1.0rem;
+  }
+
+  a.location-report{
+    font-weight: bold
   }
 </style>
 
