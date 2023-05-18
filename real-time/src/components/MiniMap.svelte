@@ -19,7 +19,15 @@ async function createMap() {
   if (map) map.remove();
 
   // Create the map
-  map = L.map('map1').setView(
+  map = L.map('map1', {
+      zoomControl: false,
+      boxZoom: false,
+      doubleClickZoom: false,
+      dragging: false,
+      zoomAnimation: false,
+      scrollWheelZoom: false,
+      touchZoom: false,
+  }).setView(
     [
       $all_monitors.getMetadata($selected_id, 'latitude'),
       $all_monitors.getMetadata($selected_id, 'longitude')
@@ -29,7 +37,7 @@ async function createMap() {
   // Add background tiles
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
 
 }

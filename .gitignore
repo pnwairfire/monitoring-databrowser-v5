@@ -102,3 +102,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# ----- Jon's extras -----
+
+.DS_Store
