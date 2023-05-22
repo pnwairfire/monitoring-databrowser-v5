@@ -22,10 +22,30 @@
   } from '../stores/gui-store.js';
   // Leaflet (NOTE:  Don't put {} around the 'L'!)
   import L from "leaflet";
+  // Extra shape makers
+  //  - https://npm.io/package/leaflet-svg-shape-markers
+  import 'leaflet-svg-shape-markers';
   // Plotting helper functions
   import { pm25ToColor } from 'air-monitor-plots';
 
   let map;
+
+
+  // Monitor icon style
+
+  function propertiesToIconOptions(properties) {
+    const latency = parseInt(properties['last_latency']);
+    const options = {
+      radius: properties['deploymentType'] == "Temporary" ? 7 : 8,
+      shape: properties['deploymentType'] == "Temporary" ? "triangle-up" : "circle",
+      fillColor: latency > 4 ? "#bbb" : pm25ToColor(properties['last_PM2.5']),
+      color: '#000',
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.8
+    };
+    return(options);
+  }
 
   async function createMap() {
 
@@ -41,13 +61,7 @@
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    // Create and add geojson created from
-    // // //let monitorGeoJSON = monitor.createGeoJSON();
-
-    // let monitorGeoJSON = $airsis_geojson;
-    // console.log(monitorGeoJSON);
-
-    // // //createMonitorLayer($airsis_geojson).addTo(map);
+    // Add monitors to the map
     airnow_geojson.load().then(function(geojsonData) {
       createMonitorLayer(geojsonData).addTo(map);
     });
@@ -77,14 +91,7 @@
     var this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
-        return L.circleMarker(latlng, {
-          radius: 8,
-          fillColor: pm25ToColor(feature.properties['last_PM2.5']),
-          color: '#000',
-          weight: 1,
-          opacity: 1,
-          fillOpacity: 0.8
-        });
+        return L.shapeMarker(latlng, propertiesToIconOptions(feature.properties));
       },
 
       // Icon behavior

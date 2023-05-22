@@ -49,7 +49,7 @@ At the command line:
 npm init vite
 # choose framework: Svelte
 # choose variant: JavaScript
-cd monitoring-v5-simple
+cd real-time
 npm install
 npm run dev
 ```
@@ -93,6 +93,7 @@ command line:
 npm install arquero highcharts moment-timezone suncalc
 npm install @square/svelte-store
 npm install leaflet
+npm install leaflet-svg-shape-markers
 # AirFire packages
 npm install github:MazamaScience/air-monitor
 npm install github:MazamaScience/air-monitor-algorithms
