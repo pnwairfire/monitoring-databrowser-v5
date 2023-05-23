@@ -59,6 +59,7 @@ function idToCurrentStatus(id) {
 
 }
 
+
 // $: currentStatus = idToCurrentStatus(hovered_id);
 
 </script>
@@ -73,20 +74,28 @@ function idToCurrentStatus(id) {
   -->
   <table>
     <thead>
-      <th colspan=2>
+      <th colspan="2">
         <span class="bold">{$all_monitors.getMetadata($hovered_id, 'locationName')}</span><br>
       </th>
+      <tr>
+        <td>Elevation</td>
+        <td>{Math.round($all_monitors.getMetadata($hovered_id, 'elevation'))} m</td>
+      </tr>
       <tr>
         <td width="40%">{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')}</td>
         <td>{idToCurrentStatus($hovered_id)['dataIngestUnitID']}</td>
       </tr>
       <tr>
         <td>Latency</td>
-        <td>{idToCurrentStatus($hovered_id)['last_latency']}</td>
+        <td>{idToCurrentStatus($hovered_id)['last_latency']} hrs</td>
       </tr>
       <tr>
-        <td>Elevation</td>
-        <td>{Math.round($all_monitors.getMetadata($hovered_id, 'elevation'))}</td>
+        <td>Last PM2.5</td>
+        <td>{idToCurrentStatus($hovered_id)['last_PM2.5']} &#xb5;g/m&#xb3;</td>
+      </tr>
+      <tr>
+        <td>Yesterday avg:</td>
+        <td>{idToCurrentStatus($hovered_id)['yesterday_PM2.5_avg']} &#xb5;g/m&#xb3;</td>
       </tr>
     </thead>
   </table>
