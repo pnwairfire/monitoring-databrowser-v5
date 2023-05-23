@@ -11,6 +11,7 @@
 	} from './stores/gui-store.js';
   // Svelte Components
   import AlertBox from "./components/AlertBox.svelte";
+  import HoveredMetadataBox from "./components/HoveredMetadataBox.svelte";
   import LeafletMap from "./components/LeafletMap.svelte";
   import MetadataBox from "./components/MetadataBox.svelte";
   import MiniMap from "./components/MiniMap.svelte";
@@ -54,7 +55,8 @@
 
 		{#if $hovered_id !== "" }
 			<div class="plot-row">
-				<HourlyBarplot element_id="r0_hourly" width="1200px"/>
+				<HoveredMetadataBox element_id="hovered-metadata-box" width="300px" height="220px"/>
+				<HourlyBarplot element_id="hovered_hourly" width="900px"/>
 			</div>
 		{/if}
 

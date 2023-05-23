@@ -41,7 +41,7 @@
 
     // For r0_hourly, show the hovered_id
     let id = $selected_id;
-    if ( element_id == "r0_hourly" ) {
+    if ( element_id == "hovered_hourly" ) {
       id = $hovered_id;
     }
 
