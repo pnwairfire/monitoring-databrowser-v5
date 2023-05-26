@@ -21,7 +21,7 @@ to install npm packages and run the app interactively.
 At the command line, download source code and install npm packages with:
 
 ```
-git clone git@github.com:pnwairfire/coding-challenge.git
+git clone git@github.com:pnwairfire/monitoring-databrowser-v5.git
 ...
 cd real-time
 npm install
