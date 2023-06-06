@@ -13,8 +13,8 @@
   import { hovered_id, selected_id } from '../stores/gui-store.js';
   // Highcharts for plotting
   import Highcharts from 'highcharts';
-  import Exporting from "highcharts/modules/exporting";
-  Exporting(Highcharts);
+  // import Exporting from "highcharts/modules/exporting";
+  // Exporting(Highcharts);
   // Plot configuration
   import {
     hourlyBarplotConfig,
@@ -63,29 +63,32 @@
       if ( size === 'small' ) {
         plotData.title = "Hourly NowCast";
         chartConfig = small_hourlyBarplotConfig(plotData);
-        // Add Context button
-        chartConfig.navigation = {
-          buttonOptions: {
-            enabled: true
-          }
-        };
-        // Add exporting
-        chartConfig.exporting = {
-          chartOptions: { // specific options for the exported image
-            plotOptions: {
-              series: {
-                dataLabels: {
-                  enabled: true
-                }
-              }
-            },
-            fallbackToExportServer: true
-          }
-        };
+        // // Add Context button
+        // chartConfig.navigation = {
+        //   buttonOptions: {
+        //     enabled: true
+        //   }
+        // };
+        // // Add exporting
+        // chartConfig.exporting = {
+        //   chartOptions: { // specific options for the exported image
+        //     plotOptions: {
+        //       series: {
+        //         dataLabels: {
+        //           enabled: true
+        //         }
+        //       }
+        //     },
+        //     fallbackToExportServer: true
+        //   }
+        // };
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);
       } else {
         chartConfig = hourlyBarplotConfig(plotData);
+        // Add zoom
+        chartConfig.chart.zoomBySingleTouch = true;
+        chartConfig.chart.zoomType = "x";
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 6);
       }

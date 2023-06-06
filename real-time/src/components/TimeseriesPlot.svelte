@@ -62,9 +62,9 @@
         pm25_addAQIStackedBar(myChart, 4);
       } else {
         chartConfig = timeseriesPlotConfig(plotData);
-        // Add zoom
-        chartConfig.chart.zoomBySingleTouch = true;
-        chartConfig.chart.zoomType = "x";
+        // // Add zoom
+        // chartConfig.chart.zoomBySingleTouch = true;
+        // chartConfig.chart.zoomType = "x";
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 6);
       }
@@ -79,7 +79,7 @@
 
 <!-- Note that sizing needs to be included as part of the element style. -->
 <div id="{element_id}" class="chart-container"
-      style="width: {width}; height: {height};">
+     style="width: {width}; height: {height};">
 </div>
 
 <style>

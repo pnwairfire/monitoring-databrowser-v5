@@ -13,10 +13,10 @@
   import { selected_id } from '../stores/gui-store.js';
   // Highcharts for plotting
   import Highcharts from 'highcharts';
-  // moment for timezone-aware date calculations
-  import moment from 'moment-timezone';
-  // SunCalc for day-night shading
-  import SunCalc from 'suncalc';
+  // // moment for timezone-aware date calculations
+  // import moment from 'moment-timezone';
+  // // SunCalc for day-night shading
+  // import SunCalc from 'suncalc';
   // Plot Configuration
   import {
     diurnalPlotConfig,
