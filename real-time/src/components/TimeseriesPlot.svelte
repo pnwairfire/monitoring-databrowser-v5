@@ -13,6 +13,8 @@
   import { selected_id } from '../stores/gui-store.js';
   // Highcharts for plotting
   import Highcharts from 'highcharts';
+  import Exporting from "highcharts/modules/exporting";
+  Exporting(Highcharts);
   // Plot Configuration
   import {
     timeseriesPlotConfig,
@@ -60,6 +62,9 @@
         pm25_addAQIStackedBar(myChart, 4);
       } else {
         chartConfig = timeseriesPlotConfig(plotData);
+        // Add zoom
+        chartConfig.chart.zoomBySingleTouch = true;
+        chartConfig.chart.zoomType = "x";
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 6);
       }
