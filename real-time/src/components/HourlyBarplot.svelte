@@ -3,6 +3,7 @@
   export let element_id = 'default-hourly-barplot';
   export let width = '400px';
   export let height = '300px';
+  export let id = '';
   export let size = 'big';
 
   // Imports
@@ -42,7 +43,6 @@
     const monitor = $all_monitors;
 
     // For r0_hourly, show the hovered_id
-    let id = $selected_ids[0];
     if ( element_id == "hovered_hourly" ) {
       id = $hovered_id;
     }

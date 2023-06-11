@@ -1,14 +1,16 @@
 <script>
 // Exports
+export let element_id = 'default-mini-map';
 export let width = '180px';
 export let height = '180px';
+export let id = '';
 
 // Imports
 // Svelte methods
 import { afterUpdate, onDestroy } from 'svelte';
 // Svelte stores
 import { all_monitors } from '../stores/monitor-data-store.js';
-import { selected_ids } from '../stores/gui-store.js';
+// import { selected_ids } from '../stores/gui-store.js';
 
 // We need these variables to live on after an individual chart is destroyed
 let map;
@@ -17,10 +19,8 @@ async function createMap() {
 
   if (map) map.remove();
 
-  const id = $selected_ids[0];
-
   // Create the map
-  map = L.map('map1', {
+  map = L.map(element_id, {
       zoomControl: false,
       boxZoom: false,
       doubleClickZoom: false,
@@ -69,7 +69,7 @@ onDestroy(() => {
 </svelte:head>
 
 <!-- Note that sizing needs to be included as part of the element style. -->
-<div id="map1"
+<div id="{element_id}"
     style="width: {width}; height: {height};">
 </div>
 

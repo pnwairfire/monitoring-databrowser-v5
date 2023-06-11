@@ -3,6 +3,7 @@
 	export let element_id = 'default-diurnal-plot';
   export let width = '400px';
   export let height = '300px';
+  export let id = '';
   export let size = 'big';
 
 	// Imports
@@ -42,7 +43,6 @@
 
     // Get a copy of the reactive data and id
     const monitor = $all_monitors;
-    const id = $selected_ids[0];
 
     if ( id !== "" ) {
 

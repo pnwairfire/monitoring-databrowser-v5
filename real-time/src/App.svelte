@@ -36,7 +36,9 @@
 	  $zoom = urlParams.get('zoom');
 	}
 
-	function leaveMap() {
+	let names = ["Jon", "Callahan"];
+
+	function unselectHovered() {
 		$hovered_id = "";
 	}
 
@@ -69,37 +71,40 @@
 		{/if}
 	  </div>
 
-		<div on:mouseleave={leaveMap}>
+		<div >
 			<LeafletMap width="1200px" height="400px"/>
 		</div>
 
 		<hr>
 
-		{#if $selected_ids[0] !== [""] }
-		<div class="flex-row">
-			<MetadataBox element_id="r1_metadata" width="300px" height="200px"/>
+		{#each $selected_ids as id, i}
+
+		<div class="flex-row" on:mouseenter={unselectHovered}>
+			<MetadataBox element_id="r{i}_metadata" width="300px" height="200px" id={id}/>
 			<div class="flex-row">
 			{#if $r1_slide === "all"}
 				<div class="flex-row">
-					<MiniMap width="200px" height="180px"/>
+					<MiniMap element_id="r{i}_map" width="200px" height="180px" id={id}/>
 					<!-- <TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" size="small"/> -->
-					<HourlyBarplot element_id="r1_hourly" width="200px" height="200px" size="small"/>
-					<DailyBarplot element_id="r1_daily" width="200px" height="200px"  size="small"/>
-					<DiurnalPlot element_id="r1_diurnal" width="200px" height="200px"  size="small"/>
+					<HourlyBarplot element_id="r{i}_hourly" width="200px" height="200px" id={id} size="small"/>
+					<DailyBarplot element_id="r{i}_daily" width="200px" height="200px" id={id}  size="small"/>
+					<DiurnalPlot element_id="r{i}_diurnal" width="200px" height="200px" id={id}  size="small"/>
 				</div>
 				{:else if $r1_slide === "timeseries"}
-					<TimeseriesPlot element_id="r1_full" width="800px" height="200px"  size="large"/>
+					<TimeseriesPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
 				{:else if $r1_slide === "hourly"}
-					<HourlyBarplot element_id="r1_full" width="800px" height="200px"  size="large"/>
+					<HourlyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
 				{:else if $r1_slide === "daily"}
-					<DailyBarplot element_id="r1_full" width="800px" height="200px"  size="large"/>
+					<DailyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
 				{:else if $r1_slide === "diurnal"}
-					<DiurnalPlot element_id="r1_full" width="800px" height="200px"  size="large"/>
+					<DiurnalPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
 				{/if}
-				<SlideAdvance element_id="r1_slideAdvance"/>
+				<SlideAdvance element_id="r{i}_slideAdvance"/>
 			</div>
 		</div>
-	{/if}
+
+
+	{/each}
 
 	{:catch}
 		<p style="color: red">An error occurred</p>
