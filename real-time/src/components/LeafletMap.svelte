@@ -15,7 +15,7 @@
   } from '../stores/monitor-data-store.js';
   import {
     hovered_id,
-    selected_id,
+    selected_ids,
     centerLon,
     centerLat,
     zoom
@@ -113,7 +113,7 @@
         // });
 
         layer.on('click', function (e) {
-          $selected_id = feature.properties.deviceDeploymentID;
+          $selected_ids[0] = feature.properties.deviceDeploymentID;
         });
       }
     });

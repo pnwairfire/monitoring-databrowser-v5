@@ -10,7 +10,7 @@
   import { afterUpdate } from 'svelte';
   // Svelte stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-  import { selected_id } from '../stores/gui-store.js';
+  import { selected_ids } from '../stores/gui-store.js';
   // Highcharts for plotting
   import Highcharts from 'highcharts';
   // Plot configuration
@@ -38,7 +38,7 @@
 
     // Get a copy of the reactive data and id
     const monitor = $all_monitors;
-    const id = $selected_id;
+    const id = $selected_ids[0];
 
     if ( id !== "" ) {
 

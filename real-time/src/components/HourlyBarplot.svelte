@@ -10,7 +10,7 @@
   import { afterUpdate } from 'svelte';
   // Svelte stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-  import { hovered_id, selected_id } from '../stores/gui-store.js';
+  import { hovered_id, selected_ids } from '../stores/gui-store.js';
   // Highcharts for plotting
   import Highcharts from 'highcharts';
   // import Exporting from "highcharts/modules/exporting";
@@ -42,7 +42,7 @@
     const monitor = $all_monitors;
 
     // For r0_hourly, show the hovered_id
-    let id = $selected_id;
+    let id = $selected_ids[0];
     if ( element_id == "hovered_hourly" ) {
       id = $hovered_id;
     }

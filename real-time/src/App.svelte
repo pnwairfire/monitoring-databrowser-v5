@@ -7,7 +7,7 @@
     centerLat,
     zoom,
 		hovered_id,
-		selected_id,
+		selected_ids,
 		r1_slide,
 	} from './stores/gui-store.js';
   // Svelte Components
@@ -75,7 +75,7 @@
 
 		<hr>
 
-		{#if $selected_id !== "" }
+		{#if $selected_ids[0] !== [""] }
 		<div class="flex-row">
 			<MetadataBox element_id="r1_metadata" width="300px" height="200px"/>
 			<div class="flex-row">

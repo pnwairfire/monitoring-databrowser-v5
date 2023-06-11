@@ -8,7 +8,7 @@ export let height = '180px';
 import { afterUpdate, onDestroy } from 'svelte';
 // Svelte stores
 import { all_monitors } from '../stores/monitor-data-store.js';
-import { selected_id } from '../stores/gui-store.js';
+import { selected_ids } from '../stores/gui-store.js';
 
 // We need these variables to live on after an individual chart is destroyed
 let map;
@@ -16,6 +16,8 @@ let map;
 async function createMap() {
 
   if (map) map.remove();
+
+  const id = $selected_ids[0];
 
   // Create the map
   map = L.map('map1', {
@@ -28,8 +30,8 @@ async function createMap() {
       touchZoom: false,
   }).setView(
     [
-      $all_monitors.getMetadata($selected_id, 'latitude'),
-      $all_monitors.getMetadata($selected_id, 'longitude')
+      $all_monitors.getMetadata(id, 'latitude'),
+      $all_monitors.getMetadata(id, 'longitude')
     ],
     10);
 
@@ -42,8 +44,8 @@ async function createMap() {
   // Add marker
   L.marker(
     [
-      $all_monitors.getMetadata($selected_id, 'latitude'),
-      $all_monitors.getMetadata($selected_id, 'longitude')
+      $all_monitors.getMetadata(id, 'latitude'),
+      $all_monitors.getMetadata(id, 'longitude')
     ]
     ).addTo(map);
 
