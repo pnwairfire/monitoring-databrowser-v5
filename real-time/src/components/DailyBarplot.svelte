@@ -59,10 +59,17 @@
       if ( size === 'small' ) {
         plotData.title = "Daily Average PM2.5";
         chartConfig = small_dailyBarplotConfig(plotData);
+        // Disable hover
+        chartConfig.plotOptions.column.enableMouseTracking = false;
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);
       } else {
         chartConfig = dailyBarplotConfig(plotData);
+        // Remove title
+        chartConfig.title = "";
+        // Add zoom
+        chartConfig.chart.zoomBySingleTouch = true;
+        chartConfig.chart.zoomType = "x";
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 6);
       }

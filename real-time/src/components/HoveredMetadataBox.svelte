@@ -103,7 +103,7 @@ function idToCurrentStatus(id) {
 
 <style>
   div {
-    padding-top: 80px;
+    padding-top: 40px;
     padding-left: 5px;
     text-align: left;
     font-size: 1.0rem;
@@ -118,6 +118,5 @@ function idToCurrentStatus(id) {
   table {
     width: 100%;
   }
-
 </style>
 

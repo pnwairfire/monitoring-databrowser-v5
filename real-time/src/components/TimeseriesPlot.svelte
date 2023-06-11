@@ -13,8 +13,8 @@
   import { selected_id } from '../stores/gui-store.js';
   // Highcharts for plotting
   import Highcharts from 'highcharts';
-  import Exporting from "highcharts/modules/exporting";
-  Exporting(Highcharts);
+  // import Exporting from "highcharts/modules/exporting";
+  // Exporting(Highcharts);
   // Plot Configuration
   import {
     timeseriesPlotConfig,
@@ -58,13 +58,17 @@
       if ( size === 'small' ) {
         plotData.title = "PM2.5 & Nowcast";
         chartConfig = small_timeseriesPlotConfig(plotData);
+        // Disable hover
+        chartConfig.plotOptions.line.enableMouseTracking = false;
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);
       } else {
         chartConfig = timeseriesPlotConfig(plotData);
-        // // Add zoom
-        // chartConfig.chart.zoomBySingleTouch = true;
-        // chartConfig.chart.zoomType = "x";
+        // Remove title
+        chartConfig.title = "";
+        // Add zoom
+        chartConfig.chart.zoomBySingleTouch = true;
+        chartConfig.chart.zoomType = "x";
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 6);
       }

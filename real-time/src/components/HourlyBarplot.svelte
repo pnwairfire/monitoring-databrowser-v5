@@ -63,29 +63,16 @@
       if ( size === 'small' ) {
         plotData.title = "Hourly NowCast";
         chartConfig = small_hourlyBarplotConfig(plotData);
-        // // Add Context button
-        // chartConfig.navigation = {
-        //   buttonOptions: {
-        //     enabled: true
-        //   }
-        // };
-        // // Add exporting
-        // chartConfig.exporting = {
-        //   chartOptions: { // specific options for the exported image
-        //     plotOptions: {
-        //       series: {
-        //         dataLabels: {
-        //           enabled: true
-        //         }
-        //       }
-        //     },
-        //     fallbackToExportServer: true
-        //   }
-        // };
+        // Disable hover
+        chartConfig.plotOptions.column.enableMouseTracking = false;
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);
       } else {
         chartConfig = hourlyBarplotConfig(plotData);
+        // Remove title
+        chartConfig.title = "";
+        // Shorten y-axis title
+        chartConfig.yAxis.title.text = "NowCast (µg/m³)"
         // Add zoom
         chartConfig.chart.zoomBySingleTouch = true;
         chartConfig.chart.zoomType = "x";

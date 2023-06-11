@@ -30,7 +30,7 @@ $: location_report_url = 'https://tools.airfire.org/location/report?monitorid=' 
 <style>
   div {
     padding-top: 25px;
-    padding-left: 65px;
+    padding-left: 30px;
     text-align: left;
     font-size: 0.8rem;
     line-height: 1.1rem;

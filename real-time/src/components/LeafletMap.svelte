@@ -96,13 +96,13 @@
 
       // Icon behavior
       onEachFeature: function (feature, layer) {
-        let valueText;
-        if (isNaN(feature.properties['last_PM2.5'])) {
-          valueText = "<span style='font-style:italic'> no data</span>";
-        } else {
-          valueText = feature.properties['last_PM2.5'] + ' &#xb5;g/m<sup>3</sup>';
-        }
-        layer.bindPopup(feature.properties.locationName + '<br>' + valueText);
+        // let valueText;
+        // if (isNaN(feature.properties['last_PM2.5'])) {
+        //   valueText = "<span style='font-style:italic'> no data</span>";
+        // } else {
+        //   valueText = feature.properties['last_PM2.5'] + ' &#xb5;g/m<sup>3</sup>';
+        // }
+        // layer.bindPopup(feature.properties.locationName + '<br>' + valueText);
 
         layer.on('mouseover', function (e) {
           $hovered_id = feature.properties.deviceDeploymentID;

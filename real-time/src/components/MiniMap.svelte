@@ -1,8 +1,7 @@
 <script>
 // Exports
-//export let element_id = 'default-mini-map';
-export let width = '400px';
-export let height = '300px';
+export let width = '180px';
+export let height = '180px';
 
 // Imports
 // Svelte methods
@@ -73,6 +72,11 @@ onDestroy(() => {
 </div>
 
 <style>
-
+  /*
+  * Default height is 180 rather than 200 for the plots.
+  */
+  div {
+    margin-top: 20px;
+  }
 </style>
 

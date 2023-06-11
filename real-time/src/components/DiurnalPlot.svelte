@@ -67,10 +67,17 @@
       if ( size === 'small' ) {
         plotData.title = "Diurnal NowCast";
         chartConfig = small_diurnalPlotConfig(plotData);
+        // Disable hover on 3 lines
+        chartConfig.plotOptions.line.enableMouseTracking = false;
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);
       } else {
         chartConfig = diurnalPlotConfig(plotData);
+        // Remove title
+        chartConfig.title = "";
+        // Add zoom
+        chartConfig.chart.zoomBySingleTouch = true;
+        chartConfig.chart.zoomType = "x";
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 6);
       }
