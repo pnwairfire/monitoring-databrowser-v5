@@ -64,11 +64,10 @@ export const all_monitors = derived(
   [airnow, airsis, wrcc],
   ([$airnow, $airsis, $wrcc]) => {
     let all_monitors = $airnow.combine($airsis).combine($wrcc).dropEmpty();
-    console.log(
-      "Initial loaded all_monitors with '" +
-        all_monitors.count() +
-        " time series"
-    );
+    let monitorCount = all_monitors.count();
+    if (monitorCount > 0) {
+      console.log("Loaded all_monitors with " + monitorCount + " time series");
+    }
     return all_monitors;
   }
 );

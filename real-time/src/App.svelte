@@ -21,6 +21,7 @@
 	import HourlyBarplot from "./components/HourlyBarplot.svelte";
 	import DailyBarplot from "./components/DailyBarplot.svelte";
 	import DiurnalPlot from "./components/DiurnalPlot.svelte";
+	import RemoveRowButton from "./components/RemoveRowButton.svelte";
 	import SlideAdvance from "./components/SlideAdvance.svelte";
 
 	// Initialize the leaflet map from URL parameters
@@ -35,8 +36,6 @@
   if ( urlParams.has('zoom') ) {
 	  $zoom = urlParams.get('zoom');
 	}
-
-	let names = ["Jon", "Callahan"];
 
 	function unselectHovered() {
 		$hovered_id = "";
@@ -64,12 +63,12 @@
 			Showing {$all_monitors.count()} monitoring locations.
 		</p>
 
-		<div id="hovered-row" class="flex-row">
-			{#if $hovered_id !== "" }
+		{#if $hovered_id !== "" }
+			<div id="hovered-row" class="flex-row">
 				<HoveredMetadataBox element_id="hovered-metadata-box" width="300px" height="220px"/>
 				<HourlyBarplot element_id="hovered_hourly" width="880px" height="200px"/>
+			</div>
 		{/if}
-	  </div>
 
 		<div >
 			<LeafletMap width="1200px" height="400px"/>
@@ -79,32 +78,32 @@
 
 		{#each $selected_ids as id, i}
 
-		<div class="flex-row" on:mouseenter={unselectHovered}>
-			<MetadataBox element_id="r{i}_metadata" width="300px" height="200px" id={id}/>
-			<div class="flex-row">
-			{#if $r1_slide === "all"}
+			<div class="flex-row" on:mouseenter={unselectHovered}>
+				<RemoveRowButton id={id}/>
+				<MetadataBox element_id="r{i}_metadata" width="300px" height="200px" id={id}/>
 				<div class="flex-row">
-					<MiniMap element_id="r{i}_map" width="200px" height="180px" id={id}/>
-					<!-- <TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" size="small"/> -->
-					<HourlyBarplot element_id="r{i}_hourly" width="200px" height="200px" id={id} size="small"/>
-					<DailyBarplot element_id="r{i}_daily" width="200px" height="200px" id={id}  size="small"/>
-					<DiurnalPlot element_id="r{i}_diurnal" width="200px" height="200px" id={id}  size="small"/>
+				{#if $r1_slide === "all"}
+					<div class="flex-row">
+						<MiniMap element_id="r{i}_map" width="200px" height="180px" id={id}/>
+						<!-- <TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" id={id}  size="small"/> -->
+						<HourlyBarplot element_id="r{i}_hourly" width="200px" height="200px" id={id} size="small"/>
+						<DailyBarplot element_id="r{i}_daily" width="200px" height="200px" id={id}  size="small"/>
+						<DiurnalPlot element_id="r{i}_diurnal" width="200px" height="200px" id={id}  size="small"/>
+					</div>
+					{:else if $r1_slide === "timeseries"}
+						<TimeseriesPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
+					{:else if $r1_slide === "hourly"}
+						<HourlyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
+					{:else if $r1_slide === "daily"}
+						<DailyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
+					{:else if $r1_slide === "diurnal"}
+						<DiurnalPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
+					{/if}
+					<SlideAdvance element_id="r{i}_slideAdvance"/>
 				</div>
-				{:else if $r1_slide === "timeseries"}
-					<TimeseriesPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
-				{:else if $r1_slide === "hourly"}
-					<HourlyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
-				{:else if $r1_slide === "daily"}
-					<DailyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
-				{:else if $r1_slide === "diurnal"}
-					<DiurnalPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
-				{/if}
-				<SlideAdvance element_id="r{i}_slideAdvance"/>
 			</div>
-		</div>
 
-
-	{/each}
+		{/each}
 
 	{:catch}
 		<p style="color: red">An error occurred</p>
@@ -140,4 +139,5 @@
   .flex-row {
     display: flex;
   }
+
 </style>

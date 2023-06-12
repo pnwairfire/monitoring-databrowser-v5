@@ -1,7 +1,7 @@
 import { readable, writable } from "svelte/store";
 
 // Version
-export const VERSION = readable("5.0.2");
+export const VERSION = readable("5.0.3");
 
 // GUI state for the leaflet map
 export let centerLon = writable(-100);

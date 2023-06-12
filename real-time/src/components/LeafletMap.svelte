@@ -32,7 +32,6 @@
 
 
   // Monitor icon style
-
   function propertiesToIconOptions(properties) {
     const latency = parseInt(properties['last_latency']);
     const options = {
@@ -45,6 +44,23 @@
       fillOpacity: 0.8
     };
     return(options);
+  }
+
+  // Monitor icon behavior
+  function iconClick(e) {
+    const feature = e.target.feature;
+    const id = feature.properties.deviceDeploymentID;
+    const found = $selected_ids.find(o => o == id);
+    if (!found) {
+      $selected_ids[$selected_ids.length] = id;
+      e.target.setStyle({weight: 2});
+    } else {
+      const ids = $selected_ids;
+      const index = ids.indexOf(id)
+      const removedItem = ids.splice(index, 1);
+      $selected_ids = ids;
+      e.target.setStyle({weight: 1});
+    }
   }
 
   async function createMap() {
@@ -91,7 +107,10 @@
     var this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
-        return L.shapeMarker(latlng, propertiesToIconOptions(feature.properties));
+        let marker = L.shapeMarker(latlng, propertiesToIconOptions(feature.properties));
+        // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
+        marker.id = feature.properties.deviceDeploymentID;
+        return(marker);
       },
 
       // Icon behavior
@@ -100,8 +119,7 @@
           $hovered_id = feature.properties.deviceDeploymentID;
         });
         layer.on('click', function (e) {
-          // $selected_ids[0] = feature.properties.deviceDeploymentID;
-          $selected_ids[$selected_ids.length] = feature.properties.deviceDeploymentID;
+          iconClick(e);
         });
       }
     });
