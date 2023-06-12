@@ -17,6 +17,8 @@ import Monitor from "air-monitor";
 // npm install @square/svelte-store --save
 import { asyncReadable, derived, writable } from "@square/svelte-store";
 
+import { error_message } from "./gui-store.js";
+
 export const airnowLoadTime = writable(1000);
 
 // ----- time series -----------------------------------------------------------
@@ -81,9 +83,14 @@ export const airnow_geojson = asyncReadable(
     const response = await fetch(
       "https://airfire-data-exports.s3.us-west-2.amazonaws.com/monitoring/v2/latest/geojson/mv4_airnow_PM2.5_latest.geojson"
     );
-    const userObject = await response.json();
-    console.log("loaded airnow geojson");
-    return userObject;
+    if (response.ok) {
+      const userObject = await response.json();
+      console.log("loaded airnow geojson");
+      return userObject;
+    } else {
+      error_message.set("Failed to load airnow geojson");
+      throw new Error(response.message);
+    }
   },
   { reloadable: true }
 );
@@ -95,9 +102,14 @@ export const airsis_geojson = asyncReadable(
     const response = await fetch(
       "https://airfire-data-exports.s3.us-west-2.amazonaws.com/monitoring/v2/latest/geojson/mv4_airsis_PM2.5_latest.geojson"
     );
-    const userObject = await response.json();
-    console.log("loaded airsis geojson");
-    return userObject;
+    if (response.ok) {
+      const userObject = await response.json();
+      console.log("loaded airsis geojson");
+      return userObject;
+    } else {
+      error_message.set("Failed to load airsis geojson");
+      throw new Error(response.message);
+    }
   },
   { reloadable: true }
 );
@@ -109,9 +121,14 @@ export const wrcc_geojson = asyncReadable(
     const response = await fetch(
       "https://airfire-data-exports.s3.us-west-2.amazonaws.com/monitoring/v2/latest/geojson/mv4_wrcc_PM2.5_latest.geojson"
     );
-    const userObject = await response.json();
-    console.log("loaded wrcc geojson");
-    return userObject;
+    if (response.ok) {
+      const userObject = await response.json();
+      console.log("loaded wrcc geojson");
+      return userObject;
+    } else {
+      error_message.set("Failed to load wrcc geojson");
+      throw new Error(response.message);
+    }
   },
   { reloadable: true }
 );

@@ -3,12 +3,13 @@
   import { all_monitors } from './stores/monitor-data-store.js';
   import {
 		VERSION,
+		error_message,
 		centerLon,
     centerLat,
     zoom,
 		hovered_id,
 		selected_ids,
-		r1_slide,
+		current_slide,
 	} from './stores/gui-store.js';
   // Svelte Components
   import NavBar from "./components/NavBar.svelte";
@@ -51,9 +52,16 @@
 		<span class="mv5">Monitoring v{$VERSION}</span>
 	</NavBar>
 
-	<AlertBox>
-		<b>This working prototype is for evaluation purposes only.</b>
-	</AlertBox>
+
+	{#if $error_message === "" }
+		<AlertBox level="warning">
+			<b>This working prototype is for evaluation purposes only.</b>
+		</AlertBox>
+	{:else}
+		<AlertBox level="error">
+			<b>{$error_message}</b>
+		</AlertBox>
+	{/if}
 
 	{#await all_monitors.load()}
 		<p>Loading monitoring data...</p>
@@ -82,7 +90,7 @@
 				<RemoveRowButton id={id}/>
 				<MetadataBox element_id="r{i}_metadata" width="300px" height="200px" id={id}/>
 				<div class="flex-row">
-				{#if $r1_slide === "all"}
+				{#if $current_slide === "all"}
 					<div class="flex-row">
 						<MiniMap element_id="r{i}_map" width="200px" height="180px" id={id}/>
 						<!-- <TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" id={id}  size="small"/> -->
@@ -90,13 +98,13 @@
 						<DailyBarplot element_id="r{i}_daily" width="200px" height="200px" id={id}  size="small"/>
 						<DiurnalPlot element_id="r{i}_diurnal" width="200px" height="200px" id={id}  size="small"/>
 					</div>
-					{:else if $r1_slide === "timeseries"}
+					{:else if $current_slide === "timeseries"}
 						<TimeseriesPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
-					{:else if $r1_slide === "hourly"}
+					{:else if $current_slide === "hourly"}
 						<HourlyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
-					{:else if $r1_slide === "daily"}
+					{:else if $current_slide === "daily"}
 						<DailyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
-					{:else if $r1_slide === "diurnal"}
+					{:else if $current_slide === "diurnal"}
 						<DiurnalPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
 					{/if}
 					<SlideAdvance element_id="r{i}_slideAdvance"/>

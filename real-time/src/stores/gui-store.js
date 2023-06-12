@@ -1,7 +1,10 @@
 import { readable, writable } from "svelte/store";
 
 // Version
-export const VERSION = readable("5.0.3");
+export const VERSION = readable("5.0.4");
+
+// Status messages
+export let error_message = writable("");
 
 // GUI state for the leaflet map
 export let centerLon = writable(-100);
@@ -11,4 +14,6 @@ export let zoom = writable(4);
 // GUI state with user selections
 export let hovered_id = writable("");
 export let selected_ids = writable([]);
-export let r1_slide = writable("all");
+export let map_update_needed = writable(false);
+
+export let current_slide = writable("all");

@@ -8,7 +8,7 @@
 	import { onMount, onDestroy } from 'svelte';
   // Svelte stores
   import {
-    all_monitors,
+    // all_monitors,
     airnow_geojson,
     airsis_geojson,
     wrcc_geojson,
@@ -16,6 +16,7 @@
   import {
     hovered_id,
     selected_ids,
+    map_update_needed,
     centerLon,
     centerLat,
     zoom
@@ -30,43 +31,10 @@
 
   let map;
 
-
-  // Monitor icon style
-  function propertiesToIconOptions(properties) {
-    const latency = parseInt(properties['last_latency']);
-    const options = {
-      radius: properties['deploymentType'] == "Temporary" ? 7 : 8,
-      shape: properties['deploymentType'] == "Temporary" ? "triangle-up" : "circle",
-      fillColor: latency > 4 ? "#bbb" : pm25ToColor(properties['last_PM2.5']),
-      color: '#000',
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 0.8
-    };
-    return(options);
-  }
-
-  // Monitor icon behavior
-  function iconClick(e) {
-    const feature = e.target.feature;
-    const id = feature.properties.deviceDeploymentID;
-    const found = $selected_ids.find(o => o == id);
-    if (!found) {
-      $selected_ids[$selected_ids.length] = id;
-      e.target.setStyle({weight: 2});
-    } else {
-      const ids = $selected_ids;
-      const index = ids.indexOf(id)
-      const removedItem = ids.splice(index, 1);
-      $selected_ids = ids;
-      e.target.setStyle({weight: 1});
-    }
-  }
-
   async function createMap() {
 
     // Get a copy of the reactive data
-    const monitor = $all_monitors;
+    // const monitor = $all_monitors;
 
     // Create the map
     map = L.map('map').setView([$centerLat, $centerLon], $zoom);
@@ -99,6 +67,8 @@
 		if (map) map.remove();
 	});
 
+  /* ----- Internal functions ----------------------------------------------- */
+
   /**
    * @param {geojson} geojson to be converted to a leaflet layer
    * @returns
@@ -110,6 +80,7 @@
         let marker = L.shapeMarker(latlng, propertiesToIconOptions(feature.properties));
         // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
         marker.id = feature.properties.deviceDeploymentID;
+        // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
         return(marker);
       },
 
@@ -124,6 +95,53 @@
       }
     });
     return this_layer;
+  }
+
+  // Monitor icon style
+  function propertiesToIconOptions(properties) {
+    const latency = parseInt(properties['last_latency']);
+    const options = {
+      radius: properties['deploymentType'] == "Temporary" ? 7 : 8,
+      shape: properties['deploymentType'] == "Temporary" ? "triangle-up" : "circle",
+      fillColor: latency > 4 ? "#bbb" : pm25ToColor(properties['last_PM2.5']),
+      color: '#000',
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.8
+    };
+    return(options);
+  }
+
+  // Monitor icon behavior
+  function iconClick(e) {
+    const feature = e.target.feature;
+    const id = feature.properties.deviceDeploymentID;
+    const found = $selected_ids.find(o => o == id);
+    if (!found) {
+      $selected_ids[$selected_ids.length] = id;
+      e.target.setStyle({weight: 3});
+    } else {
+      const ids = $selected_ids;
+      const index = ids.indexOf(id)
+      const removedItem = ids.splice(index, 1);
+      $selected_ids = ids;
+      e.target.setStyle({weight: 1});
+    }
+  }
+
+  // Watcher for map update requests from external components
+  $: if ( $map_update_needed) {
+    map.eachLayer(function(layer) {
+      // Bold or un-bold each ShapeMarker
+      if (layer instanceof L.ShapeMarker) {
+        if ($selected_ids.find(o => o == layer.id)) {
+          layer.setStyle({weight: 3});
+        } else {
+          layer.setStyle({weight: 1});
+        }
+      }
+    })
+    $map_update_needed = false;
   }
 </script>
 

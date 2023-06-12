@@ -4,15 +4,17 @@
   export let id = '';
 
   // Imports
-  import { selected_ids } from '../stores/gui-store.js';
+  import {
+    selected_ids,
+    map_update_needed,
+  } from '../stores/gui-store.js';
 
   function removeRow(id) {
-    console.log(id);
     let ids = $selected_ids;
     let index = ids.indexOf(id)
     let removedItem = ids.splice(index, 1);
-    console.log(removedItem);
     $selected_ids = ids;
+    map_update_needed.set(true);
   }
 </script>
 

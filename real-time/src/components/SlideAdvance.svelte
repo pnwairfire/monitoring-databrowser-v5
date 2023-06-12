@@ -4,20 +4,20 @@
 
   // Imports
   import {
-    r1_slide,
+    current_slide,
 	} from '../stores/gui-store.js';
 
   function advanceSlide() {
-    if ($r1_slide === "all") {
-      $r1_slide = "timeseries";
-    } else if ($r1_slide === "timeseries") {
-      $r1_slide = "hourly";
-    } else if ($r1_slide === "hourly") {
-      $r1_slide = "daily";
-    } else if ($r1_slide === "daily") {
-      $r1_slide = "diurnal";
-    } else if ($r1_slide === "diurnal") {
-      $r1_slide = "all";
+    if ($current_slide === "all") {
+      $current_slide = "timeseries";
+    } else if ($current_slide === "timeseries") {
+      $current_slide = "hourly";
+    } else if ($current_slide === "hourly") {
+      $current_slide = "daily";
+    } else if ($current_slide === "daily") {
+      $current_slide = "diurnal";
+    } else if ($current_slide === "diurnal") {
+      $current_slide = "all";
     }
   }
 </script>
