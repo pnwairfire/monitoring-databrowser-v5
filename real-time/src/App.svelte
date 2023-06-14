@@ -26,16 +26,18 @@
 	import SlideAdvance from "./components/SlideAdvance.svelte";
 
 	// Initialize the leaflet map from URL parameters
-	// ?centerlat=42.2936&centerlon=-118.8281&zoom=4
 	const urlParams = new URLSearchParams(window.location.search);
-  if ( urlParams.has('centerLon') ) {
-	  $centerLon = urlParams.get('centerLon');
+  if ( urlParams.has('centerlat') ) {
+	  $centerLat = urlParams.get('centerlat');
 	}
-  if ( urlParams.has('centerLat') ) {
-	  $centerLat = urlParams.get('centerLat');
+  if ( urlParams.has('centerlon') ) {
+	  $centerLon = urlParams.get('centerlon');
 	}
   if ( urlParams.has('zoom') ) {
 	  $zoom = urlParams.get('zoom');
+	}
+  if ( urlParams.has('monitors') ) {
+	  $selected_ids = urlParams.get('monitors').split(',');
 	}
 
 	function unselectHovered() {
