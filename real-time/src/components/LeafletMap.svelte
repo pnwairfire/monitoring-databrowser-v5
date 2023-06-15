@@ -91,16 +91,19 @@
     var this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
-        let marker = L.shapeMarker(latlng, propertiesToIconOptions(feature.properties));
-        // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
-        marker.id = feature.properties.deviceDeploymentID;
-        // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
-        if ($selected_ids.find(o => o === marker.id)) {
-          marker.setStyle({weight: 3});
-        } else {
-          marker.setStyle({weight: 1});
+        // Only show markers if the latency is less than 3 * 24 hours
+        if ( parseInt(feature.properties.last_latency) < 24 * 3) {
+          let marker = L.shapeMarker(latlng, propertiesToIconOptions(feature.properties));
+          // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
+          marker.id = feature.properties.deviceDeploymentID;
+          // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
+          if ($selected_ids.find(o => o === marker.id)) {
+            marker.setStyle({weight: 3});
+          } else {
+            marker.setStyle({weight: 1});
+          }
+          return(marker);
         }
-        return(marker);
       },
 
       // Icon behavior

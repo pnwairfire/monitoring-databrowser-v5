@@ -96,18 +96,18 @@
 					<div class="flex-row">
 						<MiniMap element_id="r{i}_map" width="200px" height="180px" id={id}/>
 						<!-- <TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" id={id}  size="small"/> -->
-						<HourlyBarplot element_id="r{i}_hourly" width="200px" height="200px" id={id} size="small"/>
-						<DailyBarplot element_id="r{i}_daily" width="200px" height="200px" id={id}  size="small"/>
-						<DiurnalPlot element_id="r{i}_diurnal" width="200px" height="200px" id={id}  size="small"/>
+						<HourlyBarplot element_id="r{i}_small_hourly" width="200px" height="200px" id={id} size="small"/>
+						<DailyBarplot element_id="r{i}_small_daily" width="200px" height="200px" id={id}  size="small"/>
+						<DiurnalPlot element_id="r{i}_small_diurnal" width="200px" height="200px" id={id}  size="small"/>
 					</div>
 					{:else if $current_slide === "timeseries"}
-						<TimeseriesPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
+						<TimeseriesPlot element_id="r{i}_timeseries" width="800px" height="200px" id={id}  size="large"/>
 					{:else if $current_slide === "hourly"}
-						<HourlyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
+						<HourlyBarplot element_id="r{i}_hourly" width="800px" height="200px" id={id}  size="large"/>
 					{:else if $current_slide === "daily"}
-						<DailyBarplot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
+						<DailyBarplot element_id="r{i}_daily" width="800px" height="200px" id={id}  size="large"/>
 					{:else if $current_slide === "diurnal"}
-						<DiurnalPlot element_id="r{i}_full" width="800px" height="200px" id={id}  size="large"/>
+						<DiurnalPlot element_id="r{i}_diurnal" width="800px" height="200px" id={id}  size="large"/>
 					{/if}
 					<SlideAdvance element_id="r{i}_slideAdvance"/>
 				</div>
