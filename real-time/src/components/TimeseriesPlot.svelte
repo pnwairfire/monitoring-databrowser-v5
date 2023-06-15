@@ -64,6 +64,7 @@
         pm25_addAQIStackedBar(myChart, 4);
       } else {
         chartConfig = timeseriesPlotConfig(plotData);
+
         // Remove title
         chartConfig.title = "";
         // Add zoom
