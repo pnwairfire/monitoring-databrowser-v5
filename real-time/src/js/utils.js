@@ -30,3 +30,11 @@ export function replaceWindowHistory(
 
   window.history.replaceState("dummy", "Monitoring v5", url);
 }
+
+// Create data-service URL
+export function createDataServiceUrl(ids = []) {
+  const baseUrl = "https://tools.airfire.org/monitor-data/v2/data";
+  const monitorids = ids.reduce((a, o) => a + "," + o);
+  const url = baseUrl + "?" + "monitorids=" + ids;
+  return url;
+}

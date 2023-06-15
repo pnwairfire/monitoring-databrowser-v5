@@ -24,6 +24,7 @@
 	import DiurnalPlot from "./components/DiurnalPlot.svelte";
 	import RemoveRowButton from "./components/RemoveRowButton.svelte";
 	import SlideAdvance from "./components/SlideAdvance.svelte";
+  import { createDataServiceUrl } from './js/utils.js';
 
 	// Initialize the leaflet map from URL parameters
 	const urlParams = new URLSearchParams(window.location.search);
@@ -85,6 +86,16 @@
 		</div>
 
 		<hr>
+		  <div class="flex-row">
+				<span id="selected-monitors">Selected Monitors:</span>
+				<span id="selected-monitor-count">{$selected_ids.length} monitors</span>
+				<div id="service-links">
+					{#if $selected_ids.length > 0}
+					<a href="{createDataServiceUrl($selected_ids)}">CSV File</a>
+					{/if}
+			</div>
+		</div>
+	<hr>
 
 		{#each $selected_ids as id, i}
 
@@ -144,6 +155,22 @@
 
 	div#hovered-row {
 		height: 260px;
+	}
+
+	div#service-links {
+		text-align: center;
+		padding-left: 400px
+	}
+
+	span#selected-monitors {
+		font-size: 1.0rem;
+		font-weight: bold;
+		padding-left: 65px;
+		padding-right: 20px;
+	}
+
+	span#selected-monitor-count {
+		font-style: italic;
 	}
 
   .flex-row {
