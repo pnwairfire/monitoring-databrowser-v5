@@ -7,44 +7,12 @@
 		centerLon,
     centerLat,
     zoom,
-		hovered_id,
-		selected_ids,
-		current_slide,
 	} from './stores/gui-store.js';
   // Svelte Components
   import NavBar from "./components/NavBar.svelte";
   import AlertBox from "./components/AlertBox.svelte";
-  import HoveredMetadataBox from "./components/HoveredMetadataBox.svelte";
   import LeafletMap from "./components/LeafletMap.svelte";
-  import MetadataBox from "./components/MetadataBox.svelte";
   import MetadataTable from "./components/MetadataTable.svelte";
-  import MiniMap from "./components/MiniMap.svelte";
-	import TimeseriesPlot from "./components/TimeseriesPlot.svelte";
-	import HourlyBarplot from "./components/HourlyBarplot.svelte";
-	import DailyBarplot from "./components/DailyBarplot.svelte";
-	import DiurnalPlot from "./components/DiurnalPlot.svelte";
-	import RemoveRowButton from "./components/RemoveRowButton.svelte";
-	import SlideAdvance from "./components/SlideAdvance.svelte";
-  //import { createDataServiceUrl } from './js/utils.js';
-
-	// Initialize the leaflet map from URL parameters
-	const urlParams = new URLSearchParams(window.location.search);
-  if ( urlParams.has('centerlat') ) {
-	  $centerLat = urlParams.get('centerlat');
-	}
-  if ( urlParams.has('centerlon') ) {
-	  $centerLon = urlParams.get('centerlon');
-	}
-  if ( urlParams.has('zoom') ) {
-	  $zoom = urlParams.get('zoom');
-	}
-  if ( urlParams.has('monitors') ) {
-	  $selected_ids = urlParams.get('monitors').split(',');
-	}
-
-	function unselectHovered() {
-		$hovered_id = "";
-	}
 
 </script>
 
@@ -110,8 +78,7 @@
 		/* font-size: 0.8rem; */
 	}
 
-  .flex-row {
+  /* .flex-row {
     display: flex;
-  }
-
+  } */
 </style>
