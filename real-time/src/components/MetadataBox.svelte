@@ -9,8 +9,28 @@ export let id = '';
 import { all_monitors } from '../stores/monitor-data-store.js';
 import { selected_ids } from '../stores/gui-store.js';
 
-// Make this statement reactive
+// Make these statements reactive
 $: location_report_url = 'https://tools.airfire.org/location/report?monitorid=' + id;
+$: airnow_qc_report_url = 'https://tools.airfire.org/monitor-airnow-qc-report/v1/airnow?aqsid=' + $all_monitors.getMetadata(id, 'AQSID');
+
+function create_temp_qc_report_url(id) {
+
+  let url;
+  const deviceID = $all_monitors.getMetadata(id, 'deviceID');
+  const aggregator = $all_monitors.getMetadata(id, 'dataIngestSource').toLowerCase();
+  const baseUrl = "https://tools.airfire.org/monitor-qc-report/v2/";
+  const provider = deviceID.split(".")[0];
+  const unit_id = deviceID.split(".")[1];
+  if (aggregator === "airsis") {
+    url = baseUrl + "airsis?provider=" + provider + "&unitID=" + unit_id;
+  } else if (aggregator === "wrcc") {
+    url = baseUrl + "wrcc?unitID=" + unit_id;
+  } else {
+    throw new Error("unrecognized aggregator: " + aggregator);
+  }
+  return url;
+
+}
 </script>
 
 <!-- Note that sizing needs to be included as part of the element style. -->
@@ -24,7 +44,13 @@ $: location_report_url = 'https://tools.airfire.org/location/report?monitorid=' 
   Elevation:&nbsp;&nbsp;{Math.round($all_monitors.getMetadata(id, 'elevation'))} m<br>
   ID:&nbsp;&nbsp;{id}<br>
   AQSID:&nbsp;&nbsp;{$all_monitors.getMetadata(id, 'AQSID')}<br>
-  Source:&nbsp;&nbsp;{$all_monitors.getMetadata(id, 'dataIngestSource')}<br>
+  Source:&nbsp;&nbsp;{$all_monitors.getMetadata(id, 'dataIngestSource')}
+  {#if $all_monitors.getMetadata(id, 'dataIngestSource') === 'AirNow' }
+    <a class="qc-report" target="_blank" rel=noreferrer href="{airnow_qc_report_url}">QC</a>
+  {:else}
+    <a class="qc-report" target="_blank" rel=noreferrer href="{create_temp_qc_report_url(id)}">QC</a>
+  {/if}
+  <br>
   Deployment type:&nbsp;&nbsp;{$all_monitors.getMetadata(id, 'deploymentType')}<br>
   <!-- Contains data through {$all_monitors.getMetadata(id, 'last_validTime')}<br> TODO:  Need to keep a list/dict of monitor properties found in .geojson -->
   Timezone:&nbsp;&nbsp;{$all_monitors.getMetadata(id, 'timezone')}<br>
@@ -45,6 +71,10 @@ $: location_report_url = 'https://tools.airfire.org/location/report?monitorid=' 
   }
 
   a.location-report{
+    font-weight: bold
+  }
+
+  a.qc-report{
     font-weight: bold
   }
 </style>

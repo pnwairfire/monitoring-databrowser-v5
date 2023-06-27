@@ -90,10 +90,10 @@
 				<span id="selected-monitors">Selected Monitors:</span>
 				<span id="selected-monitor-count">{$selected_ids.length} monitors</span>
 				<div id="service-links">
+					<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">Temporary Only</a>
 					{#if $selected_ids.length > 0}
 					<a target="_blank" rel="noreferrer" href="{createDataServiceUrl($selected_ids)}">CSV File</a>
 					{/if}
-					<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">QC Reports</a>
 			</div>
 		</div>
 	<hr>
