@@ -13,6 +13,7 @@ export let zoom = writable(4);
 
 // GUI state with user selections
 export let hovered_id = writable("");
+export let hovered_sensor_id = writable("");
 export let selected_ids = writable([]);
 export let map_update_needed = writable(false);
 
