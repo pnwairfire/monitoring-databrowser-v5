@@ -8,16 +8,16 @@
 	} from '../stores/gui-store.js';
 
   function advanceSlide() {
-    if ($current_slide === "all") {
+    if ($current_slide === "hourly") {
+      $current_slide = "all";
+    } else if ($current_slide === "all") {
       $current_slide = "timeseries";
     } else if ($current_slide === "timeseries") {
-      $current_slide = "hourly";
-    } else if ($current_slide === "hourly") {
       $current_slide = "daily";
     } else if ($current_slide === "daily") {
       $current_slide = "diurnal";
     } else if ($current_slide === "diurnal") {
-      $current_slide = "all";
+      $current_slide = "hourly";
     }
   }
 </script>

@@ -80,6 +80,26 @@
         pm25_addAQIStackedBar(myChart, 6);
       }
 
+    } else {
+
+      chartConfig = {
+        title: {
+          text: "",
+        },
+        yAxis: {
+          min: 0,
+          max: 1,
+        },
+        xAxis: {
+          min: 1,
+          max: 50
+        },
+        series: {
+          data:[null,null]
+        }
+      };
+      myChart = Highcharts.chart(context, chartConfig);
+
     }
 
   }

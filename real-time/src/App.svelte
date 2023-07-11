@@ -74,29 +74,31 @@
 			Showing {$all_monitors.count()} monitoring locations.
 		</p>
 
-		{#if $hovered_id !== "" }
-			<div id="hovered-row" class="flex-row">
-				<HoveredMetadataBox element_id="hovered-metadata-box" width="300px" height="220px"/>
-				<HourlyBarplot element_id="hovered_hourly" width="880px" height="200px"/>
-			</div>
-		{/if}
-
 		<div >
 			<LeafletMap width="1200px" height="400px"/>
 		</div>
 
+		<!-- {#if $hovered_id !== "" } -->
+			<div id="hovered-row" class="flex-row">
+				<HoveredMetadataBox element_id="hovered-metadata-box" width="350px" height="160px"/> <!-- 200px - padding-top-->
+				<HourlyBarplot element_id="hovered_hourly" width="800px" height="200px"/>
+			</div>
+		<!-- {/if} -->
+
 		<hr>
-		  <div class="flex-row">
-				<span id="selected-monitors">Selected Monitors:</span>
-				<span id="selected-monitor-count">{$selected_ids.length} monitors</span>
-				<div id="service-links">
-					<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">Temporary Only</a>
-					{#if $selected_ids.length > 0}
+
+		<div class="flex-row">
+			<span id="selected-monitors">Selected Monitors:</span>
+			<span id="selected-monitor-count">{$selected_ids.length} monitors</span>
+			<div id="service-links">
+				<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">Temporary Only</a>
+				{#if $selected_ids.length > 0}
 					<a target="_blank" rel="noreferrer" href="{createDataServiceUrl($selected_ids)}">CSV File</a>
-					{/if}
+				{/if}
 			</div>
 		</div>
-	<hr>
+
+		<hr>
 
 		{#each $selected_ids as id, i}
 
@@ -107,8 +109,8 @@
 				{#if $current_slide === "all"}
 					<div class="flex-row">
 						<MiniMap element_id="r{i}_map" width="200px" height="180px" id={id}/>
-						<!-- <TimeseriesPlot element_id="r1_timeseries" width="200px" height="200px" id={id}  size="small"/> -->
-						<HourlyBarplot element_id="r{i}_small_hourly" width="200px" height="200px" id={id} size="small"/>
+						<TimeseriesPlot element_id="r{i}_small_timeseries" width="200px" height="200px" id={id}  size="small"/>
+						<!-- <HourlyBarplot element_id="r{i}_small_hourly" width="200px" height="200px" id={id} size="small"/> -->
 						<DailyBarplot element_id="r{i}_small_daily" width="200px" height="200px" id={id}  size="small"/>
 						<DiurnalPlot element_id="r{i}_small_diurnal" width="200px" height="200px" id={id}  size="small"/>
 					</div>
@@ -152,10 +154,6 @@
 		text-align: left;
 		margin: 10px 0 0 10px;
 		font-size: 0.8rem;
-	}
-
-	div#hovered-row {
-		height: 260px;
 	}
 
 	div#service-links {

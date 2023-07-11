@@ -72,33 +72,63 @@ function idToCurrentStatus(id) {
   Elevation:&nbsp;&nbsp;{Math.round($all_monitors.getMetadata($hovered_id, 'elevation'))} m<br>
   Source:&nbsp;&nbsp;{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')}<br>
   -->
-  <table>
-    <thead>
-      <th colspan="2">
-        <span class="bold">{$all_monitors.getMetadata($hovered_id, 'locationName')}</span><br>
-      </th>
-      <tr>
-        <td width="50%">Elevation</td>
-        <td>{Math.round($all_monitors.getMetadata($hovered_id, 'elevation'))} m</td>
-      </tr>
-      <tr>
-        <td width="40%">{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')} ID</td>
-        <td>{idToCurrentStatus($hovered_id)['dataIngestUnitID']}</td>
-      </tr>
-      <tr>
-        <td>Latency</td>
-        <td>{idToCurrentStatus($hovered_id)['last_latency']} hrs</td>
-      </tr>
-      <tr>
-        <td>Latest Nowcast</td>
-        <td>{idToCurrentStatus($hovered_id)['last_nowcast']} &#xb5;g/m&#xb3;</td>
-      </tr>
-      <tr>
-        <td>Yesterday 24hr Avg:</td>
-        <td>{idToCurrentStatus($hovered_id)['yesterday_PM2.5_avg']} &#xb5;g/m&#xb3;</td>
-      </tr>
-    </thead>
-  </table>
+  {#if $hovered_id !== "" }
+    <table>
+      <thead>
+        <th colspan="2">
+          <span class="bold">{$all_monitors.getMetadata($hovered_id, 'locationName')}</span><br>
+        </th>
+        <tr>
+          <td width="50%">Elevation</td>
+          <td>{Math.round($all_monitors.getMetadata($hovered_id, 'elevation'))} m</td>
+        </tr>
+        <tr>
+          <td width="40%">{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')} ID</td>
+          <td>{idToCurrentStatus($hovered_id)['dataIngestUnitID']}</td>
+        </tr>
+        <tr>
+          <td>Latency</td>
+          <td>{idToCurrentStatus($hovered_id)['last_latency']} hrs</td>
+        </tr>
+        <tr>
+          <td>Latest Nowcast</td>
+          <td>{idToCurrentStatus($hovered_id)['last_nowcast']} &#xb5;g/m&#xb3;</td>
+        </tr>
+        <tr>
+          <td>Yesterday 24hr Avg:</td>
+          <td>{idToCurrentStatus($hovered_id)['yesterday_PM2.5_avg']} &#xb5;g/m&#xb3;</td>
+        </tr>
+      </thead>
+    </table>
+  {:else}
+    <table>
+      <thead>
+        <th colspan="2">
+          <span class="bold">Unmonitored Location</span><br>
+        </th>
+        <tr>
+          <td width="50%">Elevation</td>
+          <td>NA</td>
+        </tr>
+        <tr>
+          <td width="40%">{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')} ID</td>
+          <td>NA</td>
+        </tr>
+        <tr>
+          <td>Latency</td>
+          <td>NA</td>
+        </tr>
+        <tr>
+          <td>Latest Nowcast</td>
+          <td>NA</td>
+        </tr>
+        <tr>
+          <td>Yesterday 24hr Avg:</td>
+          <td>NA</td>
+        </tr>
+      </thead>
+    </table>
+  {/if}
 </div>
 
 <style>

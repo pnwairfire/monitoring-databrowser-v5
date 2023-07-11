@@ -1,7 +1,10 @@
+# real-time 5.0.9
+
+- Modified UX with hovered plot immediately below map.
+
 # real-time 5.0.3
 
 - Updated major version to 5.
--
 
 # real-time 0.0.2
 

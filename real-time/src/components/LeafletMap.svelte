@@ -14,12 +14,13 @@
     wrcc_geojson,
   } from '../stores/monitor-data-store.js';
   import {
+    centerLat,
+    centerLon,
+    zoom,
     hovered_id,
     selected_ids,
     map_update_needed,
-    centerLat,
-    centerLon,
-    zoom
+    current_slide,
   } from '../stores/gui-store.js';
   // Leaflet (NOTE:  Don't put {} around the 'L'!)
   import L from "leaflet";
@@ -62,6 +63,10 @@
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
 
     // Add event listeners to the map
+    map.on("mouseover", function() {
+      $current_slide = "hourly";
+    })
+
     map.on("moveend", function() {
       $centerLat = map.getCenter().lat;
       $centerLon = map.getCenter().lng;
@@ -111,6 +116,9 @@
         layer.on('mouseover', function (e) {
           $hovered_id = feature.properties.deviceDeploymentID;
         });
+        layer.on('mouseout', function (e) {
+          $hovered_id = "";
+        });
         layer.on('click', function (e) {
           iconClick(e);
         });
@@ -140,7 +148,9 @@
     const id = feature.properties.deviceDeploymentID;
     const found = $selected_ids.find(o => o == id);
     if (!found) {
-      $selected_ids[$selected_ids.length] = id;
+      const ids = $selected_ids;
+      const length = ids.unshift(id);
+      $selected_ids = ids;
       e.target.setStyle({weight: 3});
     } else {
       const ids = $selected_ids;
