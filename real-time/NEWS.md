@@ -1,3 +1,7 @@
+# real-time 5.1.0
+
+- First use of PurpleAir sensor data for hover-over barplot.
+
 # real-time 5.0.9
 
 - Modified UX with hovered plot immediately below map.
