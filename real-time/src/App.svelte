@@ -78,12 +78,10 @@
 			<LeafletMap width="1200px" height="400px"/>
 		</div>
 
-		<!-- {#if $hovered_id !== "" } -->
-			<div id="hovered-row" class="flex-row">
-				<HoveredMetadataBox element_id="hovered-metadata-box" width="350px" height="160px"/> <!-- 200px - padding-top-->
-				<HourlyBarplot element_id="hovered_hourly" width="800px" height="200px"/>
-			</div>
-		<!-- {/if} -->
+		<div id="hovered-row" class="flex-row">
+			<HoveredMetadataBox element_id="hovered-metadata-box" width="350px" height="160px"/> <!-- 200px - padding-top-->
+			<HourlyBarplot element_id="hovered_hourly" width="800px" height="200px"/>
+		</div>
 
 		<hr>
 

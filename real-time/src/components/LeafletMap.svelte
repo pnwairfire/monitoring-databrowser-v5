@@ -26,6 +26,7 @@
     hovered_sensor_id,
     selected_ids,
     map_update_needed,
+    use_hovered_sensor,
     current_slide,
   } from '../stores/gui-store.js';
   // Leaflet (NOTE:  Don't put {} around the 'L'!)
@@ -130,6 +131,7 @@
       // Icon behavior
       onEachFeature: function (feature, layer) {
         layer.on('mouseover', function (e) {
+          $use_hovered_sensor = false;
           $hovered_id = feature.properties.deviceDeploymentID;
         });
         layer.on('mouseout', function (e) {
@@ -202,12 +204,15 @@
       onEachFeature: function (feature, layer) {
         layer.on('mouseover', function (e) {
           $hovered_sensor_id = feature.properties.deviceDeploymentID;
+          $use_hovered_sensor = true;
         });
         layer.on('mouseout', function (e) {
           $hovered_sensor_id = "";
+          $use_hovered_sensor = false;
         });
         layer.on('click', function (e) {
-          sensorIconClick(e);
+          // $use_hovered_sensor = true;
+          // sensorIconClick(e);
         });
       }
     });
