@@ -1,4 +1,6 @@
-// Utility functions
+// General utility functions
+//
+// NOTE:  These functions do not need access to any reactive variables.
 
 // Replace window history without reloading a page.
 export function replaceWindowHistory(

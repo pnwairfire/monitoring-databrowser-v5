@@ -6,16 +6,18 @@
   // Imports
   // Svelte methods
 	import { onMount, onDestroy } from 'svelte';
-  // Svelte stores
+  // monitor-data-store
   import {
     // all_monitors,
     airnow_geojson,
     airsis_geojson,
     wrcc_geojson,
   } from '../stores/monitor-data-store.js';
+  // sensor-data-store
   import {
     pas,
   } from '../stores/sensor-data-store.js';
+  // gui-store
   import {
     centerLat,
     centerLon,
@@ -32,7 +34,11 @@
   //  - https://npm.io/package/leaflet-svg-shape-markers
   import 'leaflet-svg-shape-markers';
   // Plotting helper functions
-  import { pm25ToColor } from 'air-monitor-plots';
+  import {
+    monitorPropertiesToIconOptions,
+    sensorCreateGeoJSON,
+    sensorPropertiesToIconOptions,
+  } from '../js/utils-map.js';
   import { replaceWindowHistory } from '../js/utils.js';
 
   let map;
@@ -51,10 +57,10 @@
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    // Add sensors to the map
+    // Add sensors to the map, always at the bottom of the layer stack
     pas.load().then(function(synopticData) {
-      let geojsonData = createGeoJSON(synopticData);
-      createSensorLayer(geojsonData).addTo(map);
+      let geojsonData = sensorCreateGeoJSON(synopticData);
+      createSensorLayer(geojsonData).bringToBack().addTo(map);
     });
 
     // Add monitors to the map
@@ -108,7 +114,7 @@
       pointToLayer: function (feature, latlng) {
         // Only show markers if the latency is less than 3 * 24 hours
         if ( parseInt(feature.properties.last_latency) < 24 * 3) {
-          let marker = L.shapeMarker(latlng, propertiesToIconOptions(feature.properties));
+          let marker = L.shapeMarker(latlng, monitorPropertiesToIconOptions(feature.properties));
           // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
           marker.id = feature.properties.deviceDeploymentID;
           // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
@@ -130,44 +136,29 @@
           $hovered_id = "";
         });
         layer.on('click', function (e) {
-          iconClick(e);
+          monitorIconClick(e);
         });
       }
     });
     return this_layer;
   }
 
-  // Monitor icon style
-  function propertiesToIconOptions(properties) {
-    const latency = parseInt(properties['last_latency']);
-    const options = {
-      radius: properties['deploymentType'] == "Temporary" ? 7 : 8,
-      shape: properties['deploymentType'] == "Temporary" ? "triangle-up" : "circle",
-      fillColor: latency > 4 ? "#bbb" : pm25ToColor(properties['last_PM2.5']),
-      color: '#000',
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 0.8
-    };
-    return(options);
-  }
-
   // Monitor icon behavior
-  function iconClick(e) {
+  function monitorIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
-    const found = $selected_ids.find(o => o == id);
+    const found = $selected_ids.find((o) => o == id);
     if (!found) {
       const ids = $selected_ids;
       const length = ids.unshift(id);
       $selected_ids = ids;
-      e.target.setStyle({weight: 3});
+      e.target.setStyle({ weight: 3 });
     } else {
       const ids = $selected_ids;
-      const index = ids.indexOf(id)
+      const index = ids.indexOf(id);
       const removedItem = ids.splice(index, 1);
       $selected_ids = ids;
-      e.target.setStyle({weight: 1});
+      e.target.setStyle({ weight: 1 });
     }
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
   }
@@ -223,66 +214,6 @@
     return this_layer;
   }
 
-  function createGeoJSON(synopticData) {
-    // 'pas' synopticData
-    //
-    // epa_nowcast: 7.7
-    // epa_pm25: 7.2
-    // latitude: 45.031963
-    // longitude: -110.71382
-    // raw_pm25: 4.4
-    // sensor_index: 154193
-    // timezone: "America/Denver"
-    // utc_ts: "2023-07-11 21:00:00+0000"
-
-    let features = Array(synopticData.length);
-
-    let bop = 1;
-
-    for (let i = 0; i < synopticData.length; i++) {
-      let site = synopticData[i];
-      features[i] = {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [site.longitude, site.latitude],
-        },
-        properties: {
-          deviceDeploymentID: site.sensor_index,
-          locationName: "PurpleAir " + site.sensor_index,
-          epa_nowcast: site.epa_nowcast,
-          epa_pm25: site.epa_pm25,
-          raw_pm25: site.raw_pm25,
-          timezone: site.timezone,
-          utc_ts: site.utc_ts,
-          latency: (new Date() - new Date(site.utc_ts)) / (1000 * 3600),
-
-        },
-      };
-    }
-
-    let geojsonObj = {
-      type: "FeatureCollection",
-      features: features,
-    };
-
-    return geojsonObj;
-  }
-
-  // Monitor icon style
-  function sensorPropertiesToIconOptions(properties) {
-    const options = {
-      radius: 4,
-      shape: "square",
-      fillColor: properties.latency > 4 ? "#bbb" : pm25ToColor(properties.epa_pm25),
-      color: '#000',
-      weight: 1,
-      opacity: 0.2,
-      fillOpacity: 0.6
-    };
-    return(options);
-  }
-
   // Monitor icon behavior
   function sensorIconClick(e) {
     // const feature = e.target.feature;
@@ -302,7 +233,6 @@
     // }
     // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
   }
-
 
   /* ----- Other functions -------------------------------------------------- */
 

@@ -5,15 +5,24 @@ export let width = '300px';
 export let height = '220px'; // height + padding-top should equal HourlyBarplot height
 
 // Svelte stores
+// monitor-data-store
 import {
   all_monitors,
   airnow_geojson,
   airsis_geojson,
   wrcc_geojson,
 } from '../stores/monitor-data-store.js';
-import { hovered_id } from '../stores/gui-store.js';
+// sensor-data-store
+import {
+  pas,
+} from '../stores/sensor-data-store.js';
+// gui-store
+import {
+  hovered_id,
+  hovered_sensor_id,
+} from '../stores/gui-store.js';
 
-// ----- Get current status -----
+function monitorIdToCurrentStatus(id) {
 
 //   "deviceDeploymentID": "6a9d812dd5f11126_usfs.1075",
 //   "AQSID": null,
@@ -31,9 +40,7 @@ import { hovered_id } from '../stores/gui-store.js';
 //   "last_latency": "1",
 //   "yesterday_PM2.5_avg": "1.9"
 
-function idToCurrentStatus(id) {
-
-  let dataIngestSource = $all_monitors.getMetadata(id, 'dataIngestSource');
+let dataIngestSource = $all_monitors.getMetadata(id, 'dataIngestSource');
 
   let features =
     dataIngestSource === "AirNow" ?
@@ -59,8 +66,29 @@ function idToCurrentStatus(id) {
 
 }
 
+function sensorIdToCurrentStatus(id) {
 
-// $: currentStatus = idToCurrentStatus(hovered_id);
+  // 'pas' synopticData
+  //
+  // epa_nowcast: 7.7
+  // epa_pm25: 7.2
+  // latitude: 45.031963
+  // longitude: -110.71382
+  // raw_pm25: 4.4
+  // sensor_index: 154193
+  // timezone: "America/Denver"
+  // utc_ts: "2023-07-11 21:00:00+0000"
+
+  // filter() returns an array so we take the first element
+  let currentStatus = $pas.filter(o => o.sensor_index == id)[0];
+  const latency = (new Date() - new Date(currentStatus.utc_ts)) / (1000 * 3600);
+  currentStatus['last_latency'] = Math.round(latency * 10) / 10;
+  return(currentStatus);
+
+}
+
+
+// $: currentStatus = monitorIdToCurrentStatus(hovered_id);
 
 </script>
 
@@ -68,7 +96,7 @@ function idToCurrentStatus(id) {
 <div id="{element_id}" style="width: {width}; height: {height};">
   <!--
   <span class="bold">{$all_monitors.getMetadata($hovered_id, 'locationName')}</span><br>
-  Latency:&nbsp;&nbsp;{idToCurrentStatus($hovered_id)['last_latency']}<br>
+  Latency:&nbsp;&nbsp;{monitorIdToCurrentStatus($hovered_id)['last_latency']}<br>
   Elevation:&nbsp;&nbsp;{Math.round($all_monitors.getMetadata($hovered_id, 'elevation'))} m<br>
   Source:&nbsp;&nbsp;{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')}<br>
   -->
@@ -78,34 +106,61 @@ function idToCurrentStatus(id) {
         <th colspan="2">
           <span class="bold">{$all_monitors.getMetadata($hovered_id, 'locationName')}</span><br>
         </th>
+      </thead>
+      <tbody>
         <tr>
           <td width="50%">Elevation</td>
           <td>{Math.round($all_monitors.getMetadata($hovered_id, 'elevation'))} m</td>
         </tr>
         <tr>
           <td width="40%">{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')} ID</td>
-          <td>{idToCurrentStatus($hovered_id)['dataIngestUnitID']}</td>
+          <td>{monitorIdToCurrentStatus($hovered_id)['dataIngestUnitID']}</td>
         </tr>
         <tr>
           <td>Latency</td>
-          <td>{idToCurrentStatus($hovered_id)['last_latency']} hrs</td>
+          <td>{monitorIdToCurrentStatus($hovered_id)['last_latency']} hrs</td>
         </tr>
         <tr>
           <td>Latest Nowcast</td>
-          <td>{idToCurrentStatus($hovered_id)['last_nowcast']} &#xb5;g/m&#xb3;</td>
+          <td>{monitorIdToCurrentStatus($hovered_id)['last_nowcast']} &#xb5;g/m&#xb3;</td>
         </tr>
         <tr>
           <td>Yesterday 24hr Avg:</td>
-          <td>{idToCurrentStatus($hovered_id)['yesterday_PM2.5_avg']} &#xb5;g/m&#xb3;</td>
+          <td>{monitorIdToCurrentStatus($hovered_id)['yesterday_PM2.5_avg']} &#xb5;g/m&#xb3;</td>
         </tr>
-      </thead>
+      </tbody>
     </table>
-  {:else}
+  {:else if $hovered_sensor_id !== "" }
+    <table>
+      <thead>
+        <th colspan="2">
+          <span class="bold">PurpleAir {$hovered_sensor_id}</span><br>
+        </th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Latency</td>
+          <td>{sensorIdToCurrentStatus($hovered_sensor_id)['last_latency']} hrs</td>
+        </tr>
+        <tr>
+          <td>Latest Nowcast</td>
+          <td>{sensorIdToCurrentStatus($hovered_sensor_id)['epa_nowcast']} &#xb5;g/m&#xb3;</td>
+        </tr>
+        <tr>
+          <td>Latest PM2.5</td>
+          <td>{sensorIdToCurrentStatus($hovered_sensor_id)['epa_pm25']} &#xb5;g/m&#xb3;</td>
+        </tr>
+      </tbody>
+    </table>
+
+    {:else}
     <table>
       <thead>
         <th colspan="2">
           <span class="bold">Unmonitored Location</span><br>
         </th>
+      </thead>
+      <tbody>
         <tr>
           <td width="50%">Elevation</td>
           <td>NA</td>
@@ -126,7 +181,7 @@ function idToCurrentStatus(id) {
           <td>Yesterday 24hr Avg:</td>
           <td>NA</td>
         </tr>
-      </thead>
+      </tbody>
     </table>
   {/if}
 </div>
