@@ -143,7 +143,7 @@
     return this_layer;
   }
 
-  // Monitor icon behavior
+  // Monitor icon click behavior
   function monitorIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
@@ -214,14 +214,15 @@
     return this_layer;
   }
 
-  // Monitor icon behavior
+  // Sensor icon click behavior
   function sensorIconClick(e) {
-    // const feature = e.target.feature;
-    // const id = feature.properties.deviceDeploymentID;
+    const feature = e.target.feature;
+    const id = feature.properties.deviceDeploymentID;
+    console.log("sensorIconClick: id = " + id);
     // const found = $selected_ids.find(o => o == id);
     // if (!found) {
     //   const ids = $selected_ids;
-    //   const length = ids.unshift(id);
+    //   const length = ids.unshift(id); // add at the front
     //   $selected_ids = ids;
     //   e.target.setStyle({weight: 3});
     // } else {

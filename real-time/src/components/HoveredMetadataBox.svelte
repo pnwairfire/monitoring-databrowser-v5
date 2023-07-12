@@ -94,12 +94,6 @@ function sensorIdToCurrentStatus(id) {
 
 <!-- Note that sizing needs to be included as part of the element style. -->
 <div id="{element_id}" style="width: {width}; height: {height};">
-  <!--
-  <span class="bold">{$all_monitors.getMetadata($hovered_id, 'locationName')}</span><br>
-  Latency:&nbsp;&nbsp;{monitorIdToCurrentStatus($hovered_id)['last_latency']}<br>
-  Elevation:&nbsp;&nbsp;{Math.round($all_monitors.getMetadata($hovered_id, 'elevation'))} m<br>
-  Source:&nbsp;&nbsp;{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')}<br>
-  -->
   {#if $hovered_id !== "" }
     <table>
       <thead>
@@ -152,8 +146,7 @@ function sensorIdToCurrentStatus(id) {
         </tr>
       </tbody>
     </table>
-
-    {:else}
+  {:else}
     <table>
       <thead>
         <th colspan="2">

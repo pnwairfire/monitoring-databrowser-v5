@@ -10,7 +10,13 @@
   // Svelte methods
   import { afterUpdate } from 'svelte';
   // Svelte stores
+  // monitor-data-store
   import { all_monitors } from '../stores/monitor-data-store.js';
+  // // sensor-data-store
+  // import {
+  //   pas,
+  // } from '../stores/sensor-data-store.js';
+  // gui-store
   import { hovered_id, selected_ids } from '../stores/gui-store.js';
   // Highcharts for plotting
   import Highcharts from 'highcharts';
@@ -22,6 +28,7 @@
     small_hourlyBarplotConfig,
     pm25_addAQIStackedBar,
   } from "air-monitor-plots";
+  import { getPurpleAirData } from '../js/utils.js';
 
   // Good examples to learn from:
   //   https://www.youtube.com/watch?v=s7rk2b1ioVE
@@ -42,7 +49,7 @@
     // Get a copy of the reactive data and id
     const monitor = $all_monitors;
 
-    // For r0_hourly, show the hovered_id
+    // For r0_hourly, show the hovered_id (but not hovered_sensor_id)
     if ( element_id == "hovered_hourly" ) {
       id = $hovered_id;
     }
@@ -50,14 +57,39 @@
     if ( id !== "" ) {
 
       // Assemble required plot data
-      const plotData = {
-        datetime: monitor.getDatetime(),
-        pm25: monitor.getPM25(id),
-        nowcast: monitor.getNowcast(id),
-        locationName: monitor.getMetadata(id, 'locationName'),
-        timezone: monitor.getMetadata(id, 'timezone'),
-        title: undefined // use default title
+      let plotData;
+
+      if ( monitor.meta.array("deviceDeploymentID").indexOf(id) > -1) {
+
+        plotData = {
+          datetime: monitor.getDatetime(),
+          pm25: monitor.getPM25(id),
+          nowcast: monitor.getNowcast(id),
+          locationName: monitor.getMetadata(id, 'locationName'),
+          timezone: monitor.getMetadata(id, 'timezone'),
+          title: undefined // use default title
+        };
+
+      } else {
+
+        // getPurpleAirData(id).then(function(sensorData) {
+        //   // epa_pm25,epa_nowcast,local_ts
+        //   // 9.1,9.9,2023-07-05 12:00:00-0700
+        //   let datetime = sensorData.map((o) => new Date(o.local_ts));
+        //   plotData = {
+        //     datetime: datetime,
+        //     // pm25: sensorData.map((o) => o.epa_pm25),
+        //     // nowcast: sensorData.map((o) => o.epa_nowcast),
+        //     locationName: "PurpleAir " + id,
+        //     timezone: "America/Los_Angeles",
+        //     title: undefined // use default title
+        //   };
+        // });
+
+        console.log("monitor not found: " + id);
+
       }
+
 
       // Create the chartConfig
       if ( size === 'small' ) {

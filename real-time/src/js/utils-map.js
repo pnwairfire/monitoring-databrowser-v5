@@ -2,6 +2,9 @@
 //
 // NOTE:  These functions do not need access to any reactive variables.
 
+// npm install papaparse
+import Papa from "papaparse";
+
 import { pm25ToColor } from "air-monitor-plots";
 
 /* ----- Monitor functions -------------------------------------------------- */
