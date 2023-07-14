@@ -1,0 +1,29 @@
+{
+  "name": "pnwusfs",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build; sed -i 's%/assets%./assets%' dist/index.html",
+    "build_osx": "vite build; sed -i '' 's%/assets%./assets%' dist/index.html",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^2.0.0",
+    "svelte": "^3.54.0",
+    "vite": "^4.0.0"
+  },
+  "dependencies": {
+    "@square/svelte-store": "^1.0.17",
+    "air-monitor": "github:MazamaScience/air-monitor",
+    "air-monitor-algorithms": "github:MazamaScience/air-monitor-algorithms",
+    "air-monitor-plots": "github:pnwairfire/air-monitor-plots",
+    "arquero": "^5.2.0",
+    "highcharts": "^11.1.0",
+    "leaflet": "^1.9.4",
+    "leaflet-svg-shape-markers": "^1.4.0",
+    "moment-timezone": "^0.5.43",
+    "suncalc": "^1.9.0"
+  }
+}
