@@ -113,6 +113,7 @@
     var this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
+        // TODO:  This is where I can remove Susan's JBLM research monitors -- just make them not visible
         // Only show markers if the latency is less than 3 * 24 hours
         if ( parseInt(feature.properties.last_latency) < 24 * 3) {
           let marker = L.shapeMarker(latlng, monitorPropertiesToIconOptions(feature.properties));
