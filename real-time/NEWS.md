@@ -1,3 +1,7 @@
+# real-time 5.1.1
+
+- LeafletMap filters out "pnwusfs" monitors from AIRSIS.
+
 # real-time 5.1.0
 
 - First use of PurpleAir sensor data for hover-over barplot.

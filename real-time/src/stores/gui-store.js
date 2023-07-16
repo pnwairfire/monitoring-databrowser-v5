@@ -1,7 +1,7 @@
 import { readable, writable } from "svelte/store";
 
 // Version
-export const VERSION = readable("5.1.0");
+export const VERSION = readable("5.1.1");
 
 // Status messages
 export let error_message = writable("");
