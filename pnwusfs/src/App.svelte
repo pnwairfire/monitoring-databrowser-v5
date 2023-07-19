@@ -7,8 +7,6 @@
 		centerLon,
     centerLat,
     zoom,
-		hovered_id,
-		selected_ids,
 	} from './stores/gui-store.js';
   // Svelte Components
   import NavBar from "./components/NavBar.svelte";
@@ -27,13 +25,6 @@
 	}
   if ( urlParams.has('zoom') ) {
 	  $zoom = urlParams.get('zoom');
-	}
-  if ( urlParams.has('monitors') ) {
-	  $selected_ids = urlParams.get('monitors').split(',');
-	}
-
-	function unselectHovered() {
-		$hovered_id = "";
 	}
 
 </script>

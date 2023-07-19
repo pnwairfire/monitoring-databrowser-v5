@@ -14,8 +14,7 @@
   import { all_monitors } from '../stores/monitor-data-store.js';
   // gui-store
   import {
-    hovered_id,
-    selected_ids,
+    selected_id,
   } from '../stores/gui-store.js';
   // Highcharts for plotting
   import Highcharts from 'highcharts';
@@ -47,9 +46,9 @@
     // Get a copy of the reactive data and id
     const monitor = $all_monitors;
 
-    // For r0_hourly, show the hovered_id
+    // For r0_hourly, show the selected_id
     if ( element_id === "hovered_hourly" ) {
-      id = $hovered_id;
+      id = $selected_id;
     }
 
     if ( id !== "" ) {

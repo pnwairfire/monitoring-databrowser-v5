@@ -16,8 +16,7 @@
     centerLat,
     centerLon,
     zoom,
-    hovered_id,
-    selected_ids,
+    selected_id,
     map_update_needed,
   } from '../stores/gui-store.js';
   // Leaflet (NOTE:  Don't put {} around the 'L'!)
@@ -51,7 +50,7 @@
       createMonitorLayer(geojsonData).addTo(map);
     });
 
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_id);
 
     // Add event listeners to the map
     map.on("mouseover", function() {
@@ -61,12 +60,12 @@
     map.on("moveend", function() {
       $centerLat = map.getCenter().lat;
       $centerLon = map.getCenter().lng;
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_id);
     })
 
     map.on("zoomend", function() {
       $zoom = map.getZoom();
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_id);
     })
 
   }
@@ -96,7 +95,7 @@
             // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
             marker.id = feature.properties.deviceDeploymentID;
             // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
-            if ($selected_ids.find(o => o === marker.id)) {
+            if ($selected_id === marker.id) {
               marker.setStyle({weight: 3});
             } else {
               marker.setStyle({weight: 1});
@@ -109,12 +108,6 @@
 
       // Icon behavior
       onEachFeature: function (feature, layer) {
-        layer.on('mouseover', function (e) {
-          // $hovered_id = feature.properties.deviceDeploymentID;
-        });
-        layer.on('mouseout', function (e) {
-          // $hovered_id = "";
-        });
         layer.on('click', function (e) {
           monitorIconClick(e);
         });
@@ -127,14 +120,13 @@
   function monitorIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
-    if ($hovered_id === "") {
-      $hovered_id = id;
-      e.target.setStyle({ weight: 3 });
+    if (id === $selected_id) {
+      $selected_id = "";
     } else {
-      $hovered_id = "";
-      e.target.setStyle({ weight: 1 });
+      $selected_id = id;
     }
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+    highlightMonitors(map);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_id);
   }
 
   // Highlight selected monitors
@@ -142,7 +134,7 @@
     map.eachLayer(function(layer) {
       // Bold or un-bold each ShapeMarker
       if (layer instanceof L.ShapeMarker) {
-        if ($selected_ids.find(o => o === layer.id)) {
+        if ($selected_id === layer.id) {
           layer.setStyle({weight: 3});
         } else {
           layer.setStyle({weight: 1});
@@ -157,7 +149,7 @@
   $: if ($map_update_needed) {
     highlightMonitors(map);
     $map_update_needed = false;
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_id);
   }
 </script>
 
