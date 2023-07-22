@@ -9,7 +9,7 @@
 // NOTE:  always stay up-to-date as data get periodically updated.
 
 // npm install @square/svelte-store --save
-import { asyncReadable, derived, writable } from "@square/svelte-store";
+import { asyncReadable, writable } from "@square/svelte-store";
 
 import { error_message } from "./gui-store.js";
 

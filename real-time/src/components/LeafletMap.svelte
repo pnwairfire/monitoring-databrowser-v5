@@ -17,6 +17,8 @@
   import {
     pas,
   } from '../stores/sensor-data-store.js';
+  // patCart
+  import { patCart } from '../stores/patCart.js';
   // gui-store
   import {
     centerLat,
@@ -217,7 +219,7 @@
         });
         layer.on('click', function (e) {
           // $use_hovered_sensor = true;
-          // sensorIconClick(e);
+          sensorIconClick(e);
         });
       }
     });
@@ -229,20 +231,13 @@
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
     console.log("sensorIconClick: id = " + id);
-    // const found = $selected_ids.find(o => o == id);
-    // if (!found) {
-    //   const ids = $selected_ids;
-    //   const length = ids.unshift(id); // add at the front
-    //   $selected_ids = ids;
-    //   e.target.setStyle({weight: 3});
-    // } else {
-    //   const ids = $selected_ids;
-    //   const index = ids.indexOf(id)
-    //   const removedItem = ids.splice(index, 1);
-    //   $selected_ids = ids;
-    //   e.target.setStyle({weight: 1});
-    // }
-    // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+
+    let a = 1;
+
+    patCart.addItem(id);
+
+    let b = 1;
+
   }
 
   /* ----- Other functions -------------------------------------------------- */
