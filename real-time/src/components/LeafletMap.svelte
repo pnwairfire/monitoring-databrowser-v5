@@ -235,15 +235,13 @@
   async function sensorIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
-    console.log("sensorIconClick: id = " + id);
-
+    // Async request to get data
+    console.log("Downloading sensor data for id = " + id);
     let sensorData = await getPurpleAirData(id);
+    const pa_object = { id: id, data: sensorData };
+    patCart.addItem(pa_object);
 
-    patCart.addItem(id);
-
-    // This works! Callback function is called with patCart passed in.
-    // // //patCart.subscribe(console.log);
-
+    console.log("patCart.count = " + $patCart.count);
   }
 
   /* ----- Other functions -------------------------------------------------- */
