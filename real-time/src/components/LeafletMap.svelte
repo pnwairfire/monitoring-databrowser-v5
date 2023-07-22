@@ -235,11 +235,16 @@
   async function sensorIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
-    // Async request to get data
-    console.log("Downloading sensor data for id = " + id);
-    let sensorData = await getPurpleAirData(id);
-    const pa_object = { id: id, data: sensorData };
-    patCart.addItem(pa_object);
+
+    const index = $patCart.items.findIndex((item) => item.id === id);
+    if (index !== -1) {
+      console.log("pat id: " + id + " is already loaded.");
+    } else {
+      console.log("Downloading sensor data for id = " + id);
+      let sensorData = await getPurpleAirData(id);
+      const pa_object = { id: id, data: sensorData };
+      patCart.addItem(pa_object);
+    }
 
     console.log("patCart.count = " + $patCart.count);
   }
