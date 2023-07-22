@@ -33,7 +33,7 @@
     current_slide,
   } from '../stores/gui-store.js';
 
-  import { get } from 'svelte/store';
+  import { getPurpleAirData } from '../js/utils-sensor.js';
 
   // Leaflet (NOTE:  Don't put {} around the 'L'!)
   import L from "leaflet";
@@ -232,10 +232,12 @@
   }
 
   // Sensor icon click behavior
-  function sensorIconClick(e) {
+  async function sensorIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
     console.log("sensorIconClick: id = " + id);
+
+    let sensorData = await getPurpleAirData(id);
 
     patCart.addItem(id);
 
