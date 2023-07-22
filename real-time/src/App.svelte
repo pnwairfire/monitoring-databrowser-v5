@@ -31,6 +31,7 @@
 	import DiurnalPlot from "./components/DiurnalPlot.svelte";
 	import RemoveRowButton from "./components/RemoveRowButton.svelte";
 	import SlideAdvance from "./components/SlideAdvance.svelte";
+	import SensorMetadataBox from "./components/SensorMetadataBox.svelte";
   import { createDataServiceUrl } from './js/utils.js';
   import { getPurpleAirData } from './js/utils-sensor.js';
 
@@ -148,7 +149,8 @@
 		{#each $selected_sensor_ids as id, i}
 
 			<div class="flex-row">
-Sensor row {id} goes here
+				<RemoveRowButton id={id}/>
+				<SensorMetadataBox element_id="r{i}_sensorMetadata" width="300px" height="200px" id={id}/>
 			</div>
 
 		{/each}

@@ -255,7 +255,7 @@
       const ids = $selected_sensor_ids;
       const length = ids.unshift(id);
       $selected_sensor_ids = ids;
-      e.target.setStyle({ opacity: 0.6, weight: 2 });
+      e.target.setStyle({ opacity: 1.0, weight: 2 });
 
     } else {
 
