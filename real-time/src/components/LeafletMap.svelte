@@ -255,7 +255,7 @@
       const ids = $selected_sensor_ids;
       const length = ids.unshift(id);
       $selected_sensor_ids = ids;
-      e.target.setStyle({ opacity: 1.0, weight: 2 });
+      e.target.setStyle({opacity: 1.0, weight: 2});
 
     } else {
 
@@ -264,7 +264,7 @@
       const index = ids.indexOf(id);
       const removedItem = ids.splice(index, 1);
       $selected_sensor_ids = ids;
-      e.target.setStyle({ opacity: 0.2, weight: 1 });
+      e.target.setStyle({opacity: 0.2, weight: 1});
 
     }
 
@@ -273,13 +273,30 @@
 
   }
 
+  // TODO:  Figure out how to work on only the sensor layer
+
+  // // Highlight selected sensors
+  // function highlightSensors(map) {
+  //   map.eachLayer(function(layer) {
+  //     // Bold or un-bold each ShapeMarker
+  //     if (layer instanceof L.ShapeMarker) {
+  //       if ($selected_sensor_ids.find(o => o === layer.id)) {
+  //         layer.setStyle({opacity: 1.0, weight: 2});
+  //       } else {
+  //         layer.setStyle({opacity: 0.2, weight: 1});
+  //       }
+  //     }
+  //   })
+  // }
+
   /* ----- Other functions -------------------------------------------------- */
 
   // Watcher for map update requests from external components
   $: if ($map_update_needed) {
     highlightMonitors(map);
+    // highlightSensors(map);
     $map_update_needed = false;
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids); // TODO:  add selected_sensor_ids
   }
 </script>
 

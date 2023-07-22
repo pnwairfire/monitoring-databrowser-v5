@@ -147,7 +147,7 @@
 		{#each $selected_sensor_ids as id, i}
 
 			<div class="flex-row">
-				<RemoveRowButton id={id}/>
+				<RemoveRowButton id={id} deviceType="sensor"/>
 				<MetadataBox element_id="sensor_r{i}_metadata" width="300px" height="200px" id={id} deviceType="sensor"/>
 				<div class="flex-row">
 					{#if $current_slide === "all"}

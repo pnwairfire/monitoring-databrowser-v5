@@ -5,35 +5,23 @@
   export let height = '300px';
   export let id = '';
   export let size = 'big';
+  export let deviceType = 'monitor';
 
-  // Imports
   // Svelte methods
   import { afterUpdate } from 'svelte';
-  // Svelte stores
-  // monitor-data-store
+
+  // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-  // sensor-data-store
-  import {
-    pas,
-  } from '../stores/sensor-data-store.js';
-  // gui-store
-  import {
-    hovered_id,
-    hovered_sensor_id,
-    selected_ids,
-    use_hovered_sensor
-  } from '../stores/gui-store.js';
+  import { pas, patCart } from '../stores/sensor-data-store.js';
+
   // Highcharts for plotting
   import Highcharts from 'highcharts';
-  // import Exporting from "highcharts/modules/exporting";
-  // Exporting(Highcharts);
+
   // Plot configuration
   import {
     hourlyBarplotConfig,
     small_hourlyBarplotConfig,
-    pm25_addAQIStackedBar,
   } from "air-monitor-plots";
-  import { getPurpleAirData } from '../js/utils-sensor.js';
 
   // Good examples to learn from:
   //   https://www.youtube.com/watch?v=s7rk2b1ioVE
@@ -51,41 +39,16 @@
     // See https://www.youtube.com/watch?v=s7rk2b1ioVE @6:30
     if (myChart) myChart.destroy();
 
-    // Get a copy of the reactive data and id
-    const monitor = $all_monitors;
-
-    // For r0_hourly, show the hovered_id
-    if ( element_id === "hovered_hourly" ) {
-      id = $hovered_id;
-      if ( $use_hovered_sensor ) {
-        id = $hovered_sensor_id;
-      }
-    }
-
     if ( id !== "" ) {
 
-      // Assemble required plot data
+      // ----- Assemble required plot data -------------------------------------
+
       let plotData;
 
-      if ( element_id === "hovered_hourly" && $use_hovered_sensor ) {
+      if ( deviceType === "monitor" ) {
 
-        let sensorData = await getPurpleAirData(id);
-
-        // epa_pm25,epa_nowcast,local_ts
-        // 9.1,9.9,2023-07-05 12:00:00-0700
-
-        let site = $pas.filter(o => o.sensor_index == id)[0];
-        let timezone = site.timezone;
-        plotData = {
-          datetime: sensorData.map((o) => new Date(o.local_ts)),
-          pm25: sensorData.map((o) => o.epa_pm25),
-          nowcast: sensorData.map((o) => o.epa_nowcast),
-          locationName: "PurpleAir " + id,
-          timezone: timezone,
-          title: undefined // use default title
-        };
-
-      } else {
+        // Get a copy of the reactive data
+        const monitor = $all_monitors;
 
         plotData = {
           datetime: monitor.getDatetime(),
@@ -96,17 +59,35 @@
           title: undefined // use default title
         };
 
+      } else if (deviceType === "sensor" ) {
+
+        // Get a copy of the reactive data
+        const index = $patCart.items.findIndex((item) => item.id === id);
+        let sensorData = $patCart.items[index].data;
+        // epa_pm25,epa_nowcast,local_ts
+        // 9.1,9.9,2023-07-05 12:00:00-0700
+
+        let site = $pas.filter(o => o.sensor_index == id)[0];
+        // let timezone = site.timezone;
+        plotData = {
+          datetime: sensorData.map((o) => new Date(o.local_ts)),
+          pm25: sensorData.map((o) => o.epa_pm25),
+          nowcast: sensorData.map((o) => o.epa_nowcast),
+          locationName: "PurpleAir " + id,
+          timezone: site.timezone,
+          title: undefined // use default title
+        };
+
       }
 
+      // ----- Create the chartConfig ------------------------------------------
 
-      // Create the chartConfig
       if ( size === 'small' ) {
         plotData.title = "Hourly NowCast";
         chartConfig = small_hourlyBarplotConfig(plotData);
         // Disable hover
         chartConfig.plotOptions.column.enableMouseTracking = false;
         myChart = Highcharts.chart(context, chartConfig);
-        pm25_addAQIStackedBar(myChart, 4);
       } else {
         chartConfig = hourlyBarplotConfig(plotData);
         // Remove title
@@ -117,7 +98,6 @@
         chartConfig.chart.zoomBySingleTouch = true;
         chartConfig.chart.zoomType = "x";
         myChart = Highcharts.chart(context, chartConfig);
-        pm25_addAQIStackedBar(myChart, 6);
       }
 
     } else {
@@ -142,7 +122,7 @@
 
     }
 
-  }
+  } // END of createChart()
 
   // Regenerate the chart after any update
   afterUpdate(createChart);
