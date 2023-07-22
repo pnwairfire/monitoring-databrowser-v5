@@ -16,9 +16,10 @@
   // sensor-data-store
   import {
     pas,
+    patCart
   } from '../stores/sensor-data-store.js';
   // patCart
-  import { patCart } from '../stores/patCart.js';
+  // import { patCart } from '../stores/patCart.js';
   // gui-store
   import {
     centerLat,

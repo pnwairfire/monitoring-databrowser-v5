@@ -42,3 +42,41 @@ export const pas = asyncReadable(
   },
   { reloadable: true }
 );
+
+// ----- time series -----------------------------------------------------------
+
+// NOTE: A PurpleAirTimeseries shopping cart based on:
+// NOTE:   https://medium.com/@dkthelearner/implementing-a-shopping-cart-functionality-with-svelte-ec700b348251
+
+const initialState = {
+  items: [],
+};
+
+function createCart() {
+  const { subscribe, set, update } = writable(initialState);
+  return {
+    subscribe,
+    addItem: (productId) =>
+      update((state) => {
+        // TODO:  await csv load at this point
+        const product = { id: productId, csv: "abcd" };
+        const index = state.items.findIndex((item) => item.id === product.id);
+        if (index !== -1) {
+          console.log("pat id: " + productId + " is already loaded.");
+        } else {
+          state.items.push({ ...product, quantity: 1 });
+        }
+        return state;
+      }),
+    removeItem: (productId) =>
+      update((state) => {
+        const index = state.items.findIndex((item) => item.id === productId);
+        if (index !== -1) {
+          state.items.splice(index, 1);
+        }
+        return state;
+      }),
+    clear: () => set(initialState),
+  };
+}
+export const patCart = createCart();

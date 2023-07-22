@@ -21,59 +21,6 @@ import { error_message } from "./gui-store.js";
 
 export const airnowLoadTime = writable(1000);
 
-// ----- time series -----------------------------------------------------------
-
-// Reloadable AirNow data
-export const airnow = asyncReadable(
-  new Monitor(),
-  async () => {
-    const monitor = new Monitor();
-    let start = Date.now();
-    await monitor.loadLatest("airnow");
-    let end = Date.now();
-    let elapsed = (end - start) / 1000;
-    let rounded = Math.round(10 * elapsed) / 10;
-    airnowLoadTime.set(rounded);
-    return monitor;
-  },
-  { reloadable: true }
-);
-
-// Reloadable AIRSIS data
-export const airsis = asyncReadable(
-  new Monitor(),
-  async () => {
-    const monitor = new Monitor();
-    await monitor.loadLatest("airsis");
-    return monitor;
-  },
-  { reloadable: true }
-);
-
-// Reloadable WRCC data
-export const wrcc = asyncReadable(
-  new Monitor(),
-  async () => {
-    const monitor = new Monitor();
-    await monitor.loadLatest("wrcc");
-    return monitor;
-  },
-  { reloadable: true }
-);
-
-// All monitors combined (changes whenever any underlying data changes)
-export const all_monitors = derived(
-  [airnow, airsis, wrcc],
-  ([$airnow, $airsis, $wrcc]) => {
-    let all_monitors = $airnow.combine($airsis).combine($wrcc).dropEmpty();
-    let monitorCount = all_monitors.count();
-    if (monitorCount > 0) {
-      console.log("Loaded all_monitors with " + monitorCount + " time series");
-    }
-    return all_monitors;
-  }
-);
-
 // ----- geojson ---------------------------------------------------------------
 
 // Reloadable AirNow geojson data
@@ -131,4 +78,57 @@ export const wrcc_geojson = asyncReadable(
     }
   },
   { reloadable: true }
+);
+
+// ----- time series -----------------------------------------------------------
+
+// Reloadable AirNow data
+export const airnow = asyncReadable(
+  new Monitor(),
+  async () => {
+    const monitor = new Monitor();
+    let start = Date.now();
+    await monitor.loadLatest("airnow");
+    let end = Date.now();
+    let elapsed = (end - start) / 1000;
+    let rounded = Math.round(10 * elapsed) / 10;
+    airnowLoadTime.set(rounded);
+    return monitor;
+  },
+  { reloadable: true }
+);
+
+// Reloadable AIRSIS data
+export const airsis = asyncReadable(
+  new Monitor(),
+  async () => {
+    const monitor = new Monitor();
+    await monitor.loadLatest("airsis");
+    return monitor;
+  },
+  { reloadable: true }
+);
+
+// Reloadable WRCC data
+export const wrcc = asyncReadable(
+  new Monitor(),
+  async () => {
+    const monitor = new Monitor();
+    await monitor.loadLatest("wrcc");
+    return monitor;
+  },
+  { reloadable: true }
+);
+
+// All monitors combined (changes whenever any underlying data changes)
+export const all_monitors = derived(
+  [airnow, airsis, wrcc],
+  ([$airnow, $airsis, $wrcc]) => {
+    let all_monitors = $airnow.combine($airsis).combine($wrcc).dropEmpty();
+    let monitorCount = all_monitors.count();
+    if (monitorCount > 0) {
+      console.log("Loaded all_monitors with " + monitorCount + " time series");
+    }
+    return all_monitors;
+  }
 );
