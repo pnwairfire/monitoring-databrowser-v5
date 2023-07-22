@@ -51,6 +51,10 @@
   import { replaceWindowHistory } from '../js/utils.js';
 
   let map;
+  let airnow_layer;
+  let airsis_layer;
+  let wrcc_layer;
+  let sensor_layer;
 
   async function createMap() {
 
@@ -74,15 +78,21 @@
 
     // Add monitors to the map
     airnow_geojson.load().then(function(geojsonData) {
-      createMonitorLayer(geojsonData).addTo(map);
+      // createMonitorLayer(geojsonData).addTo(map);
+      airnow_layer = createMonitorLayer(geojsonData);
+      airnow_layer.addTo(map);
     });
 
     airsis_geojson.load().then(function(geojsonData) {
-      createMonitorLayer(geojsonData).addTo(map);
+      // createMonitorLayer(geojsonData).addTo(map);
+      airsis_layer = createMonitorLayer(geojsonData);
+      airsis_layer.addTo(map);
     });
 
     wrcc_geojson.load().then(function(geojsonData) {
-      createMonitorLayer(geojsonData).addTo(map);
+      // createMonitorLayer(geojsonData).addTo(map);
+      wrcc_layer = createMonitorLayer(geojsonData);
+      wrcc_layer.addTo(map);
     });
 
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
@@ -192,6 +202,7 @@
     })
   }
 
+
   /* ----- Sensor functions ------------------------------------------------- */
 
   function createSensorLayer(geojson) {
@@ -273,28 +284,11 @@
 
   }
 
-  // TODO:  Figure out how to work on only the sensor layer
-
-  // // Highlight selected sensors
-  // function highlightSensors(map) {
-  //   map.eachLayer(function(layer) {
-  //     // Bold or un-bold each ShapeMarker
-  //     if (layer instanceof L.ShapeMarker) {
-  //       if ($selected_sensor_ids.find(o => o === layer.id)) {
-  //         layer.setStyle({opacity: 1.0, weight: 2});
-  //       } else {
-  //         layer.setStyle({opacity: 0.2, weight: 1});
-  //       }
-  //     }
-  //   })
-  // }
-
   /* ----- Other functions -------------------------------------------------- */
 
   // Watcher for map update requests from external components
   $: if ($map_update_needed) {
     highlightMonitors(map);
-    // highlightSensors(map);
     $map_update_needed = false;
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids); // TODO:  add selected_sensor_ids
   }
