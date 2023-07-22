@@ -14,6 +14,7 @@
     zoom,
 		hovered_id,
 		selected_ids,
+		selected_sensor_ids,
 		current_slide,
 	} from './stores/gui-store.js';
 
@@ -79,7 +80,7 @@
 	{:then}
 
 		<p class="status">
-			Showing {$all_monitors.count()} monitoring locations. pat count = {$patCart.count}
+			Showing {$all_monitors.count()} monitoring locations.
 		</p>
 
 		<div >
@@ -94,8 +95,8 @@
 		<hr>
 
 		<div class="flex-row">
-			<span id="selected-monitors">Selected Monitors:</span>
-			<span id="selected-monitor-count">{$selected_ids.length} monitors</span>
+			<span class="selected-devices">Selected Monitors:</span>
+			<span class="selected-devices-count">{$selected_ids.length} monitors</span>
 			<div id="service-links">
 				<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">Temporary Only</a>
 				{#if $selected_ids.length > 0}
@@ -131,6 +132,23 @@
 					{/if}
 					<SlideAdvance element_id="r{i}_slideAdvance"/>
 				</div>
+			</div>
+
+		{/each}
+
+		<hr>
+
+		<div class="flex-row">
+			<span class="selected-devices">Selected Sensors:</span>
+			<span class="selected-devices-count">{$selected_sensor_ids.length} sensors</span>
+		</div>
+
+		<hr>
+
+		{#each $selected_sensor_ids as id, i}
+
+			<div class="flex-row">
+Sensor row {id} goes here
 			</div>
 
 		{/each}
@@ -171,14 +189,14 @@
 		padding: 0px 10px;
 	}
 
-	span#selected-monitors {
+	span.selected-devices {
 		font-size: 1.0rem;
 		font-weight: bold;
 		padding-left: 65px;
 		padding-right: 20px;
 	}
 
-	span#selected-monitor-count {
+	span.selected-devices-count {
 		font-style: italic;
 	}
 
