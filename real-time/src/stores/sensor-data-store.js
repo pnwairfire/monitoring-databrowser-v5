@@ -50,6 +50,7 @@ export const pas = asyncReadable(
 
 const initialState = {
   items: [],
+  count: 0,
 };
 
 function createCart() {
@@ -59,12 +60,13 @@ function createCart() {
     addItem: (id) =>
       update((state) => {
         // TODO:  await csv load at this point
-        const product = { id: id, csv: "abcd" };
-        const index = state.items.findIndex((item) => item.id === product.id);
+        const pa_object = { id: id, csv: "abcd" };
+        const index = state.items.findIndex((item) => item.id === pa_object.id);
         if (index !== -1) {
           console.log("pat id: " + id + " is already loaded.");
         } else {
-          state.items.push({ product });
+          state.items.push({ pa_object });
+          state.count += 1;
         }
         return state;
       }),
@@ -73,6 +75,7 @@ function createCart() {
         const index = state.items.findIndex((item) => item.id === id);
         if (index !== -1) {
           state.items.splice(index, 1);
+          state.count -= 1;
         }
         return state;
       }),

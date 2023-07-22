@@ -1,6 +1,11 @@
 <script>
   // Svelte stores
   import { all_monitors } from './stores/monitor-data-store.js';
+
+	import {
+     patCart,
+  } from './stores/sensor-data-store.js';
+
   import {
 		VERSION,
 		error_message,
@@ -11,6 +16,7 @@
 		selected_ids,
 		current_slide,
 	} from './stores/gui-store.js';
+
   // Svelte Components
   import NavBar from "./components/NavBar.svelte";
   import AlertBox from "./components/AlertBox.svelte";
@@ -25,6 +31,7 @@
 	import RemoveRowButton from "./components/RemoveRowButton.svelte";
 	import SlideAdvance from "./components/SlideAdvance.svelte";
   import { createDataServiceUrl } from './js/utils.js';
+  import { getPurpleAirData } from './js/utils-sensor.js';
 
 	// Initialize the leaflet map from URL parameters
 	const urlParams = new URLSearchParams(window.location.search);
@@ -44,6 +51,7 @@
 	function unselectHovered() {
 		$hovered_id = "";
 	}
+
 
 </script>
 
@@ -71,7 +79,7 @@
 	{:then}
 
 		<p class="status">
-			Showing {$all_monitors.count()} monitoring locations.
+			Showing {$all_monitors.count()} monitoring locations. pat count = {$patCart.count}
 		</p>
 
 		<div >

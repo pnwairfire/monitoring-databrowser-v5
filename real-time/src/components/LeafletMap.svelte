@@ -32,11 +32,15 @@
     use_hovered_sensor,
     current_slide,
   } from '../stores/gui-store.js';
+
+  import { get } from 'svelte/store';
+
   // Leaflet (NOTE:  Don't put {} around the 'L'!)
   import L from "leaflet";
   // Extra shape makers
   //  - https://npm.io/package/leaflet-svg-shape-markers
   import 'leaflet-svg-shape-markers';
+
   // Plotting helper functions
   import {
     monitorPropertiesToIconOptions,
@@ -233,11 +237,10 @@
     const id = feature.properties.deviceDeploymentID;
     console.log("sensorIconClick: id = " + id);
 
-    let a = 1;
-
     patCart.addItem(id);
 
-    let b = 1;
+    // This works! Callback function is called with patCart passed in.
+    // // //patCart.subscribe(console.log);
 
   }
 
