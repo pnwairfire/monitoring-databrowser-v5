@@ -31,9 +31,7 @@
 	import DiurnalPlot from "./components/DiurnalPlot.svelte";
 	import RemoveRowButton from "./components/RemoveRowButton.svelte";
 	import SlideAdvance from "./components/SlideAdvance.svelte";
-	import SensorMetadataBox from "./components/SensorMetadataBox.svelte";
   import { createDataServiceUrl } from './js/utils.js';
-  import { getPurpleAirData } from './js/utils-sensor.js';
 
 	// Initialize the leaflet map from URL parameters
 	const urlParams = new URLSearchParams(window.location.search);
@@ -118,7 +116,6 @@
 					<div class="flex-row">
 						<MiniMap element_id="r{i}_map" width="200px" height="180px" id={id}/>
 						<TimeseriesPlot element_id="r{i}_small_timeseries" width="200px" height="200px" id={id}  size="small"/>
-						<!-- <HourlyBarplot element_id="r{i}_small_hourly" width="200px" height="200px" id={id} size="small"/> -->
 						<DailyBarplot element_id="r{i}_small_daily" width="200px" height="200px" id={id}  size="small"/>
 						<DiurnalPlot element_id="r{i}_small_diurnal" width="200px" height="200px" id={id}  size="small"/>
 					</div>
@@ -150,8 +147,27 @@
 
 			<div class="flex-row">
 				<RemoveRowButton id={id}/>
-				<SensorMetadataBox element_id="r{i}_sensorMetadata" width="300px" height="200px" id={id}/>
-			</div>
+				<MetadataBox element_id="sensor_r{i}_metadata" width="300px" height="200px" id={id} deviceType="sensor"/>
+				<div class="flex-row">
+					{#if $current_slide === "all"}
+						<div class="flex-row">
+							<MiniMap element_id="sensor_r{i}_map" width="200px" height="180px" id={id} deviceType="sensor"/>
+							<!-- <TimeseriesPlot element_id="sensor_r{i}_small_timeseries" width="200px" height="200px" id={id} size="small" deviceType="sensor"/>
+							<DailyBarplot element_id="sensor_r{i}_small_daily" width="200px" height="200px" id={id} size="small" deviceType="sensor"/>
+							<DiurnalPlot element_id="sensor_r{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="sensor"/> -->
+						</div>
+						<!-- {:else if $current_slide === "timeseries"}
+							<TimeseriesPlot element_id="sensor_r{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="sensor"//>
+						{:else if $current_slide === "hourly"}
+							<HourlyBarplot element_id="sensor_r{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="sensor"//>
+						{:else if $current_slide === "daily"}
+							<DailyBarplot element_id="sensor_r{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="sensor"//>
+						{:else if $current_slide === "diurnal"}
+							<DiurnalPlot element_id="sensor_r{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="sensor"//> -->
+						{/if}
+						<SlideAdvance element_id="r{i}_sensorSlideAdvance"/>
+					</div>
+				</div>
 
 		{/each}
 
