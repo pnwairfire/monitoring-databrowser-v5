@@ -56,21 +56,21 @@ function createCart() {
   const { subscribe, set, update } = writable(initialState);
   return {
     subscribe,
-    addItem: (productId) =>
+    addItem: (id) =>
       update((state) => {
         // TODO:  await csv load at this point
-        const product = { id: productId, csv: "abcd" };
+        const product = { id: id, csv: "abcd" };
         const index = state.items.findIndex((item) => item.id === product.id);
         if (index !== -1) {
-          console.log("pat id: " + productId + " is already loaded.");
+          console.log("pat id: " + id + " is already loaded.");
         } else {
-          state.items.push({ ...product, quantity: 1 });
+          state.items.push({ product });
         }
         return state;
       }),
-    removeItem: (productId) =>
+    removeItem: (id) =>
       update((state) => {
-        const index = state.items.findIndex((item) => item.id === productId);
+        const index = state.items.findIndex((item) => item.id === id);
         if (index !== -1) {
           state.items.splice(index, 1);
         }
