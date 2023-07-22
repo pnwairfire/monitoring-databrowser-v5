@@ -28,6 +28,7 @@
     hovered_id,
     hovered_sensor_id,
     selected_ids,
+    selected_sensor_ids,
     map_update_needed,
     use_hovered_sensor,
     current_slide,
@@ -235,18 +236,41 @@
   async function sensorIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
+    const found = $selected_sensor_ids.find((o) => o == id);
 
-    const index = $patCart.items.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      console.log("pat id: " + id + " is already loaded.");
+    if (!found) {
+
+      // Load pat data
+      const index = $patCart.items.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        console.log("pat id: " + id + " is already loaded.");
+      } else {
+        console.log("Downloading sensor data for id = " + id);
+        let sensorData = await getPurpleAirData(id);
+        const pa_object = { id: id, data: sensorData };
+        patCart.addItem(pa_object);
+      }
+      console.log("patCart.count = " + $patCart.count);
+      // Now update selected_sensor_ids
+      const ids = $selected_sensor_ids;
+      const length = ids.unshift(id);
+      $selected_sensor_ids = ids;
+      e.target.setStyle({ opacity: 0.6, weight: 2 });
+
     } else {
-      console.log("Downloading sensor data for id = " + id);
-      let sensorData = await getPurpleAirData(id);
-      const pa_object = { id: id, data: sensorData };
-      patCart.addItem(pa_object);
+
+      // TODO:  Should we unload pat data?
+      const ids = $selected_sensor_ids;
+      const index = ids.indexOf(id);
+      const removedItem = ids.splice(index, 1);
+      $selected_sensor_ids = ids;
+      e.target.setStyle({ opacity: 0.2, weight: 1 });
+
     }
 
-    console.log("patCart.count = " + $patCart.count);
+    // TODO:  Figure out replaceWindowHistory with sensor ids
+    // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+
   }
 
   /* ----- Other functions -------------------------------------------------- */
