@@ -26,6 +26,7 @@
   import MetadataBox from "./components/MetadataBox.svelte";
   import MiniMap from "./components/MiniMap.svelte";
 	import TimeseriesPlot from "./components/TimeseriesPlot.svelte";
+	import HoveredHourlyBarplot from "./components/HoveredHourlyBarplot.svelte";
 	import HourlyBarplot from "./components/HourlyBarplot.svelte";
 	import DailyBarplot from "./components/DailyBarplot.svelte";
 	import DiurnalPlot from "./components/DiurnalPlot.svelte";
@@ -88,7 +89,7 @@
 
 		<div id="hovered-row" class="flex-row">
 			<HoveredMetadataBox element_id="hovered-metadata-box" width="350px" height="160px"/> <!-- 200px - padding-top-->
-			<HourlyBarplot element_id="hovered_hourly" width="800px" height="200px"/>
+			<HoveredHourlyBarplot element_id="hovered_hourly" width="800px" height="200px"/>
 		</div>
 
 		<hr>
@@ -157,13 +158,13 @@
 							<DiurnalPlot element_id="sensor_r{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="sensor"/> -->
 						</div>
 						<!-- {:else if $current_slide === "timeseries"}
-							<TimeseriesPlot element_id="sensor_r{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="sensor"//>
+							<TimeseriesPlot element_id="sensor_r{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="sensor"/> -->
 						{:else if $current_slide === "hourly"}
-							<HourlyBarplot element_id="sensor_r{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="sensor"//>
-						{:else if $current_slide === "daily"}
-							<DailyBarplot element_id="sensor_r{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="sensor"//>
+							<HourlyBarplot element_id="sensor_r{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="sensor"/>
+						<!-- {:else if $current_slide === "daily"}
+							<DailyBarplot element_id="sensor_r{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="sensor"/>
 						{:else if $current_slide === "diurnal"}
-							<DiurnalPlot element_id="sensor_r{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="sensor"//> -->
+							<DiurnalPlot element_id="sensor_r{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="sensor"/> -->
 						{/if}
 						<SlideAdvance element_id="r{i}_sensorSlideAdvance"/>
 					</div>
