@@ -68,7 +68,7 @@
         // 9.1,9.9,2023-07-05 12:00:00-0700
 
         let site = $pas.filter(o => o.sensor_index == id)[0];
-        // let timezone = site.timezone;
+
         plotData = {
           datetime: sensorData.map((o) => new Date(o.local_ts)),
           pm25: sensorData.map((o) => o.epa_pm25),

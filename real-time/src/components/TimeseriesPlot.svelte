@@ -5,17 +5,18 @@
   export let height = '300px';
   export let id = '';
   export let size = 'big';
+  export let deviceType = 'monitor';
 
-	// Imports
   // Svelte methods
   import { afterUpdate } from 'svelte';
-  // Svelte stores
+
+  // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-  import { selected_ids } from '../stores/gui-store.js';
+  import { pas, patCart } from '../stores/sensor-data-store.js';
+
   // Highcharts for plotting
   import Highcharts from 'highcharts';
-  // import Exporting from "highcharts/modules/exporting";
-  // Exporting(Highcharts);
+
   // Plot Configuration
   import {
     timeseriesPlotConfig,
@@ -39,19 +40,46 @@
     // See https://www.youtube.com/watch?v=s7rk2b1ioVE @6:30
     if (myChart) myChart.destroy();
 
-    // Get a copy of the reactive data and id
-    const monitor = $all_monitors;
-
     if ( id !== "" ) {
 
-      // Assemble required plot data
-      const plotData = {
-        datetime: monitor.getDatetime(),
-        pm25: monitor.getPM25(id),
-        nowcast: monitor.getNowcast(id),
-        locationName: monitor.getMetadata(id, 'locationName'),
-        timezone: monitor.getMetadata(id, 'timezone'),
-        title: undefined // use default title
+      // ----- Assemble required plot data -------------------------------------
+
+      let plotData;
+
+      if ( deviceType === "monitor" ) {
+
+        // Get a copy of the reactive data
+        const monitor = $all_monitors;
+
+        // Assemble required plot data
+        plotData = {
+          datetime: monitor.getDatetime(),
+          pm25: monitor.getPM25(id),
+          nowcast: monitor.getNowcast(id),
+          locationName: monitor.getMetadata(id, 'locationName'),
+          timezone: monitor.getMetadata(id, 'timezone'),
+          title: undefined // use default title
+        }
+
+      } else if ( deviceType === "sensor" ) {
+
+        // Get a copy of the reactive data
+        const index = $patCart.items.findIndex((item) => item.id === id);
+        let sensorData = $patCart.items[index].data;
+        // epa_pm25,epa_nowcast,local_ts
+        // 9.1,9.9,2023-07-05 12:00:00-0700
+
+        let site = $pas.filter(o => o.sensor_index == id)[0];
+
+        plotData = {
+          datetime: sensorData.map((o) => new Date(o.local_ts)),
+          pm25: sensorData.map((o) => o.epa_pm25),
+          nowcast: sensorData.map((o) => o.epa_nowcast),
+          locationName: "PurpleAir " + id,
+          timezone: site.timezone,
+          title: undefined // use default title
+        };
+
       }
 
       // Create the chartConfig
