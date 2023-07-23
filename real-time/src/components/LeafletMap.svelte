@@ -79,21 +79,21 @@
 
     // Add monitors to the map
     airnow_geojson.load().then(function(geojsonData) {
-      // createMonitorLayer(geojsonData).addTo(map);
-      airnow_layer = createMonitorLayer(geojsonData);
-      airnow_layer.addTo(map);
+      createMonitorLayer(geojsonData).addTo(map);
+      // airnow_layer = createMonitorLayer(geojsonData);
+      // airnow_layer.addTo(map);
     });
 
     airsis_geojson.load().then(function(geojsonData) {
-      // createMonitorLayer(geojsonData).addTo(map);
-      airsis_layer = createMonitorLayer(geojsonData);
-      airsis_layer.addTo(map);
+      createMonitorLayer(geojsonData).addTo(map);
+      // airsis_layer = createMonitorLayer(geojsonData);
+      // airsis_layer.addTo(map);
     });
 
     wrcc_geojson.load().then(function(geojsonData) {
-      // createMonitorLayer(geojsonData).addTo(map);
-      wrcc_layer = createMonitorLayer(geojsonData);
-      wrcc_layer.addTo(map);
+      createMonitorLayer(geojsonData).addTo(map);
+      // wrcc_layer = createMonitorLayer(geojsonData);
+      // wrcc_layer.addTo(map);
     });
 
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);

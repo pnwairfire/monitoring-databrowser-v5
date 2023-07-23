@@ -27,7 +27,6 @@
   // Special functions
   import { dailyStats } from 'air-monitor-algorithms';
 
-
   // Good examples to learn from:
   //   https://www.youtube.com/watch?v=s7rk2b1ioVE
   //   https://svelte.dev/repl/d283589caa554badb16644ad40682802?version=3.38.2
@@ -43,9 +42,6 @@
 
     // See https://www.youtube.com/watch?v=s7rk2b1ioVE @6:30
     if (myChart) myChart.destroy();
-
-    // Get a copy of the reactive data and id
-    const monitor = $all_monitors;
 
     if ( id !== "" ) {
 
@@ -98,7 +94,8 @@
 
       }
 
-      // Create the chartConfig
+      // ----- Create the chartConfig ------------------------------------------
+
       if ( size === 'small' ) {
         plotData.title = "Daily Average PM2.5";
         chartConfig = small_dailyBarplotConfig(plotData);

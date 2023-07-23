@@ -5,25 +5,27 @@
   export let height = '300px';
   export let id = '';
   export let size = 'big';
+  export let deviceType = 'monitor';
 
-	// Imports
   // Svelte methods
   import { afterUpdate } from 'svelte';
-  // Svelte stores
+
+  // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-  import { selected_ids } from '../stores/gui-store.js';
+  import { pas, patCart } from '../stores/sensor-data-store.js';
+
   // Highcharts for plotting
   import Highcharts from 'highcharts';
-  // // moment for timezone-aware date calculations
-  // import moment from 'moment-timezone';
-  // // SunCalc for day-night shading
-  // import SunCalc from 'suncalc';
+
   // Plot Configuration
   import {
     diurnalPlotConfig,
     small_diurnalPlotConfig,
     pm25_addAQIStackedBar,
   } from "air-monitor-plots";
+
+  // Special functions
+  import { diurnalStats } from 'air-monitor-algorithms';
 
   // Good examples to learn from:
   //   https://www.youtube.com/watch?v=s7rk2b1ioVE
@@ -41,29 +43,68 @@
     // See https://www.youtube.com/watch?v=s7rk2b1ioVE @6:30
     if (myChart) myChart.destroy();
 
-    // Get a copy of the reactive data and id
-    const monitor = $all_monitors;
-
     if ( id !== "" ) {
 
-      // Special method to get an object containing diurnal averages
-      const diurnal = monitor.getDiurnalStats(id);
+      // ----- Assemble required plot data -------------------------------------
 
-      // Assemble required plot data
-      const plotData = {
-        datetime: monitor.getDatetime(),
-        pm25: monitor.getPM25(id),
-        nowcast: monitor.getNowcast(id),
-        locationName: monitor.getMetadata(id, 'locationName'),
-        timezone: monitor.getMetadata(id, 'timezone'),
-        title: undefined, // use default title
-        // unique to this chart
-        hour_average: diurnal.mean,
-        longitude: monitor.getMetadata(id, 'longitude'),
-        latitude: monitor.getMetadata(id, 'latitude'),
+      let plotData;
+
+      if ( deviceType === "monitor" ) {
+
+        // Get a copy of the reactive data
+        const monitor = $all_monitors;
+
+        // Special method to get an object containing diurnal averages
+        const diurnal = monitor.getDiurnalStats(id);
+
+        // Assemble required plot data
+        const plotData = {
+          datetime: monitor.getDatetime(),
+          pm25: monitor.getPM25(id),
+          nowcast: monitor.getNowcast(id),
+          locationName: monitor.getMetadata(id, 'locationName'),
+          timezone: monitor.getMetadata(id, 'timezone'),
+          title: "",
+          // unique to this chart
+          hour_average: diurnal.mean,
+          longitude: monitor.getMetadata(id, 'longitude'),
+          latitude: monitor.getMetadata(id, 'latitude'),
+        }
+
+      } else if ( deviceType === "sensor" ) {
+
+        // Get a copy of the reactive data
+        const index = $patCart.items.findIndex((item) => item.id === id);
+        let sensorData = $patCart.items[index].data;
+        // epa_pm25,epa_nowcast,local_ts
+        // 9.1,9.9,2023-07-05 12:00:00-0700
+        let datetime = sensorData.map((o) => new Date(o.local_ts));
+        let pm25 = sensorData.map((o) => o.epa_pm25);
+        let nowcast = sensorData.map((o) => o.epa_nowcast);
+
+        let site = $pas.filter(o => o.sensor_index == id)[0];
+        let timezone = site.timezone;
+
+        // Special method to get an object containing daily averages
+        const diurnal = diurnalStats(datetime, pm25, timezone);
+
+        plotData = {
+          datetime: datetime,
+          pm25: pm25,
+          nowcast: nowcast, // not required
+          locationName: "PurpleAir " + id,
+          timezone: site.timezone,
+          title: "",
+          // unique to this chart
+          hour_average: diurnal.mean,
+          longitude: site.longitude,
+          latitude: site.latitude,
+        };
+
       }
 
-      // Create the chartConfig
+      // ----- Create the chartConfig ------------------------------------------
+
       if ( size === 'small' ) {
         plotData.title = "Diurnal NowCast";
         chartConfig = small_diurnalPlotConfig(plotData);

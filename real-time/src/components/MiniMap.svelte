@@ -31,10 +31,10 @@ async function createMap() {
 
   } else if (deviceType === 'sensor') {
 
-    let currentStatus = $pas.filter(o => o.sensor_index == id)[0]
+    let site = $pas.filter(o => o.sensor_index == id)[0]
     latLng = [
-      currentStatus.latitude,
-      currentStatus.longitude
+      site.latitude,
+      site.longitude
     ];
 
   }

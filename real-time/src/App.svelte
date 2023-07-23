@@ -155,7 +155,7 @@
 							<MiniMap element_id="sensor_r{i}_map" width="200px" height="180px" id={id} deviceType="sensor"/>
 							<TimeseriesPlot element_id="sensor_r{i}_small_timeseries" width="200px" height="200px" id={id} size="small" deviceType="sensor"/>
 							<DailyBarplot element_id="sensor_r{i}_small_daily" width="200px" height="200px" id={id} size="small" deviceType="sensor"/>
-							<!-- <DiurnalPlot element_id="sensor_r{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="sensor"/> -->
+							<DiurnalPlot element_id="sensor_r{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="sensor"/>
 						</div>
 						{:else if $current_slide === "timeseries"}
 							<TimeseriesPlot element_id="sensor_r{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="sensor"/>
@@ -163,10 +163,10 @@
 							<HourlyBarplot element_id="sensor_r{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="sensor"/>
 						{:else if $current_slide === "daily"}
 							<DailyBarplot element_id="sensor_r{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="sensor"/>
-						<!-- {:else if $current_slide === "diurnal"}
-							<DiurnalPlot element_id="sensor_r{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="sensor"/> -->
+						{:else if $current_slide === "diurnal"}
+							<DiurnalPlot element_id="sensor_r{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="sensor"/>
 						{/if}
-						<SlideAdvance element_id="r{i}_sensorSlideAdvance"/>
+						<SlideAdvance element_id="sensor_r{i}_sensorSlideAdvance"/>
 					</div>
 				</div>
 
