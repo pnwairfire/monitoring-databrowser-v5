@@ -16,6 +16,8 @@ export let hovered_id = writable("");
 export let hovered_sensor_id = writable("");
 export let selected_ids = writable([]);
 export let selected_sensor_ids = writable([]);
+export let unselected_id = writable("");
+export let unselected_sensor_id = writable("");
 export let map_update_needed = writable(false);
 
 export let use_hovered_sensor = writable(false);

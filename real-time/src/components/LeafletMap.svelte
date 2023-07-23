@@ -29,7 +29,8 @@
     hovered_sensor_id,
     selected_ids,
     selected_sensor_ids,
-    map_update_needed,
+    unselected_id,
+    unselected_sensor_id,
     use_hovered_sensor,
     current_slide,
   } from '../stores/gui-store.js';
@@ -188,21 +189,6 @@
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
   }
 
-  // Highlight selected monitors
-  function highlightMonitors(map) {
-    map.eachLayer(function(layer) {
-      // Bold or un-bold each ShapeMarker
-      if (layer instanceof L.ShapeMarker) {
-        if ($selected_ids.find(o => o === layer.id)) {
-          layer.setStyle({weight: 3});
-        } else {
-          layer.setStyle({weight: 1});
-        }
-      }
-    })
-  }
-
-
   /* ----- Sensor functions ------------------------------------------------- */
 
   function createSensorLayer(geojson) {
@@ -286,12 +272,32 @@
 
   /* ----- Other functions -------------------------------------------------- */
 
-  // Watcher for map update requests from external components
-  $: if ($map_update_needed) {
-    highlightMonitors(map);
-    $map_update_needed = false;
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids); // TODO:  add selected_sensor_ids
+  // Watcher for map-external monitor deselect events
+  $: if ($unselected_id !== "") {
+    map.eachLayer(function(layer) {
+      if (layer instanceof L.ShapeMarker) {
+        if (layer.id == $unselected_id) {
+          layer.setStyle({weight: 1});
+          $unselected_id = "";
+        }
+      }
+    })
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
   }
+
+  // Watcher for map-external sensor deselect events
+  $: if ($unselected_sensor_id !== "") {
+    map.eachLayer(function(layer) {
+      if (layer instanceof L.ShapeMarker) {
+        if (layer.id == $unselected_sensor_id) {
+          layer.setStyle({weight: 1});
+          $unselected_sensor_id = "";
+        }
+      }
+    })
+    // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+  }
+
 </script>
 
 <svelte:head>

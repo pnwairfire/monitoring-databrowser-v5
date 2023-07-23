@@ -8,22 +8,24 @@
   import {
     selected_ids,
     selected_sensor_ids,
-    map_update_needed,
+    unselected_id,
+    unselected_sensor_id,
   } from '../stores/gui-store.js';
 
   function removeRow(id) {
     if ( deviceType === 'monitor') {
       let ids = $selected_ids;
       let index = ids.indexOf(id)
-      let removedItem = ids.splice(index, 1);
+      ids.splice(index, 1);
       $selected_ids = ids;
+      $unselected_id = id;
     } else if ( deviceType === 'sensor') {
       let ids = $selected_sensor_ids;
       let index = ids.indexOf(id)
-      let removedItem = ids.splice(index, 1);
+      ids.splice(index, 1);
       $selected_sensor_ids = ids;
+      $unselected_sensor_id = id;
     }
-    map_update_needed.set(true);
 
   }
 </script>
