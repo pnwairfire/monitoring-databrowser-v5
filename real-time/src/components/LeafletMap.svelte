@@ -52,10 +52,6 @@
   import { replaceWindowHistory } from '../js/utils.js';
 
   let map;
-  let airnow_layer;
-  let airsis_layer;
-  let wrcc_layer;
-  let sensor_layer;
 
   async function createMap() {
 
@@ -80,39 +76,44 @@
     // Add monitors to the map
     airnow_geojson.load().then(function(geojsonData) {
       createMonitorLayer(geojsonData).addTo(map);
-      // airnow_layer = createMonitorLayer(geojsonData);
-      // airnow_layer.addTo(map);
     });
 
     airsis_geojson.load().then(function(geojsonData) {
       createMonitorLayer(geojsonData).addTo(map);
-      // airsis_layer = createMonitorLayer(geojsonData);
-      // airsis_layer.addTo(map);
     });
 
     wrcc_geojson.load().then(function(geojsonData) {
       createMonitorLayer(geojsonData).addTo(map);
-      // wrcc_layer = createMonitorLayer(geojsonData);
-      // wrcc_layer.addTo(map);
     });
 
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
 
-    // Add event listeners to the map
+    // ----- Add event listeners to the map ------------------------------------
+
+    // Force selected monitors/sensors to show hourly plot when interacting with the map
     map.on("mouseover", function() {
       $current_slide = "hourly";
     })
 
+    // Update browser URL when panning
     map.on("moveend", function() {
       $centerLat = map.getCenter().lat;
       $centerLon = map.getCenter().lng;
       replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
     })
 
+    // Update browser URL when zooming
     map.on("zoomend", function() {
       $zoom = map.getZoom();
       replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
     })
+
+    // Ensure no "hovered" plot is shown after leaving the map
+    map.on('mouseout', function () {
+      $hovered_id = "";
+      $hovered_sensor_id = "";
+      $use_hovered_sensor = false;
+    });
 
   }
 
@@ -132,7 +133,7 @@
     var this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
-        // TODO:  This is where I can filter for Susan's JBLM research monitors -- only show non-matches
+        // NOTE:  This is where I filter for Susan's JBLM research monitors -- only show non-matches
         if ( feature.properties.deviceDeploymentID.indexOf("_pnwusfs") === -1 ) {
 
           // Only show markers if the latency is less than 3 * 24 hours

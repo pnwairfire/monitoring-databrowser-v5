@@ -58,7 +58,7 @@
         const diurnal = monitor.getDiurnalStats(id);
 
         // Assemble required plot data
-        const plotData = {
+        plotData = {
           datetime: monitor.getDatetime(),
           pm25: monitor.getPM25(id),
           nowcast: monitor.getNowcast(id),
