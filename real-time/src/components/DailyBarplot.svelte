@@ -5,21 +5,28 @@
   export let height = '300px';
   export let id = '';
   export let size = 'big';
+  export let deviceType = 'monitor';
 
-  // Imports
   // Svelte methods
   import { afterUpdate } from 'svelte';
-  // Svelte stores
+
+  // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-  import { selected_ids } from '../stores/gui-store.js';
+  import { pas, patCart } from '../stores/sensor-data-store.js';
+
   // Highcharts for plotting
   import Highcharts from 'highcharts';
+
   // Plot configuration
   import {
     dailyBarplotConfig,
     small_dailyBarplotConfig,
     pm25_addAQIStackedBar,
   } from "air-monitor-plots";
+
+  // Special functions
+  import { dailyStats } from 'air-monitor-algorithms';
+
 
   // Good examples to learn from:
   //   https://www.youtube.com/watch?v=s7rk2b1ioVE
@@ -42,17 +49,53 @@
 
     if ( id !== "" ) {
 
-      // Special method to get an object containing daily averages
-      const daily = monitor.getDailyStats(id);
+      // ----- Assemble required plot data -------------------------------------
 
-      // Assemble required plot data
-      const plotData = {
-        daily_datetime: daily.datetime,
-        daily_mean: daily.mean,
-        daily_nowcast: undefined, // not required
-        locationName: monitor.getMetadata(id, 'locationName'),
-        timezone: monitor.getMetadata(id, 'timezone'),
-        title: undefined // use default title
+      let plotData;
+
+      if ( deviceType === "monitor" ) {
+
+        // Get a copy of the reactive data
+        const monitor = $all_monitors;
+
+        // Special method to get an object containing daily averages
+        const daily = monitor.getDailyStats(id);
+
+        // Assemble required plot data
+        plotData = {
+          daily_datetime: daily.datetime,
+          daily_mean: daily.mean,
+          daily_nowcast: undefined, // not required
+          locationName: monitor.getMetadata(id, 'locationName'),
+          timezone: monitor.getMetadata(id, 'timezone'),
+          title: undefined // use default title
+        }
+
+      } else if ( deviceType === "sensor" ) {
+
+        // Get a copy of the reactive data
+        const index = $patCart.items.findIndex((item) => item.id === id);
+        let sensorData = $patCart.items[index].data;
+        // epa_pm25,epa_nowcast,local_ts
+        // 9.1,9.9,2023-07-05 12:00:00-0700
+        let datetime = sensorData.map((o) => new Date(o.local_ts));
+        let pm25 = sensorData.map((o) => o.epa_pm25);
+
+        let site = $pas.filter(o => o.sensor_index == id)[0];
+        let timezone = site.timezone;
+
+        // Special method to get an object containing daily averages
+        const daily = dailyStats(datetime, pm25, timezone);
+
+        plotData = {
+          daily_datetime: daily.datetime,
+          daily_mean: daily.mean,
+          daily_nowcast: undefined, // not required
+          locationName: "PurpleAir " + id,
+          timezone: site.timezone,
+          title: undefined // use default title
+        };
+
       }
 
       // Create the chartConfig

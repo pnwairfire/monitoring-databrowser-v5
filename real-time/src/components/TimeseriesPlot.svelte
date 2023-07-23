@@ -82,7 +82,8 @@
 
       }
 
-      // Create the chartConfig
+      // ----- Create the chartConfig ------------------------------------------
+
       if ( size === 'small' ) {
         plotData.title = "PM2.5 & Nowcast";
         chartConfig = small_timeseriesPlotConfig(plotData);
