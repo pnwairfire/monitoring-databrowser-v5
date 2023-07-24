@@ -5,8 +5,8 @@
 // NOTE:    https://github.com/square/svelte-store
 
 // NOTE:  Basically, it allows us to abstract away the async/await aspects of
-// NOTE:  fetching data and create a derived object, "all_monitors", that will
-// NOTE:  always stay up-to-date as data get periodically updated.
+// NOTE:  fetching data and create a derived object that will always stay
+// NOTE:  up-to-date as data get periodically updated.
 
 // npm install @square/svelte-store --save
 import { asyncReadable, writable } from "@square/svelte-store";
@@ -18,7 +18,7 @@ import Papa from "papaparse";
 
 // ----- geojson ---------------------------------------------------------------
 
-// Reloadable met statistics
+// Reloadable sensor metadata
 export const pas = asyncReadable(
   {},
   async () => {

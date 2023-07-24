@@ -25,11 +25,11 @@
     centerLat,
     centerLon,
     zoom,
-    hovered_id,
+    hovered_monitor_id,
     hovered_sensor_id,
-    selected_ids,
+    selected_monitor_ids,
     selected_sensor_ids,
-    unselected_id,
+    unselected_monitor_id,
     unselected_sensor_id,
     use_hovered_sensor,
     current_slide,
@@ -86,7 +86,7 @@
       createMonitorLayer(geojsonData).addTo(map);
     });
 
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
 
     // ----- Add event listeners to the map ------------------------------------
 
@@ -99,18 +99,18 @@
     map.on("moveend", function() {
       $centerLat = map.getCenter().lat;
       $centerLon = map.getCenter().lng;
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
     })
 
     // Update browser URL when zooming
     map.on("zoomend", function() {
       $zoom = map.getZoom();
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
     })
 
-    // Ensure no "hovered" plot is shown after leaving the map
+    // Ensure "hovered" plot is not shown after leaving the map
     map.on('mouseout', function () {
-      $hovered_id = "";
+      $hovered_monitor_id = "";
       $hovered_sensor_id = "";
       $use_hovered_sensor = false;
     });
@@ -142,7 +142,7 @@
             // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
             marker.id = feature.properties.deviceDeploymentID;
             // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
-            if ($selected_ids.find(o => o === marker.id)) {
+            if ($selected_monitor_ids.find(o => o === marker.id)) {
               marker.setStyle({weight: 3});
             } else {
               marker.setStyle({weight: 1});
@@ -157,10 +157,10 @@
       onEachFeature: function (feature, layer) {
         layer.on('mouseover', function (e) {
           $use_hovered_sensor = false;
-          $hovered_id = feature.properties.deviceDeploymentID;
+          $hovered_monitor_id = feature.properties.deviceDeploymentID;
         });
         layer.on('mouseout', function (e) {
-          $hovered_id = "";
+          $hovered_monitor_id = "";
         });
         layer.on('click', function (e) {
           monitorIconClick(e);
@@ -174,20 +174,20 @@
   function monitorIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
-    const found = $selected_ids.find((o) => o == id);
+    const found = $selected_monitor_ids.find((o) => o == id);
     if (!found) {
-      const ids = $selected_ids;
+      const ids = $selected_monitor_ids;
       const length = ids.unshift(id);
-      $selected_ids = ids;
-      e.target.setStyle({ weight: 3 });
+      $selected_monitor_ids = ids;
+      e.target.setStyle({weight: 3});
     } else {
-      const ids = $selected_ids;
+      const ids = $selected_monitor_ids;
       const index = ids.indexOf(id);
       const removedItem = ids.splice(index, 1);
-      $selected_ids = ids;
-      e.target.setStyle({ weight: 1 });
+      $selected_monitor_ids = ids;
+      e.target.setStyle({weight: 1});
     }
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
   }
 
   /* ----- Sensor functions ------------------------------------------------- */
@@ -202,7 +202,7 @@
           // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
           marker.id = feature.properties.deviceDeploymentID;
           // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
-          if ($selected_ids.find(o => o === marker.id)) {
+          if ($selected_monitor_ids.find(o => o === marker.id)) {
             marker.setStyle({weight: 3});
           } else {
             marker.setStyle({weight: 1});
@@ -267,23 +267,23 @@
     }
 
     // TODO:  Figure out replaceWindowHistory with sensor ids
-    // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+    // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
 
   }
 
   /* ----- Other functions -------------------------------------------------- */
 
   // Watcher for map-external monitor deselect events
-  $: if ($unselected_id !== "") {
+  $: if ($unselected_monitor_id !== "") {
     map.eachLayer(function(layer) {
       if (layer instanceof L.ShapeMarker) {
-        if (layer.id == $unselected_id) {
+        if (layer.id == $unselected_monitor_id) {
           layer.setStyle({weight: 1});
-          $unselected_id = "";
+          $unselected_monitor_id = "";
         }
       }
     })
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
   }
 
   // Watcher for map-external sensor deselect events
@@ -291,12 +291,12 @@
     map.eachLayer(function(layer) {
       if (layer instanceof L.ShapeMarker) {
         if (layer.id == $unselected_sensor_id) {
-          layer.setStyle({weight: 1});
+          layer.setStyle({opacity: 0.2, weight: 1});
           $unselected_sensor_id = "";
         }
       }
     })
-    // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_ids);
+    // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
   }
 
 </script>

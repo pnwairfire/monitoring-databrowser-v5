@@ -18,7 +18,7 @@ import {
 } from '../stores/sensor-data-store.js';
 // gui-store
 import {
-  hovered_id,
+  hovered_monitor_id,
   hovered_sensor_id,
 } from '../stores/gui-store.js';
 
@@ -88,39 +88,39 @@ function sensorIdToCurrentStatus(id) {
 }
 
 
-// $: currentStatus = monitorIdToCurrentStatus(hovered_id);
+// $: currentStatus = monitorIdToCurrentStatus(hovered_monitor_id);
 
 </script>
 
 <!-- Note that sizing needs to be included as part of the element style. -->
 <div id="{element_id}" style="width: {width}; height: {height};">
-  {#if $hovered_id !== "" }
+  {#if $hovered_monitor_id !== "" }
     <table>
       <thead>
         <th colspan="2">
-          <span class="bold">{$all_monitors.getMetadata($hovered_id, 'locationName')}</span><br>
+          <span class="bold">{$all_monitors.getMetadata($hovered_monitor_id, 'locationName')}</span><br>
         </th>
       </thead>
       <tbody>
         <tr>
           <td width="50%">Elevation</td>
-          <td>{Math.round($all_monitors.getMetadata($hovered_id, 'elevation'))} m</td>
+          <td>{Math.round($all_monitors.getMetadata($hovered_monitor_id, 'elevation'))} m</td>
         </tr>
         <tr>
-          <td width="40%">{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')} ID</td>
-          <td>{monitorIdToCurrentStatus($hovered_id)['dataIngestUnitID']}</td>
+          <td width="40%">{$all_monitors.getMetadata($hovered_monitor_id, 'dataIngestSource')} ID</td>
+          <td>{monitorIdToCurrentStatus($hovered_monitor_id)['dataIngestUnitID']}</td>
         </tr>
         <tr>
           <td>Latency</td>
-          <td>{monitorIdToCurrentStatus($hovered_id)['last_latency']} hrs</td>
+          <td>{monitorIdToCurrentStatus($hovered_monitor_id)['last_latency']} hrs</td>
         </tr>
         <tr>
           <td>Latest Nowcast</td>
-          <td>{monitorIdToCurrentStatus($hovered_id)['last_nowcast']} &#xb5;g/m&#xb3;</td>
+          <td>{monitorIdToCurrentStatus($hovered_monitor_id)['last_nowcast']} &#xb5;g/m&#xb3;</td>
         </tr>
         <tr>
           <td>Yesterday 24hr Avg:</td>
-          <td>{monitorIdToCurrentStatus($hovered_id)['yesterday_PM2.5_avg']} &#xb5;g/m&#xb3;</td>
+          <td>{monitorIdToCurrentStatus($hovered_monitor_id)['yesterday_PM2.5_avg']} &#xb5;g/m&#xb3;</td>
         </tr>
       </tbody>
     </table>
@@ -159,7 +159,7 @@ function sensorIdToCurrentStatus(id) {
           <td>NA</td>
         </tr>
         <tr>
-          <td width="40%">{$all_monitors.getMetadata($hovered_id, 'dataIngestSource')} ID</td>
+          <td width="40%">{$all_monitors.getMetadata($hovered_monitor_id, 'dataIngestSource')} ID</td>
           <td>NA</td>
         </tr>
         <tr>

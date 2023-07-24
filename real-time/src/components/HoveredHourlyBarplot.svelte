@@ -13,7 +13,7 @@
   import { all_monitors } from '../stores/monitor-data-store.js';
    import { pas } from '../stores/sensor-data-store.js';
   import {
-    hovered_id,
+    hovered_monitor_id,
     hovered_sensor_id,
     use_hovered_sensor
   } from '../stores/gui-store.js';
@@ -50,9 +50,9 @@
     // Get a copy of the reactive data and id
     const monitor = $all_monitors;
 
-    // For r0_hourly, show the hovered_id
+    // For r0_hourly, show the hovered_monitor_id
     if ( element_id === "hovered_hourly" ) {
-      id = $hovered_id;
+      id = $hovered_monitor_id;
       if ( $use_hovered_sensor ) {
         id = $hovered_sensor_id;
       }

@@ -6,19 +6,19 @@
 
   // Imports
   import {
-    selected_ids,
+    selected_monitor_ids,
     selected_sensor_ids,
-    unselected_id,
+    unselected_monitor_id,
     unselected_sensor_id,
   } from '../stores/gui-store.js';
 
   function removeRow(id) {
     if ( deviceType === 'monitor') {
-      let ids = $selected_ids;
+      let ids = $selected_monitor_ids;
       let index = ids.indexOf(id)
       ids.splice(index, 1);
-      $selected_ids = ids;
-      $unselected_id = id;
+      $selected_monitor_ids = ids;
+      $unselected_monitor_id = id;
     } else if ( deviceType === 'sensor') {
       let ids = $selected_sensor_ids;
       let index = ids.indexOf(id)

@@ -12,8 +12,8 @@
 		centerLon,
     centerLat,
     zoom,
-		hovered_id,
-		selected_ids,
+		hovered_monitor_id,
+		selected_monitor_ids,
 		selected_sensor_ids,
 		current_slide,
 	} from './stores/gui-store.js';
@@ -46,11 +46,11 @@
 	  $zoom = urlParams.get('zoom');
 	}
   if ( urlParams.has('monitors') ) {
-	  $selected_ids = urlParams.get('monitors').split(',');
+	  $selected_monitor_ids = urlParams.get('monitors').split(',');
 	}
 
 	function unselectHovered() {
-		$hovered_id = "";
+		$hovered_monitor_id = "";
 	}
 
 
@@ -96,18 +96,18 @@
 
 		<div class="flex-row">
 			<span class="selected-devices">Selected Monitors:</span>
-			<span class="selected-devices-count">{$selected_ids.length} monitors</span>
+			<span class="selected-devices-count">{$selected_monitor_ids.length} monitors</span>
 			<div id="service-links">
 				<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">Temporary Only</a>
-				{#if $selected_ids.length > 0}
-					<a target="_blank" rel="noreferrer" href="{createDataServiceUrl($selected_ids)}">CSV File</a>
+				{#if $selected_monitor_ids.length > 0}
+					<a target="_blank" rel="noreferrer" href="{createDataServiceUrl($selected_monitor_ids)}">CSV File</a>
 				{/if}
 			</div>
 		</div>
 
 		<hr>
 
-		{#each $selected_ids as id, i}
+		{#each $selected_monitor_ids as id, i}
 
 			<div class="flex-row" on:mouseenter={unselectHovered}>
 				<RemoveRowButton id={id}/>
@@ -166,7 +166,7 @@
 						{:else if $current_slide === "diurnal"}
 							<DiurnalPlot element_id="sensor_r{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="sensor"/>
 						{/if}
-						<SlideAdvance element_id="sensor_r{i}_sensorSlideAdvance"/>
+						<SlideAdvance element_id="sensor_r{i}_SlideAdvance"/>
 					</div>
 				</div>
 

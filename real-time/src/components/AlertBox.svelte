@@ -1,5 +1,4 @@
 <script>
-	// Exports
 	export let level = 'warning';
 </script>
 
