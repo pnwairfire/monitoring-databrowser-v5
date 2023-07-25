@@ -62,8 +62,8 @@
     setTimeout(() => {
       map.remove();
       createMap();
-    }, 1000 * 5)   // 10 seconds
-  }, 1000 * 1 * 10) // 5 minutes
+    }, 1000 * 10)   // 10 seconds
+  }, 1000 * 60 * 1) // 1 minutes
 
   let map;
 
