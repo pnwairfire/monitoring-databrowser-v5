@@ -3,24 +3,22 @@
   export let width = '400px';
   export let height = '400px';
 
-  // Imports
   // Svelte methods
 	import { onMount, onDestroy } from 'svelte';
-  // monitor-data-store
+
+  // Stores
   import {
-    // all_monitors,
+    all_monitors,
     airnow_geojson,
     airsis_geojson,
     wrcc_geojson,
   } from '../stores/monitor-data-store.js';
-  // sensor-data-store
+
   import {
     pas,
     patCart
   } from '../stores/sensor-data-store.js';
-  // patCart
-  // import { patCart } from '../stores/patCart.js';
-  // gui-store
+
   import {
     centerLat,
     centerLon,
@@ -35,8 +33,6 @@
     current_slide,
   } from '../stores/gui-store.js';
 
-  import { getPurpleAirData } from '../js/utils-sensor.js';
-
   // Leaflet (NOTE:  Don't put {} around the 'L'!)
   import L from "leaflet";
   // Extra shape makers
@@ -49,7 +45,27 @@
     sensorCreateGeoJSON,
     sensorPropertiesToIconOptions,
   } from '../js/utils-map.js';
+
+  // Utility functions
+  import { getPurpleAirData } from '../js/utils-sensor.js';
   import { replaceWindowHistory } from '../js/utils.js';
+
+  // TODO:  Status text could say how old the map data is.
+
+  // Reload geojson data every five minutes
+  setInterval(() => {
+    // Asynchronous reloads
+    all_monitors.reload();
+    airnow_geojson.reload();
+    airsis_geojson.reload();
+    wrcc_geojson.reload();
+    pas.reload();
+    // Wait 10 seconds for all data to load before recreating the map
+    setTimeout(() => {
+      map.remove();
+      createMap();
+    }, 1000 * 10)   // 10 seconds
+  }, 1000 * 60 * 5) // 5 minutes
 
   let map;
 
