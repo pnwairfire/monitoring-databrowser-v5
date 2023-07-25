@@ -1,14 +1,12 @@
 <script>
   // Svelte stores
   import { all_monitors } from './stores/monitor-data-store.js';
-
-	import {
-     patCart,
-  } from './stores/sensor-data-store.js';
+	import { pas } from './stores/sensor-data-store.js';
 
   import {
 		VERSION,
 		error_message,
+		sensorCount,
 		centerLon,
     centerLat,
     zoom,
@@ -53,7 +51,6 @@
 		$hovered_monitor_id = "";
 	}
 
-
 </script>
 
 <main>
@@ -80,7 +77,7 @@
 	{:then}
 
 		<p class="status">
-			Showing {$all_monitors.count()} monitoring locations.
+			Showing {$all_monitors.count()} monitors and {$sensorCount} sensors.
 		</p>
 
 		<div >
