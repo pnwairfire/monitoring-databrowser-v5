@@ -17,7 +17,7 @@ import Monitor from "air-monitor";
 // npm install @square/svelte-store --save
 import { asyncReadable, derived, writable } from "@square/svelte-store";
 
-import { error_message } from "./gui-store.js";
+import { error_message, monitorCount } from "./gui-store.js";
 
 export const airnowLoadTime = writable(1000);
 
@@ -125,10 +125,7 @@ export const all_monitors = derived(
   [airnow, airsis, wrcc],
   ([$airnow, $airsis, $wrcc]) => {
     let all_monitors = $airnow.combine($airsis).combine($wrcc).dropEmpty();
-    let monitorCount = all_monitors.count();
-    if (monitorCount > 0) {
-      console.log("Loaded all_monitors with " + monitorCount + " time series");
-    }
+    monitorCount.set(all_monitors.count());
     return all_monitors;
   }
 );

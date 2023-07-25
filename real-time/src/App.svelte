@@ -6,6 +6,7 @@
   import {
 		VERSION,
 		error_message,
+		monitorCount,
 		sensorCount,
 		centerLon,
     centerLat,
@@ -77,7 +78,7 @@
 	{:then}
 
 		<p class="status">
-			Showing {$all_monitors.count()} monitors and {$sensorCount} sensors.
+			Showing {$monitorCount} monitors and {$sensorCount} sensors.
 		</p>
 
 		<div >
