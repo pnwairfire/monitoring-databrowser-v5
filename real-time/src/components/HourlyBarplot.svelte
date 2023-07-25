@@ -32,6 +32,11 @@
   let context;
   let myChart;
 
+  // // Recreate chart every five minutes
+  // setInterval(() => {
+  //   createChart();
+  // }, 1000 * 1 * 5) // 5 minutes
+
   async function createChart() {
 
     context = document.getElementById(element_id);

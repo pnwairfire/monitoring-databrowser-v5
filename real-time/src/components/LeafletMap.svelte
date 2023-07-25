@@ -54,8 +54,6 @@
 
   // Reload geojson data every five minutes
   setInterval(() => {
-    // Asynchronous reloads
-    all_monitors.reload();
     airnow_geojson.reload();
     airsis_geojson.reload();
     wrcc_geojson.reload();
@@ -64,8 +62,8 @@
     setTimeout(() => {
       map.remove();
       createMap();
-    }, 1000 * 10)   // 10 seconds
-  }, 1000 * 60 * 5) // 5 minutes
+    }, 1000 * 5)   // 10 seconds
+  }, 1000 * 1 * 10) // 5 minutes
 
   let map;
 
