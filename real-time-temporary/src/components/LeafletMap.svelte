@@ -69,7 +69,7 @@
 		if (map) map.remove();
 	});
 
-  /* ----- Internal functions ----------------------------------------------- */
+  /* ----- Monitor functions ------------------------------------------------ */
 
   /**
    * @param {geojson} geojson to be converted to a leaflet layer
@@ -79,12 +79,17 @@
     var this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
-        // Only show markers if the latency is less than 3 * 24 hours
-        if ( parseInt(feature.properties.last_latency) < 24 * 3) {
-          let marker = L.shapeMarker(latlng, propertiesToIconOptions(feature.properties));
-          // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
-          marker.id = feature.properties.deviceDeploymentID;
-          return(marker);
+        // This is where I can filter for Susan's JBLM research monitors -- only show non-matches
+        if ( feature.properties.deviceDeploymentID.indexOf("_pnwusfs") === -1 ) {
+
+          // Only show markers if the latency is less than 3 * 24 hours
+          if ( parseInt(feature.properties.last_latency) < 24 * 3) {
+            let marker = L.shapeMarker(latlng, propertiesToIconOptions(feature.properties));
+            // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
+            marker.id = feature.properties.deviceDeploymentID;
+            return(marker);
+          }
+
         }
       },
 

@@ -40,7 +40,12 @@
 
 	{#if $error_message === "" }
 		<AlertBox level="warning">
-			<b>This working prototype is for evaluation purposes only.</b>
+			<b>
+				Disclaimer: Data are raw research data and are not quality checked.<br>
+			</b>
+			The monitors are not federal reference method monitors.<br>
+			They may read higher than actual ambient PM2.5 concentrations especially
+			when relative humidity is high.
 		</AlertBox>
 	{:else}
 		<AlertBox level="error">
@@ -61,8 +66,8 @@
 		</div>
 
 		<div id="hovered-row" class="flex-row">
-			<HoveredMetadataBox element_id="hovered-metadata-box" width="350px" height="160px"/> <!-- 200px - padding-top-->
-			<HourlyBarplot element_id="hovered_hourly" width="800px" height="200px"/>
+			<HoveredMetadataBox element_id="hovered-metadata-box" width="350px" height="200px"/> <!-- 200px - padding-top-->
+			<HourlyBarplot element_id="hovered_hourly" width="800px" height="240px"/>
 		</div>
 
 		<hr>
