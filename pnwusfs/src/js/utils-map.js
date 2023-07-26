@@ -13,7 +13,7 @@ export function monitorPropertiesToIconOptions(properties) {
     radius: properties["deploymentType"] == "Temporary" ? 7 : 8,
     shape:
       properties["deploymentType"] == "Temporary" ? "triangle-up" : "circle",
-    fillColor: latency > 4 ? "#bbb" : pm25ToColor(properties["last_PM2.5"]),
+    fillColor: latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"]),
     color: "#000",
     weight: 1,
     opacity: 1,

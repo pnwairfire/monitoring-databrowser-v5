@@ -12,8 +12,12 @@ import { wrcc } from '../stores/monitor-data-store.js';
 // Utility functions
 import { createQCServiceUrl } from '../js/utils.js';
 
-// NOTE:  airsis.meta is an arquero table
-let airsis_ids = $airsis.meta.array('deviceDeploymentID');
+// NOTE:  airsis.meta and wrcc.meta an arquero tables
+let airsis_ids =
+  $airsis.meta.array('deviceDeploymentID')
+  // This is where I can filter for Susan's JBLM research monitors -- only show non-matches
+  .filter(id => id.indexOf("_pnwusfs") === -1 );
+
 let wrcc_ids = $wrcc.meta.array('deviceDeploymentID');
 
 // sort by deviceID

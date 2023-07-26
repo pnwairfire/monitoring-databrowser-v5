@@ -49,7 +49,7 @@
 
 	<hr>
 
-  <MetadataTable width="100%"/>
+  <MetadataTable width="100%" element_id="metadata-table"/>
 
 	{:catch}
 		<p style="color: red">An error occurred</p>
