@@ -45,7 +45,14 @@
     context = document.getElementById(element_id);
 
     // See https://www.youtube.com/watch?v=s7rk2b1ioVE @6:30
-    if (myChart) myChart.destroy();
+
+    // NOTE:  When moving quickly, sensor data cannot be downloaded quickly
+    // NOTE:  enough and generates errors here.
+    try {
+      if (myChart) myChart.destroy();
+    } catch(err) {
+      // Do nothing
+    }
 
     // Get a copy of the reactive data and id
     const monitor = $all_monitors;
@@ -65,23 +72,29 @@
 
       if ( $use_hovered_sensor ) {
 
-        // NOTE:  Data isn't loaded until a sensor is selected. So we load it
-        // NOTE:  every time for the hovered plot.
-        let sensorData = await getPurpleAirData(id);
+        // NOTE:  When moving quickly, sensor data cannot be downloaded quickly
+        // NOTE:  enough and generates errors here.
+        try {
+          // NOTE:  Data isn't loaded until a sensor is selected. So we load it
+          // NOTE:  every time for the hovered plot.
+          let sensorData = await getPurpleAirData(id);
 
-        // epa_pm25,epa_nowcast,local_ts
-        // 9.1,9.9,2023-07-05 12:00:00-0700
+          // epa_pm25,epa_nowcast,local_ts
+          // 9.1,9.9,2023-07-05 12:00:00-0700
 
-        let site = $pas.filter(o => o.sensor_index == id)[0];
-        let timezone = site.timezone;
-        plotData = {
-          datetime: sensorData.map((o) => new Date(o.local_ts)),
-          pm25: sensorData.map((o) => o.epa_pm25),
-          nowcast: sensorData.map((o) => o.epa_nowcast),
-          locationName: "PurpleAir " + id,
-          timezone: timezone,
-          title: undefined // use default title
-        };
+          let site = $pas.filter(o => o.sensor_index == id)[0];
+          let timezone = site.timezone;
+          plotData = {
+            datetime: sensorData.map((o) => new Date(o.local_ts)),
+            pm25: sensorData.map((o) => o.epa_pm25),
+            nowcast: sensorData.map((o) => o.epa_nowcast),
+            locationName: "PurpleAir " + id,
+            timezone: timezone,
+            title: undefined // use default title
+          };
+        } catch(err) {
+          // Do nothing
+        }
 
       } else {
 

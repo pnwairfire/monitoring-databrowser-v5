@@ -125,6 +125,8 @@ export const all_monitors = derived(
   [airnow, airsis, wrcc],
   ([$airnow, $airsis, $wrcc]) => {
     let all_monitors = $airnow.combine($airsis).combine($wrcc).dropEmpty();
+    // Reduce to the last 168 hours to match PurpleAir data
+    all_monitors.data = all_monitors.data.slice(-168);
     monitorCount.set(all_monitors.count());
     return all_monitors;
   }
