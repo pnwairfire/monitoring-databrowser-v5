@@ -149,7 +149,7 @@
           if ( parseInt(feature.properties.last_latency) < 24 * 3) {
             let marker = L.shapeMarker(latlng, monitorPropertiesToIconOptions(feature.properties));
             // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
-            marker.id = feature.properties.deviceDeploymentID;
+            marker.id = feature.properties.deviceDeploymentID.toString();
             // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
             if ($selected_monitor_ids.find(o => o === marker.id)) {
               marker.setStyle({weight: 3});
@@ -209,12 +209,12 @@
         if ( parseInt(feature.properties.latency) < 24 * 3) {
           let marker = L.shapeMarker(latlng, sensorPropertiesToIconOptions(feature.properties));
           // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
-          marker.id = feature.properties.deviceDeploymentID;
+          marker.id = feature.properties.deviceDeploymentID.toString();
           // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
-          if ($selected_monitor_ids.find(o => o === marker.id)) {
-            marker.setStyle({weight: 3});
+          if ($selected_sensor_ids.find(o => o === marker.id)) {
+            marker.setStyle({opacity: 1.0, weight: 2});
           } else {
-            marker.setStyle({weight: 1});
+            marker.setStyle({opacity: 0.2, weight: 1});
           }
           return(marker);
         }
