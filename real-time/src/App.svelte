@@ -1,7 +1,7 @@
 <script>
   // Svelte stores
   import { all_monitors } from './stores/monitor-data-store.js';
-	import { pas } from './stores/sensor-data-store.js';
+	import { pas, patCart } from './stores/sensor-data-store.js';
 
   import {
 		VERSION,
@@ -31,6 +31,9 @@
 	import DiurnalPlot from "./components/DiurnalPlot.svelte";
 	import RemoveRowButton from "./components/RemoveRowButton.svelte";
 	import SlideAdvance from "./components/SlideAdvance.svelte";
+
+  // Utility functions
+  import { getPurpleAirData } from './js/utils-sensor.js';
   import { createDataServiceUrl } from './js/utils.js';
 
 	// Initialize the leaflet map from URL parameters
@@ -46,6 +49,34 @@
 	}
   if ( urlParams.has('monitors') ) {
 	  $selected_monitor_ids = urlParams.get('monitors').split(',');
+	}
+
+	async function loadSensorData(sensor_ids) {
+		for (let i = 0; i < sensor_ids.length; i++) {
+			let id = sensor_ids[i];
+      // Load pat data
+      const index = $patCart.items.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        console.log("pat id: " + id + " is already loaded.");
+      } else {
+        console.log("Downloading sensor data for id = " + id);
+        let sensorData = await getPurpleAirData(id);
+        const pa_object = { id: id, data: sensorData };
+        patCart.addItem(pa_object);
+      }
+      console.log("patCart.count = " + $patCart.count);
+      // Now update selected_sensor_ids
+      const ids = $selected_sensor_ids;
+      const length = ids.unshift(id);
+      $selected_sensor_ids = ids;
+		}
+	}
+
+  if ( urlParams.has('sensors') ) {
+    pas.load().then(function(synopticData) {
+			let sensor_ids = urlParams.get('sensors').split(',');
+		  loadSensorData(sensor_ids);
+		});
 	}
 
 	function unselectHovered() {

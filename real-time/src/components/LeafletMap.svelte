@@ -14,10 +14,7 @@
     wrcc_geojson,
   } from '../stores/monitor-data-store.js';
 
-  import {
-    pas,
-    patCart
-  } from '../stores/sensor-data-store.js';
+  import { pas, patCart } from '../stores/sensor-data-store.js';
 
   import {
     centerLat,
@@ -98,7 +95,7 @@
       createMonitorLayer(geojsonData).addTo(map);
     });
 
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
 
     // ----- Add event listeners to the map ------------------------------------
 
@@ -111,13 +108,13 @@
     map.on("moveend", function() {
       $centerLat = map.getCenter().lat;
       $centerLon = map.getCenter().lng;
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
     })
 
     // Update browser URL when zooming
     map.on("zoomend", function() {
       $zoom = map.getZoom();
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
     })
 
     // Ensure "hovered" plot is not shown after leaving the map
@@ -199,7 +196,7 @@
       $selected_monitor_ids = ids;
       e.target.setStyle({weight: 1});
     }
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
   }
 
   /* ----- Sensor functions ------------------------------------------------- */
@@ -278,8 +275,7 @@
 
     }
 
-    // TODO:  Figure out replaceWindowHistory with sensor ids
-    // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
 
   }
 
@@ -295,7 +291,7 @@
         }
       }
     })
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
   }
 
   // Watcher for map-external sensor deselect events
@@ -308,7 +304,7 @@
         }
       }
     })
-    // replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
   }
 
 </script>
