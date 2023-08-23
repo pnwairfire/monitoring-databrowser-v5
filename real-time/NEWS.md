@@ -1,3 +1,10 @@
+# real-time 5.1.6
+
+- Selected sensors are added to URL and page is properly initialized with any
+  monitors and sensors in the URL.
+- Removed AQI lines from hourly barplots.
+- Fixed typo in color levels causing some "red" levels to be shown as purple.
+
 # real-time 5.1.5
 
 - Added ESRI 'Topographic' basemap.
