@@ -94,6 +94,7 @@ npm install arquero highcharts moment-timezone suncalc
 npm install @square/svelte-store
 npm install leaflet
 npm install leaflet-svg-shape-markers
+npm install esri-leaflet
 npm install papaparse
 # AirFire packages
 npm install github:MazamaScience/air-monitor

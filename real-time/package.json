@@ -20,6 +20,7 @@
     "air-monitor-algorithms": "github:MazamaScience/air-monitor-algorithms",
     "air-monitor-plots": "github:pnwairfire/air-monitor-plots",
     "arquero": "^5.1.0",
+    "esri-leaflet": "^3.0.10",
     "highcharts": "^10.3.3",
     "leaflet": "^1.9.3",
     "leaflet-svg-shape-markers": "^1.4.0",

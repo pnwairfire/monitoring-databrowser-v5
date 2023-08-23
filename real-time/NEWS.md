@@ -1,3 +1,12 @@
+# real-time 5.1.5
+
+- Added ESRI 'Topographic' basemap.
+- Updated map refresh time to 10 minutes.
+
+# real-time 5.1.2 - 5.1.4
+
+- Mostly working with PurpleAir data.
+
 # real-time 5.1.1
 
 - LeafletMap filters out "pnwusfs" monitors from AIRSIS.

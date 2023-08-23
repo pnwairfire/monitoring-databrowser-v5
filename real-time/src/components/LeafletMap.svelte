@@ -38,6 +38,7 @@
   // Extra shape makers
   //  - https://npm.io/package/leaflet-svg-shape-markers
   import 'leaflet-svg-shape-markers';
+  import { basemapLayer } from 'esri-leaflet';
 
   // Plotting helper functions
   import {
@@ -63,7 +64,7 @@
       map.remove();
       createMap();
     }, 1000 * 10)   // 10 seconds
-  }, 1000 * 60 * 1) // 1 minutes
+  }, 1000 * 60 * 10) // 10 minutes
 
   let map;
 
@@ -76,10 +77,7 @@
     map = L.map('map').setView([$centerLat, $centerLon], $zoom);
 
     // Add background tiles
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    basemapLayer('Topographic').addTo(map);
 
     // Add sensors to the map, always at the bottom of the layer stack
     pas.load().then(function(synopticData) {
