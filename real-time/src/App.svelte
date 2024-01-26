@@ -51,15 +51,15 @@
 	  $selected_monitor_ids = urlParams.get('monitors').split(',');
 	}
 
-	async function loadPurpleAirData(sensor_ids) {
-		for (let i = 0; i < sensor_ids.length; i++) {
-			let id = sensor_ids[i];
+	async function loadPurpleAirData(ids) {
+		for (let i = 0; i < ids.length; i++) {
+			let id = ids[i];
       // Load pat data
       const index = $patCart.items.findIndex((item) => item.id === id);
       if (index !== -1) {
         console.log("pat id: " + id + " is already loaded.");
       } else {
-        console.log("Downloading sensor data for id = " + id);
+        console.log("Downloading PurpleAir data for id = " + id);
         let purpleairData = await getPurpleAirData(id);
         const pa_object = { id: id, data: purpleairData };
         patCart.addItem(pa_object);
@@ -140,25 +140,25 @@
 
 			<div class="flex-row" on:mouseenter={unselectHovered}>
 				<RemoveRowButton id={id}/>
-				<MetadataBox element_id="r{i}_metadata" width="300px" height="200px" id={id}/>
+				<MetadataBox element_id="row{i}_metadata" width="300px" height="200px" id={id}/>
 				<div class="flex-row">
 				{#if $current_slide === "all"}
 					<div class="flex-row">
-						<MiniMap element_id="r{i}_map" width="200px" height="180px" id={id}/>
-						<TimeseriesPlot element_id="r{i}_small_timeseries" width="200px" height="200px" id={id}  size="small"/>
-						<DailyBarplot element_id="r{i}_small_daily" width="200px" height="200px" id={id}  size="small"/>
-						<DiurnalPlot element_id="r{i}_small_diurnal" width="200px" height="200px" id={id}  size="small"/>
+						<MiniMap element_id="row{i}_map" width="200px" height="180px" id={id}/>
+						<TimeseriesPlot element_id="row{i}_small_timeseries" width="200px" height="200px" id={id}  size="small"/>
+						<DailyBarplot element_id="row{i}_small_daily" width="200px" height="200px" id={id}  size="small"/>
+						<DiurnalPlot element_id="row{i}_small_diurnal" width="200px" height="200px" id={id}  size="small"/>
 					</div>
 					{:else if $current_slide === "timeseries"}
-						<TimeseriesPlot element_id="r{i}_timeseries" width="800px" height="200px" id={id}  size="large"/>
+						<TimeseriesPlot element_id="row{i}_timeseries" width="800px" height="200px" id={id}  size="large"/>
 					{:else if $current_slide === "hourly"}
-						<HourlyBarplot element_id="r{i}_hourly" width="800px" height="200px" id={id}  size="large"/>
+						<HourlyBarplot element_id="row{i}_hourly" width="800px" height="200px" id={id}  size="large"/>
 					{:else if $current_slide === "daily"}
-						<DailyBarplot element_id="r{i}_daily" width="800px" height="200px" id={id}  size="large"/>
+						<DailyBarplot element_id="row{i}_daily" width="800px" height="200px" id={id}  size="large"/>
 					{:else if $current_slide === "diurnal"}
-						<DiurnalPlot element_id="r{i}_diurnal" width="800px" height="200px" id={id}  size="large"/>
+						<DiurnalPlot element_id="row{i}_diurnal" width="800px" height="200px" id={id}  size="large"/>
 					{/if}
-					<SlideAdvance element_id="r{i}_slideAdvance"/>
+					<SlideAdvance element_id="row{i}_slideAdvance"/>
 				</div>
 			</div>
 
@@ -177,25 +177,25 @@
 
 			<div class="flex-row">
 				<RemoveRowButton id={id} deviceType="purpleair"/>
-				<MetadataBox element_id="sensor_r{i}_metadata" width="300px" height="200px" id={id} deviceType="purpleair"/>
+				<MetadataBox element_id="purpleair_row{i}_metadata" width="300px" height="200px" id={id} deviceType="purpleair"/>
 				<div class="flex-row">
 					{#if $current_slide === "all"}
 						<div class="flex-row">
-							<MiniMap element_id="sensor_r{i}_map" width="200px" height="180px" id={id} deviceType="purpleair"/>
-							<TimeseriesPlot element_id="sensor_r{i}_small_timeseries" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
-							<DailyBarplot element_id="sensor_r{i}_small_daily" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
-							<DiurnalPlot element_id="sensor_r{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
+							<MiniMap element_id="purpleair_row{i}_map" width="200px" height="180px" id={id} deviceType="purpleair"/>
+							<TimeseriesPlot element_id="purpleair_row{i}_small_timeseries" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
+							<DailyBarplot element_id="purpleair_row{i}_small_daily" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
+							<DiurnalPlot element_id="purpleair_row{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
 						</div>
 						{:else if $current_slide === "timeseries"}
-							<TimeseriesPlot element_id="sensor_r{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
+							<TimeseriesPlot element_id="purpleair_row{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
 						{:else if $current_slide === "hourly"}
-							<HourlyBarplot element_id="sensor_r{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
+							<HourlyBarplot element_id="purpleair_row{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
 						{:else if $current_slide === "daily"}
-							<DailyBarplot element_id="sensor_r{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
+							<DailyBarplot element_id="purpleair_row{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
 						{:else if $current_slide === "diurnal"}
-							<DiurnalPlot element_id="sensor_r{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
+							<DiurnalPlot element_id="purpleair_row{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
 						{/if}
-						<SlideAdvance element_id="sensor_r{i}_SlideAdvance"/>
+						<SlideAdvance element_id="purpleair_row{i}_SlideAdvance"/>
 					</div>
 				</div>
 

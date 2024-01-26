@@ -73,10 +73,10 @@ export function purpleairCreateGeoJSON(synopticData) {
 }
 
 // Icon style
-export function sensorPropertiesToIconOptions(properties) {
+export function sensorPropertiesToIconOptions(properties, shape = "square") {
   const options = {
     radius: 4,
-    shape: "square",
+    shape: shape,
     fillColor:
       properties.latency > 4 ? "#bbb" : pm25ToColor(properties.epa_nowcast),
     color: "#000",

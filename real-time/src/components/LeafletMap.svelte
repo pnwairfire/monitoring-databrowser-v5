@@ -252,7 +252,7 @@
       if (index !== -1) {
         console.log("pat id: " + id + " is already loaded.");
       } else {
-        console.log("Downloading sensor data for id = " + id);
+        console.log("Downloading PurpleAir data for id = " + id);
         let purpleairData = await getPurpleAirData(id);
         const pa_object = { id: id, data: purpleairData };
         patCart.addItem(pa_object);
