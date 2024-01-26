@@ -37,7 +37,7 @@ function create_location_report_url(id) {
   if ( deviceType === "monitor" ) {
     url = baseUrl + "report?monitorid=" + id;
   } else if ( deviceType === "purpleair" ) {
-    let currentStatus = sensorIdToCurrentStatus(id);
+    let currentStatus = purpleairIdToCurrentStatus(id);
     url = baseUrl + "report?longitude=" + currentStatus.longitude + "&latitude=" + currentStatus.latitude;
   } else {
     url = baseUrl;
@@ -45,7 +45,7 @@ function create_location_report_url(id) {
   return url;
 }
 
-function sensorIdToCurrentStatus(id, deviceType) {
+function purpleairIdToCurrentStatus(id, deviceType) {
   // 'pas' synopticData
   //
   // epa_nowcast: 7.7
@@ -110,7 +110,7 @@ function sensorIdToCurrentStatus(id, deviceType) {
     <br>
     Deployment type:&nbsp;&nbsp;Low Cost Sensor<br>
     <!-- Contains data through {$all_monitors.getMetadata(id, 'last_validTime')}<br> TODO:  Need to keep a list/dict of monitor properties found in .geojson -->
-    Timezone:&nbsp;&nbsp;{sensorIdToCurrentStatus(id, deviceType)['timezone']}<br>
+    Timezone:&nbsp;&nbsp;{purpleairIdToCurrentStatus(id, deviceType)['timezone']}<br>
 
   {/if}
 

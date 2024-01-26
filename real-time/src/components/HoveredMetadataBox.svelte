@@ -16,10 +16,12 @@ import {
 import {
   pas,
 } from '../stores/purpleair-data-store.js';
+import { clarity_geojson } from '../stores/clarity-data-store.js';
 // gui-store
 import {
   hovered_monitor_id,
   hovered_purpleair_id,
+  hovered_clarity_id,
 } from '../stores/gui-store.js';
 
 function monitorIdToCurrentStatus(id) {
@@ -66,7 +68,7 @@ let dataIngestSource = $all_monitors.getMetadata(id, 'dataIngestSource');
 
 }
 
-function sensorIdToCurrentStatus(id) {
+function purpleairIdToCurrentStatus(id) {
 
   // 'pas' synopticData
   //
@@ -83,6 +85,43 @@ function sensorIdToCurrentStatus(id) {
   let currentStatus = $pas.filter(o => o.sensor_index == id)[0];
   const latency = (new Date() - new Date(currentStatus.utc_ts)) / (1000 * 3600);
   currentStatus['last_latency'] = Math.round(latency * 10) / 10;
+  return(currentStatus);
+
+}
+
+function clarityIdToCurrentStatus(id) {
+
+// "deviceDeploymentID":"9q5c59fnh9_clarity.DVVTD9746"
+// "AQSID":null
+// "fullAQSID":null
+// "deploymentType":null
+// "locationName":"DVVTD9746"
+// "timezone":"America/Los_Angeles"
+// "dataIngestSource":"Clarity"
+// "dataIngestUnitID":"DVVTD9746"
+// "currentStatus_processingTime":"2024-01-26 22:07:35"
+// "last_validTime":"2024-01-26 21:00:00",
+// "last_validLocalTimestamp":"2024-01-26 13:00:00 PST"
+// "last_nowcast":" 5.0"
+// "last_PM2.5":"  4.5"
+// "last_latency":"  1"
+// "yesterday_PM2.5_avg":" 3.5"
+
+  let dataIngestSource = "Clarity";
+
+  let features = $clarity_geojson.features;
+
+  let currentStatus;
+  features.forEach(o => {
+    if ( o.properties.deviceDeploymentID === id ) currentStatus = o.properties;
+  });
+
+  // TODO: Handle currentStatus === undefined
+
+  // if (dataIngestSource === "AirNow") {
+  //   currentStatus.dataIngestUnitID = currentStatus.AQSID;
+  // }
+
   return(currentStatus);
 
 }
@@ -124,7 +163,7 @@ function sensorIdToCurrentStatus(id) {
         </tr>
       </tbody>
     </table>
-  {:else if $hovered_purpleair_id !== "" }
+    {:else if $hovered_purpleair_id !== "" }
     <table>
       <thead>
         <th colspan="2">
@@ -134,15 +173,37 @@ function sensorIdToCurrentStatus(id) {
       <tbody>
         <tr>
           <td>Latency</td>
-          <td>{sensorIdToCurrentStatus($hovered_purpleair_id)['last_latency']} hrs</td>
+          <td>{purpleairIdToCurrentStatus($hovered_purpleair_id)['last_latency']} hrs</td>
         </tr>
         <tr>
           <td>Latest Nowcast</td>
-          <td>{sensorIdToCurrentStatus($hovered_purpleair_id)['epa_nowcast']} &#xb5;g/m&#xb3;</td>
+          <td>{purpleairIdToCurrentStatus($hovered_purpleair_id)['epa_nowcast']} &#xb5;g/m&#xb3;</td>
         </tr>
         <tr>
           <td>Latest PM2.5</td>
-          <td>{sensorIdToCurrentStatus($hovered_purpleair_id)['epa_pm25']} &#xb5;g/m&#xb3;</td>
+          <td>{purpleairIdToCurrentStatus($hovered_purpleair_id)['epa_pm25']} &#xb5;g/m&#xb3;</td>
+        </tr>
+      </tbody>
+    </table>
+    {:else if $hovered_clarity_id !== "" }
+    <table>
+      <thead>
+        <th colspan="2">
+          <span class="bold">Clarity {clarityIdToCurrentStatus($hovered_clarity_id)['dataIngestUnitID']}</span><br>
+        </th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Latency</td>
+          <td>{clarityIdToCurrentStatus($hovered_clarity_id)['last_latency']} hrs</td>
+        </tr>
+        <tr>
+          <td>Latest Nowcast</td>
+          <td>{clarityIdToCurrentStatus($hovered_clarity_id)['last_nowcast']} &#xb5;g/m&#xb3;</td>
+        </tr>
+        <tr>
+          <td>Yesterday 24hr Avg:</td>
+          <td>{clarityIdToCurrentStatus($hovered_clarity_id)['yesterday_PM2.5_avg']} &#xb5;g/m&#xb3;</td>
         </tr>
       </tbody>
     </table>

@@ -11,11 +11,14 @@
 
   // Svelte stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-   import { pas } from '../stores/purpleair-data-store.js';
+  import { pas } from '../stores/purpleair-data-store.js';
+  import { clarity } from '../stores/clarity-data-store.js';
   import {
     hovered_monitor_id,
     hovered_purpleair_id,
-    use_hovered_purpleair
+    use_hovered_purpleair,
+    hovered_clarity_id,
+    use_hovered_clarity,
   } from '../stores/gui-store.js';
 
   // Highcharts for plotting
@@ -63,6 +66,9 @@
       if ( $use_hovered_purpleair ) {
         id = $hovered_purpleair_id;
       }
+      if ( $use_hovered_clarity ) {
+        id = $hovered_clarity_id;
+      }
     }
 
     if ( id !== "" ) {
@@ -95,6 +101,17 @@
         } catch(err) {
           // Do nothing
         }
+
+      } else if ( $use_hovered_clarity ) {
+
+        plotData = {
+          datetime: $clarity.getDatetime(),
+          pm25: $clarity.getPM25(id),
+          nowcast: $clarity.getNowcast(id),
+          locationName: $clarity.getMetadata(id, 'locationName'),
+          timezone: $clarity.getMetadata(id, 'timezone'),
+          title: undefined // use default title
+        };
 
       } else {
 
