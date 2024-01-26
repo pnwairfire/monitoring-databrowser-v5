@@ -16,17 +16,23 @@
 
   import { pas, patCart } from '../stores/purpleair-data-store.js';
 
+  import { clarity, clarity_geojson } from '../stores/clarity-data-store.js';
+
   import {
     centerLat,
     centerLon,
     zoom,
     hovered_monitor_id,
     hovered_purpleair_id,
+    hovered_clarity_id,
     selected_monitor_ids,
     selected_purpleair_ids,
+    selected_clarity_ids,
     unselected_monitor_id,
     unselected_purpleair_id,
+    unselected_clarity_id,
     use_hovered_purpleair,
+    use_hovered_clarity,
     current_slide,
   } from '../stores/gui-store.js';
 
@@ -41,7 +47,8 @@
   import {
     monitorPropertiesToIconOptions,
     purpleairCreateGeoJSON,
-    sensorPropertiesToIconOptions,
+    purpleairPropertiesToIconOptions,
+    clarityPropertiesToIconOptions,
   } from '../js/utils-map.js';
 
   // Utility functions
@@ -55,6 +62,7 @@
     airnow_geojson.reload();
     airsis_geojson.reload();
     wrcc_geojson.reload();
+    clarity.reload();
     pas.reload();
     // Wait 10 seconds for all data to load before recreating the map
     setTimeout(() => {
@@ -76,10 +84,15 @@
     // Add background tiles
     basemapLayer('Topographic').addTo(map);
 
-    // Add sensors to the map, always at the bottom of the layer stack
+    // Add PurpleAir sensors to the map, always at the bottom of the layer stack
     pas.load().then(function(synopticData) {
       let geojsonData = purpleairCreateGeoJSON(synopticData);
       createPurpleAirLayer(geojsonData).bringToBack().addTo(map);
+    });
+
+    // Add Clarity sensors to the map
+    clarity_geojson.load().then(function(geojsonData) {
+      createClarityLayer(geojsonData).addTo(map);
     });
 
     // Add monitors to the map
@@ -95,7 +108,7 @@
       createMonitorLayer(geojsonData).addTo(map);
     });
 
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
 
     // ----- Add event listeners to the map ------------------------------------
 
@@ -108,20 +121,22 @@
     map.on("moveend", function() {
       $centerLat = map.getCenter().lat;
       $centerLon = map.getCenter().lng;
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
     })
 
     // Update browser URL when zooming
     map.on("zoomend", function() {
       $zoom = map.getZoom();
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
     })
 
     // Ensure "hovered" plot is not shown after leaving the map
     map.on('mouseout', function () {
       $hovered_monitor_id = "";
       $hovered_purpleair_id = "";
+      $hovered_clarity_id = "";
       $use_hovered_purpleair = false;
+      $use_hovered_clarity = false;
     });
 
   }
@@ -166,6 +181,7 @@
       onEachFeature: function (feature, layer) {
         layer.on('mouseover', function (e) {
           $use_hovered_purpleair = false;
+          $use_hovered_clarity = false;
           $hovered_monitor_id = feature.properties.deviceDeploymentID;
         });
         layer.on('mouseout', function (e) {
@@ -196,10 +212,10 @@
       $selected_monitor_ids = ids;
       e.target.setStyle({weight: 1});
     }
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
   }
 
-  /* ----- Sensor functions ------------------------------------------------- */
+  /* ----- PurpleAir functions ---------------------------------------------- */
 
   function createPurpleAirLayer(geojson) {
     var this_layer = L.geoJSON(geojson, {
@@ -207,7 +223,7 @@
       pointToLayer: function (feature, latlng) {
         // Only show markers if the latency is less than 3 * 24 hours
         if ( parseInt(feature.properties.latency) < 24 * 3) {
-          let marker = L.shapeMarker(latlng, sensorPropertiesToIconOptions(feature.properties));
+          let marker = L.shapeMarker(latlng, purpleairPropertiesToIconOptions(feature.properties));
           // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
           marker.id = feature.properties.deviceDeploymentID.toString();
           // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
@@ -232,7 +248,7 @@
         });
         layer.on('click', function (e) {
           // $use_hovered_purpleair = true;
-          sensorIconClick(e);
+          purpleairIconClick(e);
         });
       }
     });
@@ -240,7 +256,7 @@
   }
 
   // Sensor icon click behavior
-  async function sensorIconClick(e) {
+  async function purpleairIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
     const found = $selected_purpleair_ids.find((o) => o == id);
@@ -275,8 +291,72 @@
 
     }
 
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
 
+  }
+
+  /* ----- Clarity functions ------------------------------------------------ */
+
+  /**
+   * @param {geojson} geojson to be converted to a leaflet layer
+   * @returns
+   */
+   function createClarityLayer(geojson) {
+    var this_layer = L.geoJSON(geojson, {
+      // Icon appearance
+      pointToLayer: function (feature, latlng) {
+        // Only show markers if the latency is less than 3 * 24 hours
+        if ( parseInt(feature.properties.last_latency) < 24 * 3) {
+          let marker = L.shapeMarker(latlng, clarityPropertiesToIconOptions(feature.properties));
+          // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
+          marker.id = feature.properties.deviceDeploymentID.toString();
+          // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
+          if ($selected_clarity_ids.find(o => o === marker.id)) {
+            marker.setStyle({opacity: 1.0, weight: 2});
+          } else {
+            marker.setStyle({opacity: 0.2, weight: 1});
+          }
+          return(marker);
+        }
+      },
+
+      // Icon behavior
+      onEachFeature: function (feature, layer) {
+        layer.on('mouseover', function (e) {
+          $hovered_clarity_id = feature.properties.deviceDeploymentID;
+          $use_hovered_clarity = true;
+        });
+        layer.on('mouseout', function (e) {
+          $hovered_clarity_id = "";
+          $use_hovered_clarity = false;
+        });
+        layer.on('click', function (e) {
+          // $use_hovered_clarity = true;
+          clarityIconClick(e);
+        });
+      }
+    });
+    return this_layer;
+  }
+
+  // Monitor icon click behavior
+  function clarityIconClick(e) {
+    const feature = e.target.feature;
+    const id = feature.properties.deviceDeploymentID;
+    const found = $selected_clarity_ids.find((o) => o == id);
+    if (!found) {
+      const ids = $selected_clarity_ids;
+      const length = ids.unshift(id);
+      $selected_clarity_ids = ids;
+      e.target.setStyle({opacity: 1.0, weight: 2});
+    } else {
+      const ids = $selected_clarity_ids;
+      const index = ids.indexOf(id);
+      const removedItem = ids.splice(index, 1);
+      $selected_clarity_ids = ids;
+      e.target.setStyle({opacity: 0.2, weight: 1});
+    }
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
   }
 
   /* ----- Other functions -------------------------------------------------- */
@@ -291,7 +371,7 @@
         }
       }
     })
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
   }
 
   // Watcher for map-external sensor deselect events
@@ -304,7 +384,20 @@
         }
       }
     })
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
+  }
+
+  // Watcher for map-external sensor deselect events
+  $: if ($unselected_clarity_id !== "") {
+    map.eachLayer(function(layer) {
+      if (layer instanceof L.ShapeMarker) {
+        if (layer.id == $unselected_clarity_id) {
+          layer.setStyle({opacity: 0.2, weight: 1});
+          $unselected_clarity_id = "";
+        }
+      }
+    })
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
   }
 
 </script>

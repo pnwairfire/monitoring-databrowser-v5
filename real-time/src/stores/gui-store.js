@@ -7,6 +7,7 @@ export const VERSION = readable("5.1.6");
 export let error_message = writable("");
 export let monitorCount = writable(0);
 export let purpleairCount = writable(0);
+export let clarityCount = writable(0);
 
 // GUI state for the leaflet map
 export let centerLon = writable(-100);
@@ -22,8 +23,13 @@ export let hovered_purpleair_id = writable("");
 export let selected_purpleair_ids = writable([]);
 export let unselected_purpleair_id = writable("");
 
+export let hovered_clarity_id = writable("");
+export let selected_clarity_ids = writable([]);
+export let unselected_clarity_id = writable("");
+
 export let map_update_needed = writable(false);
 
 export let use_hovered_purpleair = writable(false);
+export let use_hovered_clarity = writable(false);
 
 export let current_slide = writable("all");

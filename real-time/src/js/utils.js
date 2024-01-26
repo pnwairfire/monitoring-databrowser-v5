@@ -8,7 +8,8 @@ export function replaceWindowHistory(
   centerlon = "",
   zoom = "",
   monitors = "",
-  purpleair = ""
+  purpleair = "",
+  clarity = ""
 ) {
   let base = window.location.origin + window.location.pathname;
 
@@ -32,6 +33,10 @@ export function replaceWindowHistory(
     purpleair = "purpleair=" + purpleair.reduce((a, o) => a + "," + o);
   }
 
+  if (clarity !== "" && clarity.length > 0) {
+    clarity = "clarity=" + clarity.reduce((a, o) => a + "," + o);
+  }
+
   const url =
     base +
     "?" +
@@ -43,7 +48,9 @@ export function replaceWindowHistory(
     "&" +
     monitors +
     "&" +
-    purpleair;
+    purpleair +
+    "&" +
+    clarity;
 
   window.history.replaceState("dummy", "Monitoring v5", url);
 }

@@ -25,7 +25,7 @@ export function monitorPropertiesToIconOptions(properties) {
   return options;
 }
 
-/* ----- Sensor functions --------------------------------------------------- */
+/* ----- PurpleAir functions ------------------------------------------------ */
 
 export function purpleairCreateGeoJSON(synopticData) {
   // 'pas' synopticData
@@ -73,12 +73,29 @@ export function purpleairCreateGeoJSON(synopticData) {
 }
 
 // Icon style
-export function sensorPropertiesToIconOptions(properties, shape = "square") {
+export function purpleairPropertiesToIconOptions(properties) {
   const options = {
     radius: 4,
-    shape: shape,
+    shape: "square",
     fillColor:
       properties.latency > 4 ? "#bbb" : pm25ToColor(properties.epa_nowcast),
+    color: "#000",
+    weight: 1,
+    opacity: 0.2,
+    fillOpacity: 0.6,
+  };
+  return options;
+}
+
+/* ----- Clarity functions -------------------------------------------------- */
+
+// Icon style
+export function clarityPropertiesToIconOptions(properties) {
+  const latency = parseInt(properties["last_latency"]);
+  const options = {
+    radius: 4,
+    shape: "diamond",
+    fillColor: latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"]),
     color: "#000",
     weight: 1,
     opacity: 0.2,
