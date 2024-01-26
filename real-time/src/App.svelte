@@ -9,12 +9,14 @@
 		error_message,
 		monitorCount,
 		purpleairCount,
+		clarityCount,
 		centerLon,
     centerLat,
     zoom,
 		hovered_monitor_id,
 		selected_monitor_ids,
 		selected_purpleair_ids,
+		selected_clarity_ids,
 		current_slide,
 	} from './stores/gui-store.js';
 
@@ -110,7 +112,7 @@
 	{:then}
 
 		<p class="status">
-			Showing {$monitorCount} monitors and {$purpleairCount} PurpleAirs.
+			Showing {$monitorCount} monitors, {$purpleairCount} PurpleAir and {$clarityCount} Clarity sensors.
 		</p>
 
 		<div >
@@ -197,6 +199,43 @@
 							<DiurnalPlot element_id="purpleair_row{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
 						{/if}
 						<SlideAdvance element_id="purpleair_row{i}_SlideAdvance"/>
+					</div>
+				</div>
+
+		{/each}
+
+		<hr>
+
+		<div class="flex-row">
+			<span class="selected-devices">Selected Clarity Sensors:</span>
+			<span class="selected-devices-count">{$selected_clarity_ids.length} sensors</span>
+		</div>
+
+		<hr>
+
+		{#each $selected_clarity_ids as id, i}
+
+			<div class="flex-row">
+				<RemoveRowButton id={id} deviceType="clarity"/>
+				<MetadataBox element_id="clarity_row{i}_metadata" width="300px" height="200px" id={id} deviceType="clarity"/>
+				<div class="flex-row">
+					{#if $current_slide === "all"}
+						<div class="flex-row">
+							<MiniMap element_id="clarity_row{i}_map" width="200px" height="180px" id={id} deviceType="clarity"/>
+							<TimeseriesPlot element_id="clarity_row{i}_small_timeseries" width="200px" height="200px" id={id} size="small" deviceType="clarity"/>
+							<DailyBarplot element_id="clarity_row{i}_small_daily" width="200px" height="200px" id={id} size="small" deviceType="clarity"/>
+							<DiurnalPlot element_id="clarity_row{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="clarity"/>
+						</div>
+						{:else if $current_slide === "timeseries"}
+							<TimeseriesPlot element_id="clarity_row{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
+						{:else if $current_slide === "hourly"}
+							<HourlyBarplot element_id="clarity_row{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
+						{:else if $current_slide === "daily"}
+							<DailyBarplot element_id="clarity_row{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
+						{:else if $current_slide === "diurnal"}
+							<DiurnalPlot element_id="clarity_row{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
+						{/if}
+						<SlideAdvance element_id="clarity_row{i}_SlideAdvance"/>
 					</div>
 				</div>
 

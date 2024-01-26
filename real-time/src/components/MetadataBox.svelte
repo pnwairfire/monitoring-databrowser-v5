@@ -9,6 +9,7 @@ export let deviceType = 'monitor';
 // Svelte stores
 import { all_monitors } from '../stores/monitor-data-store.js';
 import { pas } from '../stores/purpleair-data-store.js';
+import { clarity, clarity_geojson } from '../stores/clarity-data-store.js';
 
 // Make these statements reactive
 // $: location_report_url = 'https://tools.airfire.org/location/report?monitorid=' + id;
@@ -68,6 +69,38 @@ function purpleairIdToCurrentStatus(id, deviceType) {
   return(currentStatus);
 
 }
+
+function clarityIdToCurrentStatus(id) {
+
+// "deviceDeploymentID":"9q5c59fnh9_clarity.DVVTD9746"
+// "AQSID":null
+// "fullAQSID":null
+// "deploymentType":null
+// "locationName":"DVVTD9746"
+// "timezone":"America/Los_Angeles"
+// "dataIngestSource":"Clarity"
+// "dataIngestUnitID":"DVVTD9746"
+// "currentStatus_processingTime":"2024-01-26 22:07:35"
+// "last_validTime":"2024-01-26 21:00:00",
+// "last_validLocalTimestamp":"2024-01-26 13:00:00 PST"
+// "last_nowcast":" 5.0"
+// "last_PM2.5":"  4.5"
+// "last_latency":"  1"
+// "yesterday_PM2.5_avg":" 3.5"
+
+  let dataIngestSource = "Clarity";
+
+  let features = $clarity_geojson.features;
+
+  let currentStatus;
+  features.forEach(o => {
+    if ( o.properties.deviceDeploymentID === id ) currentStatus = o.properties;
+  });
+
+  return(currentStatus);
+
+}
+
 </script>
 
 <!-- Note that sizing needs to be included as part of the element style. -->
@@ -99,9 +132,6 @@ function purpleairIdToCurrentStatus(id, deviceType) {
 
     <span class="bold">PurpleAir {id}</span><br>
 
-    <!-- Location Report currently fails with: Error in UseMethod("as_s2_geography")
-    <a class="location-report" target="_blank" rel=noreferrer href="{create_location_report_url(id)}">Location Report</a><br>
-    -->
     <br>
     Elevation:&nbsp;&nbsp;NA<br>
     ID:&nbsp;&nbsp;{id}<br>
@@ -109,8 +139,20 @@ function purpleairIdToCurrentStatus(id, deviceType) {
     Source:&nbsp;&nbsp;PurpleAir
     <br>
     Deployment type:&nbsp;&nbsp;Low Cost Sensor<br>
-    <!-- Contains data through {$all_monitors.getMetadata(id, 'last_validTime')}<br> TODO:  Need to keep a list/dict of monitor properties found in .geojson -->
     Timezone:&nbsp;&nbsp;{purpleairIdToCurrentStatus(id, deviceType)['timezone']}<br>
+
+  {:else if deviceType === "clarity"}
+
+    <span class="bold">Clarity {clarityIdToCurrentStatus(id)['dataIngestUnitID']}</span><br>
+
+    <br>
+    Elevation:&nbsp;&nbsp;NA<br>
+    ID:&nbsp;&nbsp;{id}<br>
+    AQSID:&nbsp;&nbsp;none<br>
+    Source:&nbsp;&nbsp;Clarity
+    <br>
+    Deployment type:&nbsp;&nbsp;Low Cost Sensor<br>
+    Timezone:&nbsp;&nbsp;{clarityIdToCurrentStatus(id)['timezone']}<br>
 
   {/if}
 

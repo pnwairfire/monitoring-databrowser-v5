@@ -54,6 +54,9 @@ export const clarity = asyncReadable(
       "clarity_PM2.5_latest",
       "https://airfire-data-exports.s3.us-west-2.amazonaws.com/sensors/v3/PM2.5/latest/data"
     );
+    // Reduce to the last 168 hours to match PurpleAir data
+    monitor.data = monitor.data.slice(-168);
+    clarityCount.set(monitor.count());
     let end = Date.now();
     let elapsed = (end - start) / 1000;
     let rounded = Math.round(10 * elapsed) / 10;

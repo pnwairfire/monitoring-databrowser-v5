@@ -116,12 +116,6 @@ function clarityIdToCurrentStatus(id) {
     if ( o.properties.deviceDeploymentID === id ) currentStatus = o.properties;
   });
 
-  // TODO: Handle currentStatus === undefined
-
-  // if (dataIngestSource === "AirNow") {
-  //   currentStatus.dataIngestUnitID = currentStatus.AQSID;
-  // }
-
   return(currentStatus);
 
 }
