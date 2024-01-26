@@ -12,10 +12,10 @@ import {
   airsis_geojson,
   wrcc_geojson,
 } from '../stores/monitor-data-store.js';
-// sensor-data-store
+// purpleair-data-store
 import {
   pas,
-} from '../stores/sensor-data-store.js';
+} from '../stores/purpleair-data-store.js';
 // gui-store
 import {
   hovered_monitor_id,

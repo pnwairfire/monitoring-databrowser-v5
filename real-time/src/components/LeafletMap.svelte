@@ -14,7 +14,7 @@
     wrcc_geojson,
   } from '../stores/monitor-data-store.js';
 
-  import { pas, patCart } from '../stores/sensor-data-store.js';
+  import { pas, patCart } from '../stores/purpleair-data-store.js';
 
   import {
     centerLat,
@@ -253,8 +253,8 @@
         console.log("pat id: " + id + " is already loaded.");
       } else {
         console.log("Downloading sensor data for id = " + id);
-        let sensorData = await getPurpleAirData(id);
-        const pa_object = { id: id, data: sensorData };
+        let purpleairData = await getPurpleAirData(id);
+        const pa_object = { id: id, data: purpleairData };
         patCart.addItem(pa_object);
       }
       console.log("patCart.count = " + $patCart.count);

@@ -11,7 +11,7 @@
 // npm install @square/svelte-store --save
 import { asyncReadable, writable } from "@square/svelte-store";
 
-import { error_message, sensorCount } from "./gui-store.js";
+import { error_message, purpleairCount } from "./gui-store.js";
 
 // npm install papaparse
 import Papa from "papaparse";
@@ -37,7 +37,7 @@ export const pas = asyncReadable(
       console.log(results.error[0]);
       return [];
     } else {
-      sensorCount.set(results.data.length);
+      purpleairCount.set(results.data.length);
       return results.data;
     }
   },

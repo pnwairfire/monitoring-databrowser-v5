@@ -11,7 +11,7 @@ export let deviceType = 'monitor';
 import { afterUpdate, onDestroy } from 'svelte';
 // Svelte stores
 import { all_monitors } from '../stores/monitor-data-store.js';
-import { pas } from '../stores/sensor-data-store.js';
+import { pas } from '../stores/purpleair-data-store.js';
 
 // We need these variables to live on after an individual chart is destroyed
 let map;

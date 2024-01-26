@@ -12,7 +12,7 @@
 
   // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-  import { pas, patCart } from '../stores/sensor-data-store.js';
+  import { pas, patCart } from '../stores/purpleair-data-store.js';
 
   // Highcharts for plotting
   import Highcharts from 'highcharts';
@@ -65,16 +65,16 @@
 
         // Get a copy of the reactive data
         const index = $patCart.items.findIndex((item) => item.id === id);
-        let sensorData = $patCart.items[index].data;
+        let purpleairData = $patCart.items[index].data;
         // epa_pm25,epa_nowcast,local_ts
         // 9.1,9.9,2023-07-05 12:00:00-0700
 
         let site = $pas.filter(o => o.sensor_index == id)[0];
 
         plotData = {
-          datetime: sensorData.map((o) => new Date(o.local_ts)),
-          pm25: sensorData.map((o) => o.epa_pm25),
-          nowcast: sensorData.map((o) => o.epa_nowcast),
+          datetime: purpleairData.map((o) => new Date(o.local_ts)),
+          pm25: purpleairData.map((o) => o.epa_pm25),
+          nowcast: purpleairData.map((o) => o.epa_nowcast),
           locationName: "PurpleAir " + id,
           timezone: site.timezone,
           title: undefined // use default title

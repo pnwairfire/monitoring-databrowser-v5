@@ -11,7 +11,7 @@
 
   // Svelte stores
   import { all_monitors } from '../stores/monitor-data-store.js';
-   import { pas } from '../stores/sensor-data-store.js';
+   import { pas } from '../stores/purpleair-data-store.js';
   import {
     hovered_monitor_id,
     hovered_sensor_id,
@@ -77,7 +77,7 @@
         try {
           // NOTE:  Data isn't loaded until a sensor is selected. So we load it
           // NOTE:  every time for the hovered plot.
-          let sensorData = await getPurpleAirData(id);
+          let purpleairData = await getPurpleAirData(id);
 
           // epa_pm25,epa_nowcast,local_ts
           // 9.1,9.9,2023-07-05 12:00:00-0700
@@ -85,9 +85,9 @@
           let site = $pas.filter(o => o.sensor_index == id)[0];
           let timezone = site.timezone;
           plotData = {
-            datetime: sensorData.map((o) => new Date(o.local_ts)),
-            pm25: sensorData.map((o) => o.epa_pm25),
-            nowcast: sensorData.map((o) => o.epa_nowcast),
+            datetime: purpleairData.map((o) => new Date(o.local_ts)),
+            pm25: purpleairData.map((o) => o.epa_pm25),
+            nowcast: purpleairData.map((o) => o.epa_nowcast),
             locationName: "PurpleAir " + id,
             timezone: timezone,
             title: undefined // use default title

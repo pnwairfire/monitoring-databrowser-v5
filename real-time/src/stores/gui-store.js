@@ -6,7 +6,7 @@ export const VERSION = readable("5.1.6");
 // Status messages
 export let error_message = writable("");
 export let monitorCount = writable(0);
-export let sensorCount = writable(0);
+export let purpleairCount = writable(0);
 
 // GUI state for the leaflet map
 export let centerLon = writable(-100);
