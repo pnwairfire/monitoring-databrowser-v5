@@ -18,7 +18,7 @@ import Papa from "papaparse";
 
 // ----- geojson ---------------------------------------------------------------
 
-// Reloadable sensor metadata
+// Reloadable purpleair metadata
 export const pas = asyncReadable(
   {},
   async () => {

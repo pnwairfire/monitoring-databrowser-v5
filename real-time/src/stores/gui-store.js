@@ -19,8 +19,8 @@ export let selected_monitor_ids = writable([]);
 export let unselected_monitor_id = writable("");
 
 export let hovered_sensor_id = writable("");
-export let selected_sensor_ids = writable([]);
-export let unselected_sensor_id = writable("");
+export let selected_purpleair_ids = writable([]);
+export let unselected_purpleair_id = writable("");
 
 export let map_update_needed = writable(false);
 

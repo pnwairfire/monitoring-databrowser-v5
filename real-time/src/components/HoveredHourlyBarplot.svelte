@@ -29,7 +29,7 @@
   } from "air-monitor-plots";
 
   // Asynchronous sensor data access
-  import { getPurpleAirData } from '../js/utils-sensor.js';
+  import { getPurpleAirData } from '../js/utils-purpleair.js';
 
   // Good examples to learn from:
   //   https://www.youtube.com/watch?v=s7rk2b1ioVE

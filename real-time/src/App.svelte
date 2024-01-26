@@ -13,7 +13,7 @@
     zoom,
 		hovered_monitor_id,
 		selected_monitor_ids,
-		selected_sensor_ids,
+		selected_purpleair_ids,
 		current_slide,
 	} from './stores/gui-store.js';
 
@@ -33,7 +33,7 @@
 	import SlideAdvance from "./components/SlideAdvance.svelte";
 
   // Utility functions
-  import { getPurpleAirData } from './js/utils-sensor.js';
+  import { getPurpleAirData } from './js/utils-purpleair.js';
   import { createDataServiceUrl } from './js/utils.js';
 
 	// Initialize the leaflet map from URL parameters
@@ -51,7 +51,7 @@
 	  $selected_monitor_ids = urlParams.get('monitors').split(',');
 	}
 
-	async function loadSensorData(sensor_ids) {
+	async function loadPurpleAirData(sensor_ids) {
 		for (let i = 0; i < sensor_ids.length; i++) {
 			let id = sensor_ids[i];
       // Load pat data
@@ -65,17 +65,17 @@
         patCart.addItem(pa_object);
       }
       console.log("patCart.count = " + $patCart.count);
-      // Now update selected_sensor_ids
-      const ids = $selected_sensor_ids;
+      // Now update selected_purpleair_ids
+      const ids = $selected_purpleair_ids;
       const length = ids.unshift(id);
-      $selected_sensor_ids = ids;
+      $selected_purpleair_ids = ids;
 		}
 	}
 
-  if ( urlParams.has('sensors') ) {
+  if ( urlParams.has('pa_sensors') ) {
     pas.load().then(function(synopticData) {
-			let sensor_ids = urlParams.get('sensors').split(',');
-		  loadSensorData(sensor_ids);
+			let purpleair_ids = urlParams.get('pa_sensors').split(',');
+		  loadPurpleAirData(purpleair_ids);
 		});
 	}
 
@@ -109,7 +109,7 @@
 	{:then}
 
 		<p class="status">
-			Showing {$monitorCount} monitors and {$purpleairCount} sensors.
+			Showing {$monitorCount} monitors and {$purpleairCount} PurpleAirs.
 		</p>
 
 		<div >
@@ -167,13 +167,13 @@
 		<hr>
 
 		<div class="flex-row">
-			<span class="selected-devices">Selected Sensors:</span>
-			<span class="selected-devices-count">{$selected_sensor_ids.length} sensors</span>
+			<span class="selected-devices">Selected PurpleAir Sensors:</span>
+			<span class="selected-devices-count">{$selected_purpleair_ids.length} sensors</span>
 		</div>
 
 		<hr>
 
-		{#each $selected_sensor_ids as id, i}
+		{#each $selected_purpleair_ids as id, i}
 
 			<div class="flex-row">
 				<RemoveRowButton id={id} deviceType="sensor"/>

@@ -23,9 +23,9 @@
     hovered_monitor_id,
     hovered_sensor_id,
     selected_monitor_ids,
-    selected_sensor_ids,
+    selected_purpleair_ids,
     unselected_monitor_id,
-    unselected_sensor_id,
+    unselected_purpleair_id,
     use_hovered_sensor,
     current_slide,
   } from '../stores/gui-store.js';
@@ -45,7 +45,7 @@
   } from '../js/utils-map.js';
 
   // Utility functions
-  import { getPurpleAirData } from '../js/utils-sensor.js';
+  import { getPurpleAirData } from '../js/utils-purpleair.js';
   import { replaceWindowHistory } from '../js/utils.js';
 
   // TODO:  Status text could say how old the map data is.
@@ -95,7 +95,7 @@
       createMonitorLayer(geojsonData).addTo(map);
     });
 
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
 
     // ----- Add event listeners to the map ------------------------------------
 
@@ -108,13 +108,13 @@
     map.on("moveend", function() {
       $centerLat = map.getCenter().lat;
       $centerLon = map.getCenter().lng;
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
     })
 
     // Update browser URL when zooming
     map.on("zoomend", function() {
       $zoom = map.getZoom();
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
     })
 
     // Ensure "hovered" plot is not shown after leaving the map
@@ -196,7 +196,7 @@
       $selected_monitor_ids = ids;
       e.target.setStyle({weight: 1});
     }
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
   }
 
   /* ----- Sensor functions ------------------------------------------------- */
@@ -211,7 +211,7 @@
           // https://stackoverflow.com/questions/34322864/finding-a-specific-layer-in-a-leaflet-layergroup-where-layers-are-polygons
           marker.id = feature.properties.deviceDeploymentID.toString();
           // // //marker.setStyle({"zIndexOffset": feature.properties.last_nowcast * 10})
-          if ($selected_sensor_ids.find(o => o === marker.id)) {
+          if ($selected_purpleair_ids.find(o => o === marker.id)) {
             marker.setStyle({opacity: 1.0, weight: 2});
           } else {
             marker.setStyle({opacity: 0.2, weight: 1});
@@ -243,7 +243,7 @@
   async function sensorIconClick(e) {
     const feature = e.target.feature;
     const id = feature.properties.deviceDeploymentID;
-    const found = $selected_sensor_ids.find((o) => o == id);
+    const found = $selected_purpleair_ids.find((o) => o == id);
 
     if (!found) {
 
@@ -258,24 +258,24 @@
         patCart.addItem(pa_object);
       }
       console.log("patCart.count = " + $patCart.count);
-      // Now update selected_sensor_ids
-      const ids = $selected_sensor_ids;
+      // Now update selected_purpleair_ids
+      const ids = $selected_purpleair_ids;
       const length = ids.unshift(id);
-      $selected_sensor_ids = ids;
+      $selected_purpleair_ids = ids;
       e.target.setStyle({opacity: 1.0, weight: 2});
 
     } else {
 
       // TODO:  Should we unload pat data?
-      const ids = $selected_sensor_ids;
+      const ids = $selected_purpleair_ids;
       const index = ids.indexOf(id);
       const removedItem = ids.splice(index, 1);
-      $selected_sensor_ids = ids;
+      $selected_purpleair_ids = ids;
       e.target.setStyle({opacity: 0.2, weight: 1});
 
     }
 
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
 
   }
 
@@ -291,20 +291,20 @@
         }
       }
     })
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
   }
 
   // Watcher for map-external sensor deselect events
-  $: if ($unselected_sensor_id !== "") {
+  $: if ($unselected_purpleair_id !== "") {
     map.eachLayer(function(layer) {
       if (layer instanceof L.ShapeMarker) {
-        if (layer.id == $unselected_sensor_id) {
+        if (layer.id == $unselected_purpleair_id) {
           layer.setStyle({opacity: 0.2, weight: 1});
-          $unselected_sensor_id = "";
+          $unselected_purpleair_id = "";
         }
       }
     })
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_sensor_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
   }
 
 </script>

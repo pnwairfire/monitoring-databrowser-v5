@@ -8,7 +8,7 @@ export function replaceWindowHistory(
   centerlon = "",
   zoom = "",
   monitors = "",
-  sensors = ""
+  pa_sensors = ""
 ) {
   let base = window.location.origin + window.location.pathname;
 
@@ -28,8 +28,8 @@ export function replaceWindowHistory(
     monitors = "monitors=" + monitors.reduce((a, o) => a + "," + o);
   }
 
-  if (sensors !== "" && sensors.length > 0) {
-    sensors = "sensors=" + sensors.reduce((a, o) => a + "," + o);
+  if (pa_sensors !== "" && pa_sensors.length > 0) {
+    pa_sensors = "pa_sensors=" + pa_sensors.reduce((a, o) => a + "," + o);
   }
 
   const url =
@@ -43,7 +43,7 @@ export function replaceWindowHistory(
     "&" +
     monitors +
     "&" +
-    sensors;
+    pa_sensors;
 
   window.history.replaceState("dummy", "Monitoring v5", url);
 }
