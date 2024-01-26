@@ -36,7 +36,7 @@ function create_location_report_url(id) {
   let url;
   if ( deviceType === "monitor" ) {
     url = baseUrl + "report?monitorid=" + id;
-  } else if ( deviceType === 'sensor' ) {
+  } else if ( deviceType === "purpleair" ) {
     let currentStatus = sensorIdToCurrentStatus(id);
     url = baseUrl + "report?longitude=" + currentStatus.longitude + "&latitude=" + currentStatus.latitude;
   } else {
@@ -89,7 +89,7 @@ function sensorIdToCurrentStatus(id) {
     <!-- Contains data through {$all_monitors.getMetadata(id, 'last_validTime')}<br> TODO:  Need to keep a list/dict of monitor properties found in .geojson -->
     Timezone:&nbsp;&nbsp;{$all_monitors.getMetadata(id, 'timezone')}<br>
 
-  {:else if deviceType === 'sensor'}
+  {:else if deviceType === "purpleair"}
 
     <span class="bold">PurpleAir {id}</span><br>
 

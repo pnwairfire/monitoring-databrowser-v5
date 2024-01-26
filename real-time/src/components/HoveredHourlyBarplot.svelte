@@ -14,8 +14,8 @@
    import { pas } from '../stores/purpleair-data-store.js';
   import {
     hovered_monitor_id,
-    hovered_sensor_id,
-    use_hovered_sensor
+    hovered_purpleair_id,
+    use_hovered_purpleair
   } from '../stores/gui-store.js';
 
   // Highcharts for plotting
@@ -60,8 +60,8 @@
     // For r0_hourly, show the hovered_monitor_id
     if ( element_id === "hovered_hourly" ) {
       id = $hovered_monitor_id;
-      if ( $use_hovered_sensor ) {
-        id = $hovered_sensor_id;
+      if ( $use_hovered_purpleair ) {
+        id = $hovered_purpleair_id;
       }
     }
 
@@ -70,7 +70,7 @@
       // Assemble required plot data
       let plotData;
 
-      if ( $use_hovered_sensor ) {
+      if ( $use_hovered_purpleair ) {
 
         // NOTE:  When moving quickly, sensor data cannot be downloaded quickly
         // NOTE:  enough and generates errors here.

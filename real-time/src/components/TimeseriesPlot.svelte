@@ -61,7 +61,7 @@
           title: undefined // use default title
         }
 
-      } else if ( deviceType === "sensor" ) {
+      } else if ( deviceType === "purpleair" ) {
 
         // Get a copy of the reactive data
         const index = $patCart.items.findIndex((item) => item.id === id);

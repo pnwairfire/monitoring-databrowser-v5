@@ -27,7 +27,7 @@ export function monitorPropertiesToIconOptions(properties) {
 
 /* ----- Sensor functions --------------------------------------------------- */
 
-export function sensorCreateGeoJSON(synopticData) {
+export function purpleairCreateGeoJSON(synopticData) {
   // 'pas' synopticData
   //
   // epa_nowcast: 7.7

@@ -19,7 +19,7 @@ import {
 // gui-store
 import {
   hovered_monitor_id,
-  hovered_sensor_id,
+  hovered_purpleair_id,
 } from '../stores/gui-store.js';
 
 function monitorIdToCurrentStatus(id) {
@@ -124,25 +124,25 @@ function sensorIdToCurrentStatus(id) {
         </tr>
       </tbody>
     </table>
-  {:else if $hovered_sensor_id !== "" }
+  {:else if $hovered_purpleair_id !== "" }
     <table>
       <thead>
         <th colspan="2">
-          <span class="bold">PurpleAir {$hovered_sensor_id}</span><br>
+          <span class="bold">PurpleAir {$hovered_purpleair_id}</span><br>
         </th>
       </thead>
       <tbody>
         <tr>
           <td>Latency</td>
-          <td>{sensorIdToCurrentStatus($hovered_sensor_id)['last_latency']} hrs</td>
+          <td>{sensorIdToCurrentStatus($hovered_purpleair_id)['last_latency']} hrs</td>
         </tr>
         <tr>
           <td>Latest Nowcast</td>
-          <td>{sensorIdToCurrentStatus($hovered_sensor_id)['epa_nowcast']} &#xb5;g/m&#xb3;</td>
+          <td>{sensorIdToCurrentStatus($hovered_purpleair_id)['epa_nowcast']} &#xb5;g/m&#xb3;</td>
         </tr>
         <tr>
           <td>Latest PM2.5</td>
-          <td>{sensorIdToCurrentStatus($hovered_sensor_id)['epa_pm25']} &#xb5;g/m&#xb3;</td>
+          <td>{sensorIdToCurrentStatus($hovered_purpleair_id)['epa_pm25']} &#xb5;g/m&#xb3;</td>
         </tr>
       </tbody>
     </table>

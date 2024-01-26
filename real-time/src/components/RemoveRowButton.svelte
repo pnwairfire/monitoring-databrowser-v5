@@ -19,7 +19,7 @@
       ids.splice(index, 1);
       $selected_monitor_ids = ids;
       $unselected_monitor_id = id;
-    } else if ( deviceType === 'sensor') {
+    } else if ( deviceType === "purpleair") {
       let ids = $selected_purpleair_ids;
       let index = ids.indexOf(id)
       ids.splice(index, 1);

@@ -21,12 +21,12 @@
     centerLon,
     zoom,
     hovered_monitor_id,
-    hovered_sensor_id,
+    hovered_purpleair_id,
     selected_monitor_ids,
     selected_purpleair_ids,
     unselected_monitor_id,
     unselected_purpleair_id,
-    use_hovered_sensor,
+    use_hovered_purpleair,
     current_slide,
   } from '../stores/gui-store.js';
 
@@ -40,7 +40,7 @@
   // Plotting helper functions
   import {
     monitorPropertiesToIconOptions,
-    sensorCreateGeoJSON,
+    purpleairCreateGeoJSON,
     sensorPropertiesToIconOptions,
   } from '../js/utils-map.js';
 
@@ -78,8 +78,8 @@
 
     // Add sensors to the map, always at the bottom of the layer stack
     pas.load().then(function(synopticData) {
-      let geojsonData = sensorCreateGeoJSON(synopticData);
-      createSensorLayer(geojsonData).bringToBack().addTo(map);
+      let geojsonData = purpleairCreateGeoJSON(synopticData);
+      createPurpleAirLayer(geojsonData).bringToBack().addTo(map);
     });
 
     // Add monitors to the map
@@ -120,8 +120,8 @@
     // Ensure "hovered" plot is not shown after leaving the map
     map.on('mouseout', function () {
       $hovered_monitor_id = "";
-      $hovered_sensor_id = "";
-      $use_hovered_sensor = false;
+      $hovered_purpleair_id = "";
+      $use_hovered_purpleair = false;
     });
 
   }
@@ -165,7 +165,7 @@
       // Icon behavior
       onEachFeature: function (feature, layer) {
         layer.on('mouseover', function (e) {
-          $use_hovered_sensor = false;
+          $use_hovered_purpleair = false;
           $hovered_monitor_id = feature.properties.deviceDeploymentID;
         });
         layer.on('mouseout', function (e) {
@@ -201,7 +201,7 @@
 
   /* ----- Sensor functions ------------------------------------------------- */
 
-  function createSensorLayer(geojson) {
+  function createPurpleAirLayer(geojson) {
     var this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
@@ -223,15 +223,15 @@
       // Icon behavior
       onEachFeature: function (feature, layer) {
         layer.on('mouseover', function (e) {
-          $hovered_sensor_id = feature.properties.deviceDeploymentID;
-          $use_hovered_sensor = true;
+          $hovered_purpleair_id = feature.properties.deviceDeploymentID;
+          $use_hovered_purpleair = true;
         });
         layer.on('mouseout', function (e) {
-          $hovered_sensor_id = "";
-          $use_hovered_sensor = false;
+          $hovered_purpleair_id = "";
+          $use_hovered_purpleair = false;
         });
         layer.on('click', function (e) {
-          // $use_hovered_sensor = true;
+          // $use_hovered_purpleair = true;
           sensorIconClick(e);
         });
       }

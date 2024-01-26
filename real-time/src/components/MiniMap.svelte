@@ -29,7 +29,7 @@ async function createMap() {
       $all_monitors.getMetadata(id, 'longitude')
     ];
 
-  } else if (deviceType === 'sensor') {
+  } else if (deviceType === "purpleair") {
 
     let site = $pas.filter(o => o.sensor_index == id)[0]
     latLng = [
