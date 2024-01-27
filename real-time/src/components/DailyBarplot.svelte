@@ -13,6 +13,7 @@
   // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
   import { pas, patCart } from '../stores/purpleair-data-store.js';
+  import { clarity } from '../stores/clarity-data-store.js';
 
   // Highcharts for plotting
   import Highcharts from 'highcharts';
@@ -91,6 +92,21 @@
           timezone: site.timezone,
           title: undefined // use default title
         };
+
+      } else if ( deviceType === "clarity" ) {
+
+        // Special method to get an object containing daily averages
+        const daily = $clarity.getDailyStats(id);
+
+        // Assemble required plot data
+        plotData = {
+          daily_datetime: daily.datetime,
+          daily_mean: daily.mean,
+          daily_nowcast: undefined, // not required
+          locationName: $clarity.getMetadata(id, 'locationName'),
+          timezone: $clarity.getMetadata(id, 'timezone'),
+          title: undefined // use default title
+        }
 
       }
 

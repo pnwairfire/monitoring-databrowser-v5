@@ -17,7 +17,7 @@ import Monitor from "air-monitor";
 // npm install @square/svelte-store --save
 import { asyncReadable, derived, writable } from "@square/svelte-store";
 
-import { error_message, monitorCount } from "./gui-store.js";
+import { error_message, clarityCount } from "./gui-store.js";
 
 export const clarityLoadTime = writable(1000);
 

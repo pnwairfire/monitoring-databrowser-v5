@@ -13,6 +13,7 @@
   // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
   import { pas, patCart } from '../stores/purpleair-data-store.js';
+  import { clarity } from '../stores/clarity-data-store.js';
 
   // Highcharts for plotting
   import Highcharts from 'highcharts';
@@ -77,6 +78,18 @@
           nowcast: purpleairData.map((o) => o.epa_nowcast),
           locationName: "PurpleAir " + id,
           timezone: site.timezone,
+          title: undefined // use default title
+        };
+
+      } else if ( deviceType === "clarity" ) {
+
+        // Assemble required plot data
+        plotData = {
+          datetime: $clarity.getDatetime(),
+          pm25: $clarity.getPM25(id),
+          nowcast: $clarity.getNowcast(id),
+          locationName: $clarity.getMetadata(id, 'locationName'),
+          timezone: $clarity.getMetadata(id, 'timezone'),
           title: undefined // use default title
         };
 

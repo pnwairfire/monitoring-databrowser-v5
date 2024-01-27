@@ -12,6 +12,7 @@ import { afterUpdate, onDestroy } from 'svelte';
 // Svelte stores
 import { all_monitors } from '../stores/monitor-data-store.js';
 import { pas } from '../stores/purpleair-data-store.js';
+import { clarity } from '../stores/clarity-data-store.js';
 
 // We need these variables to live on after an individual chart is destroyed
 let map;
@@ -35,6 +36,13 @@ async function createMap() {
     latLng = [
       site.latitude,
       site.longitude
+    ];
+
+  } else if (deviceType === "clarity") {
+
+    latLng = [
+      $clarity.getMetadata(id, 'latitude'),
+      $clarity.getMetadata(id, 'longitude')
     ];
 
   }

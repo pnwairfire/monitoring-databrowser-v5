@@ -8,8 +8,10 @@
   import {
     selected_monitor_ids,
     selected_purpleair_ids,
+    selected_clarity_ids,
     unselected_monitor_id,
     unselected_purpleair_id,
+    unselected_clarity_id,
   } from '../stores/gui-store.js';
 
   function removeRow(id) {
@@ -25,6 +27,12 @@
       ids.splice(index, 1);
       $selected_purpleair_ids = ids;
       $unselected_purpleair_id = id;
+    } else if ( deviceType === "clarity") {
+      let ids = $selected_clarity_ids;
+      let index = ids.indexOf(id)
+      ids.splice(index, 1);
+      $selected_clarity_ids = ids;
+      $unselected_clarity_id = id;
     }
 
   }
