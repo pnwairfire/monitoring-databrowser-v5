@@ -7,6 +7,8 @@ import Papa from "papaparse";
 
 import { pm25ToColor } from "air-monitor-plots";
 
+// NOTE:  NAAQS parameter ("PM2.5" or "PM2.5_2024") is hardcoded in each function
+
 /* ----- Monitor functions -------------------------------------------------- */
 
 // Icon style
@@ -16,7 +18,8 @@ export function monitorPropertiesToIconOptions(properties) {
     radius: properties["deploymentType"] == "Temporary" ? 7 : 8,
     shape:
       properties["deploymentType"] == "Temporary" ? "triangle-up" : "circle",
-    fillColor: latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"]),
+    fillColor:
+      latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"], "PM2.5"),
     color: "#000",
     weight: 1,
     opacity: 1,
@@ -78,7 +81,9 @@ export function purpleairPropertiesToIconOptions(properties) {
     radius: 4,
     shape: "square",
     fillColor:
-      properties.latency > 4 ? "#bbb" : pm25ToColor(properties.epa_nowcast),
+      properties.latency > 4
+        ? "#bbb"
+        : pm25ToColor(properties.epa_nowcast, "PM2.5"),
     color: "#000",
     weight: 1,
     opacity: 0.2,
@@ -95,7 +100,8 @@ export function clarityPropertiesToIconOptions(properties) {
   const options = {
     radius: 4,
     shape: "diamond",
-    fillColor: latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"]),
+    fillColor:
+      latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"], "PM2.5"),
     color: "#000",
     weight: 1,
     opacity: 0.2,
