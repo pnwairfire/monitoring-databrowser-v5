@@ -136,15 +136,7 @@ function clarityIdToCurrentStatus(id) {
       </thead>
       <tbody>
         <tr>
-          <td width="50%">Elevation</td>
-          <td>{Math.round($all_monitors.getMetadata($hovered_monitor_id, 'elevation'))} m</td>
-        </tr>
-        <tr>
-          <td width="40%">{$all_monitors.getMetadata($hovered_monitor_id, 'dataIngestSource')} ID</td>
-          <td>{monitorIdToCurrentStatus($hovered_monitor_id)['dataIngestUnitID']}</td>
-        </tr>
-        <tr>
-          <td>Latency</td>
+          <td width="50%">Latency</td>
           <td>{monitorIdToCurrentStatus($hovered_monitor_id)['last_latency']} hrs</td>
         </tr>
         <tr>
@@ -154,6 +146,14 @@ function clarityIdToCurrentStatus(id) {
         <tr>
           <td>Yesterday 24hr Avg:</td>
           <td>{monitorIdToCurrentStatus($hovered_monitor_id)['yesterday_PM2.5_avg']} &#xb5;g/m&#xb3;</td>
+        </tr>
+        <tr>
+          <td>Elevation</td>
+          <td>{Math.round($all_monitors.getMetadata($hovered_monitor_id, 'elevation'))} m</td>
+        </tr>
+        <tr>
+          <td>{$all_monitors.getMetadata($hovered_monitor_id, 'dataIngestSource')} ID</td>
+          <td>{monitorIdToCurrentStatus($hovered_monitor_id)['dataIngestUnitID']}</td>
         </tr>
       </tbody>
     </table>
@@ -166,8 +166,8 @@ function clarityIdToCurrentStatus(id) {
       </thead>
       <tbody>
         <tr>
-          <td>Latency</td>
-          <td>{purpleairIdToCurrentStatus($hovered_purpleair_id)['last_latency']} hrs</td>
+          <td width="50%">Latency</td>
+          <td width="50%">{purpleairIdToCurrentStatus($hovered_purpleair_id)['last_latency']} hrs</td>
         </tr>
         <tr>
           <td>Latest Nowcast</td>
@@ -188,8 +188,8 @@ function clarityIdToCurrentStatus(id) {
       </thead>
       <tbody>
         <tr>
-          <td>Latency</td>
-          <td>{clarityIdToCurrentStatus($hovered_clarity_id)['last_latency']} hrs</td>
+          <td width="50%">Latency</td>
+          <td width="50%">{clarityIdToCurrentStatus($hovered_clarity_id)['last_latency']} hrs</td>
         </tr>
         <tr>
           <td>Latest Nowcast</td>
@@ -205,21 +205,13 @@ function clarityIdToCurrentStatus(id) {
     <table>
       <thead>
         <th colspan="2">
-          <span class="bold">Unmonitored Location</span><br>
+          <span class="bold">Mouse over a location...</span><br>
         </th>
       </thead>
       <tbody>
         <tr>
-          <td width="50%">Elevation</td>
-          <td>NA</td>
-        </tr>
-        <tr>
-          <td width="40%">{$all_monitors.getMetadata($hovered_monitor_id, 'dataIngestSource')} ID</td>
-          <td>NA</td>
-        </tr>
-        <tr>
-          <td>Latency</td>
-          <td>NA</td>
+          <td width="50%">Latency</td>
+          <td width="50%">NA</td>
         </tr>
         <tr>
           <td>Latest Nowcast</td>
@@ -227,6 +219,14 @@ function clarityIdToCurrentStatus(id) {
         </tr>
         <tr>
           <td>Yesterday 24hr Avg:</td>
+          <td>NA</td>
+        </tr>
+        <tr>
+          <td>Elevation</td>
+          <td>NA</td>
+        </tr>
+        <tr>
+          <td>ID</td>
           <td>NA</td>
         </tr>
       </tbody>
