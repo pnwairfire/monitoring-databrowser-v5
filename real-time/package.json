@@ -21,11 +21,14 @@
     "air-monitor-plots": "github:pnwairfire/air-monitor-plots",
     "arquero": "^5.1.0",
     "esri-leaflet": "^3.0.10",
+    "geobuf": "^3.0.2",
     "highcharts": "^10.3.3",
     "leaflet": "^1.9.3",
     "leaflet-svg-shape-markers": "^1.4.0",
     "moment-timezone": "^0.5.40",
+    "pako": "^2.1.0",
     "papaparse": "^5.4.1",
+    "pbf": "^3.2.1",
     "suncalc": "^1.9.0"
   }
 }

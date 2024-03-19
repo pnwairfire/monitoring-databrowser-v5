@@ -3,6 +3,7 @@
   export let width = '400px';
   export let height = '400px';
 
+
   // Svelte methods
 	import { onMount, onDestroy } from 'svelte';
 
@@ -17,6 +18,8 @@
   import { pas, patCart } from '../stores/purpleair-data-store.js';
 
   import { clarity, clarity_geojson } from '../stores/clarity-data-store.js';
+
+  import { hms_smoke_geojson } from '../stores/hms-data-store.js';
 
   import {
     centerLat,
@@ -84,6 +87,11 @@
     // Add background tiles
     basemapLayer('Topographic').addTo(map);
 
+    // Add HMS Smoke to the map so it's on the bottom
+    hms_smoke_geojson.load().then(function(geojsonData) {
+      createHMSSmokeLayer(geojsonData).addTo(map);
+    });
+
     // Add PurpleAir sensors to the map, always at the bottom of the layer stack
     pas.load().then(function(synopticData) {
       let geojsonData = purpleairCreateGeoJSON(synopticData);
@@ -107,6 +115,7 @@
     wrcc_geojson.load().then(function(geojsonData) {
       createMonitorLayer(geojsonData).addTo(map);
     });
+
 
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
 
@@ -154,7 +163,7 @@
    * @returns
    */
   function createMonitorLayer(geojson) {
-    var this_layer = L.geoJSON(geojson, {
+    let this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
         // NOTE:  This is where I filter for Susan's JBLM research monitors -- only show non-matches
@@ -218,7 +227,7 @@
   /* ----- PurpleAir functions ---------------------------------------------- */
 
   function createPurpleAirLayer(geojson) {
-    var this_layer = L.geoJSON(geojson, {
+    let this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
         // Only show markers if the latency is less than 3 * 24 hours
@@ -302,7 +311,7 @@
    * @returns
    */
    function createClarityLayer(geojson) {
-    var this_layer = L.geoJSON(geojson, {
+    let this_layer = L.geoJSON(geojson, {
       // Icon appearance
       pointToLayer: function (feature, latlng) {
         // Only show markers if the latency is less than 3 * 24 hours
@@ -357,6 +366,27 @@
       e.target.setStyle({opacity: 0.2, weight: 1});
     }
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
+  }
+
+  /* ----- HMS functions ---------------------------------------------------- */
+
+  /**
+   * @param {geojson} geojson to be converted to a leaflet layer
+   * @returns
+   */
+   function createHMSSmokeLayer(geojson) {
+    let this_layer = L.geoJSON(geojson, {
+      style: function style(feature) {
+        return {
+            fillColor: 'gray',
+            weight: 1,
+            opacity: 0.5,
+            color: 'gray',
+            fillOpacity: 0.15
+        };
+      }
+    });
+    return this_layer;
   }
 
   /* ----- Other functions -------------------------------------------------- */
