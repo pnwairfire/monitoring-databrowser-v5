@@ -131,10 +131,12 @@
     HMSSmokeLayer.addTo(map);
     await hms_fires_geojson.load();
     HMSFiresLayer.addTo(map);
+
     await clarity_geojson.load();
     ClarityLayer.addTo(map);
     await pas.load();
     PurpleAirLayer.addTo(map);
+
     await airsis_geojson.load();
     AIRSISLayer.addTo(map);
     await wrcc_geojson.load();
