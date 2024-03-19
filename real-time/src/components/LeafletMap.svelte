@@ -88,39 +88,59 @@
     // Add background tiles
     basemapLayer('Topographic').addTo(map);
 
-    // // Add HMS Fires to the map so it's on the bottom
-    // hms_fires_geojson.load().then(function(geojsonData) {
-    //   createHMSFiresLayer(geojsonData).addTo(map);
-    // });
+    let HMSFiresLayer, HMSSmokeLayer;
+    let PurpleAirLayer, ClarityLayer;
+    let AirNowLayer, AIRSISLayer, WRCCLayer;
+
+    // Add HMS Fires to the map so it's on the bottom
+    hms_fires_geojson.load().then(function(geojsonData) {
+      HMSFiresLayer = createHMSFiresLayer(geojsonData);
+    });
 
     // Add HMS Smoke to the map before the monitor layers
     hms_smoke_geojson.load().then(function(geojsonData) {
-      createHMSSmokeLayer(geojsonData).addTo(map);
+      HMSSmokeLayer = createHMSSmokeLayer(geojsonData);
     });
 
     // Add PurpleAir sensors to the map, always at the bottom of the layer stack
     pas.load().then(function(synopticData) {
       let geojsonData = purpleairCreateGeoJSON(synopticData);
-      createPurpleAirLayer(geojsonData).bringToBack().addTo(map);
+      PurpleAirLayer = createPurpleAirLayer(geojsonData);
     });
 
     // Add Clarity sensors to the map
     clarity_geojson.load().then(function(geojsonData) {
-      createClarityLayer(geojsonData).addTo(map);
+      ClarityLayer = createClarityLayer(geojsonData);
     });
 
     // Add monitors to the map
     airnow_geojson.load().then(function(geojsonData) {
-      createMonitorLayer(geojsonData).addTo(map);
+      AirNowLayer = createMonitorLayer(geojsonData);
     });
 
     airsis_geojson.load().then(function(geojsonData) {
-      createMonitorLayer(geojsonData).addTo(map);
+      AIRSISLayer = createMonitorLayer(geojsonData);
     });
 
     wrcc_geojson.load().then(function(geojsonData) {
-      createMonitorLayer(geojsonData).addTo(map);
+      WRCCLayer = createMonitorLayer(geojsonData);
     });
+
+    // Add layers in desired order after each has loaded
+    await hms_smoke_geojson.load();
+    HMSSmokeLayer.addTo(map);
+    await hms_fires_geojson.load();
+    HMSFiresLayer.addTo(map);
+    await clarity_geojson.load();
+    ClarityLayer.addTo(map);
+    await pas.load();
+    PurpleAirLayer.addTo(map);
+    await airsis_geojson.load();
+    AIRSISLayer.addTo(map);
+    await wrcc_geojson.load();
+    WRCCLayer.addTo(map);
+    await airnow_geojson.load();
+    AirNowLayer.addTo(map);
 
 
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids, $selected_clarity_ids);
@@ -376,20 +396,21 @@
 
   /* ----- HMS functions ---------------------------------------------------- */
 
-  // /**
-  //  * @param {geojson} geojson to be converted to a leaflet layer
-  //  * @returns
-  //  */
-  //  function createHMSFiresLayer(geojson) {
-  //   let this_layer = L.geoJSON(geojson, {
-  //     // Icon appearance
-  //     pointToLayer: function (feature, latlng) {
-  //       let marker = L.shapeMarker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
-  //       return(marker);
-  //     }
-  //   });
-  //   return this_layer;
-  // }
+  /**
+   * @param {geojson} geojson to be converted to a leaflet layer
+   * @returns
+   */
+   function createHMSFiresLayer(geojson) {
+    let this_layer = L.geoJSON(geojson, {
+      // Icon appearance
+      pointToLayer: function (feature, latlng) {
+        // // //let marker = L.shapeMarker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
+        let marker = L.marker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
+        return(marker);
+      }
+    });
+    return this_layer;
+  }
 
   /**
    * @param {geojson} geojson to be converted to a leaflet layer

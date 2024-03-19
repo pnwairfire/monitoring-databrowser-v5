@@ -114,14 +114,25 @@ export function clarityPropertiesToIconOptions(properties) {
 
 // Icon style
 export function HMSFiresPropertiesToIconOptions(properties) {
+  const fireDot = L.icon({
+    iconUrl: "images/fire-dot.png",
+    //shadowUrl: 'leaf-shadow.png',
+
+    iconSize: [6, 6], // size of the icon
+    //shadowSize:   [50, 64], // size of the shadow
+    //iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    //shadowAnchor: [4, 62],  // the same for the shadow
+    //popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+  });
   const options = {
-    radius: 2,
-    shape: "star-5",
-    fillColor: "goldenrod",
-    color: "#000",
-    weight: 1,
-    opacity: 1,
-    fillOpacity: 0.8,
+    icon: fireDot,
+    // radius: 2,
+    // shape: "star-5",
+    // fillColor: "goldenrod",
+    // color: "#000",
+    // weight: 1,
+    // opacity: 1,
+    // fillOpacity: 0.8,
   };
   return options;
 }
