@@ -3,7 +3,7 @@
 // NOTE:  These functions do not need access to any reactive variables.
 
 // npm install papaparse
-import Papa from "papaparse";
+// // //import Papa from "papaparse";
 
 import { pm25ToColor } from "air-monitor-plots";
 
@@ -106,6 +106,22 @@ export function clarityPropertiesToIconOptions(properties) {
     weight: 1,
     opacity: 0.2,
     fillOpacity: 0.6,
+  };
+  return options;
+}
+
+/* ----- HMS fires functions ------------------------------------------------- */
+
+// Icon style
+export function HMSFiresPropertiesToIconOptions(properties) {
+  const options = {
+    radius: 2,
+    shape: "star-5",
+    fillColor: "goldenrod",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8,
   };
   return options;
 }

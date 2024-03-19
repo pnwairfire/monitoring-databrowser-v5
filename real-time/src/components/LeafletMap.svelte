@@ -19,7 +19,7 @@
 
   import { clarity, clarity_geojson } from '../stores/clarity-data-store.js';
 
-  import { hms_smoke_geojson } from '../stores/hms-data-store.js';
+  import { hms_fires_geojson, hms_smoke_geojson } from '../stores/hms-data-store.js';
 
   import {
     centerLat,
@@ -52,6 +52,7 @@
     purpleairCreateGeoJSON,
     purpleairPropertiesToIconOptions,
     clarityPropertiesToIconOptions,
+    HMSFiresPropertiesToIconOptions,
   } from '../js/utils-map.js';
 
   // Utility functions
@@ -87,7 +88,12 @@
     // Add background tiles
     basemapLayer('Topographic').addTo(map);
 
-    // Add HMS Smoke to the map so it's on the bottom
+    // // Add HMS Fires to the map so it's on the bottom
+    // hms_fires_geojson.load().then(function(geojsonData) {
+    //   createHMSFiresLayer(geojsonData).addTo(map);
+    // });
+
+    // Add HMS Smoke to the map before the monitor layers
     hms_smoke_geojson.load().then(function(geojsonData) {
       createHMSSmokeLayer(geojsonData).addTo(map);
     });
@@ -369,6 +375,21 @@
   }
 
   /* ----- HMS functions ---------------------------------------------------- */
+
+  // /**
+  //  * @param {geojson} geojson to be converted to a leaflet layer
+  //  * @returns
+  //  */
+  //  function createHMSFiresLayer(geojson) {
+  //   let this_layer = L.geoJSON(geojson, {
+  //     // Icon appearance
+  //     pointToLayer: function (feature, latlng) {
+  //       let marker = L.shapeMarker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
+  //       return(marker);
+  //     }
+  //   });
+  //   return this_layer;
+  // }
 
   /**
    * @param {geojson} geojson to be converted to a leaflet layer

@@ -18,16 +18,14 @@ import geobuf from "geobuf";
 
 // ----- geojson ---------------------------------------------------------------
 
-// Reloadable Clarity geojson data
+// Reloadable HMS Smoke geojson data
 export const hms_smoke_geojson = asyncReadable(
   {},
   async () => {
     const response = await fetch(
-      // // //"https://airfire-data-exports.s3.us-west-2.amazonaws.com/hms/v1/geojson/latest_smoke.geojson"
       "https://airfire-data-exports.s3.us-west-2.amazonaws.com/maps/geobuf/latest_smoke.pbf"
     );
     if (response.ok) {
-      // // //const userObject = await response.json();
       const arrayBuffer = await response.arrayBuffer();
       const pbf = new Pbf(arrayBuffer);
       const geojson = geobuf.decode(pbf);
@@ -35,6 +33,27 @@ export const hms_smoke_geojson = asyncReadable(
       return geojson;
     } else {
       error_message.set("Failed to load HMS smoke geojson");
+      throw new Error(response.message);
+    }
+  },
+  { reloadable: true }
+);
+
+// Reloadable HMS Smoke geojson data
+export const hms_fires_geojson = asyncReadable(
+  {},
+  async () => {
+    const response = await fetch(
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/maps/geobuf/latest_fire.pbf"
+    );
+    if (response.ok) {
+      const arrayBuffer = await response.arrayBuffer();
+      const pbf = new Pbf(arrayBuffer);
+      const geojson = geobuf.decode(pbf);
+      console.log("loaded HMS fires geojson");
+      return geojson;
+    } else {
+      error_message.set("Failed to load HMS fires geojson");
       throw new Error(response.message);
     }
   },
