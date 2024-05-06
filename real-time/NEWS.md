@@ -1,3 +1,7 @@
+# real-time 5.4.2
+
+- Switch to updated PM2.5 NAAQS.
+
 # real-time 5.1.6
 
 - Selected sensors are added to URL and page is properly initialized with any

@@ -1,7 +1,7 @@
 import { readable, writable } from "svelte/store";
 
-// Version 5.4.0 = v5 . HMS smoke and fires . update NAAQS
-export const VERSION = readable("5.4.1");
+// Version 5.4.2 = v5 . HMS smoke and fires . fixed map NAAQS
+export const VERSION = readable("5.4.2");
 
 // Status messages
 export let error_message = writable("");
