@@ -1,8 +1,5 @@
 <script>
 // Exports
-export let element_id = 'default-metadata-table';
-export let aggregator = "";
-export let width = '100%';
 export let id = '';
 
 // Svelte stores
