@@ -117,8 +117,11 @@ Files will be found in the `dist/` directory:
 ```
 dist
 ├── assets
-│   ├── index-ad776a4e.js
-│   └── index-f9ecc00f.css
+│   ├── index-6187947d.js
+│   └── index-af8c322a.css
+├── images
+│   ├── fire-dot.png
+│   └── forestservicelogo-inverted.svg
 └── index.html
 ```
 

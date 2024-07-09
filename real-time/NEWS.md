@@ -1,3 +1,7 @@
+# real-time 5.4.0
+
+- Added HMS fires and smoke plumes.
+
 # real-time 5.1.6
 
 - Selected sensors are added to URL and page is properly initialized with any
