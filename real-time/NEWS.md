@@ -1,3 +1,11 @@
+# real-time 5.4.3
+
+- Updated air-monitor.js fixes monitor.combine() bug.
+
+# real-time 5.4.2
+
+- Switch to updated PM2.5 NAAQS.
+
 # real-time 5.4.0
 
 - Added HMS fires and smoke plumes.

@@ -7,8 +7,6 @@
 
 import { pm25ToColor } from "air-monitor-plots";
 
-// NOTE:  NAAQS parameter ("PM2.5" or "PM2.5_2024") is hardcoded in each function
-
 /* ----- Monitor functions -------------------------------------------------- */
 
 // Icon style
@@ -19,7 +17,7 @@ export function monitorPropertiesToIconOptions(properties) {
     shape:
       properties["deploymentType"] == "Temporary" ? "triangle-up" : "circle",
     fillColor:
-      latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"], "PM2.5"),
+      latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"]),
     color: "#000",
     weight: 1,
     opacity: 1,
@@ -83,7 +81,7 @@ export function purpleairPropertiesToIconOptions(properties) {
     fillColor:
       properties.latency > 4
         ? "#bbb"
-        : pm25ToColor(properties.epa_nowcast, "PM2.5"),
+        : pm25ToColor(properties.epa_nowcast),
     color: "#000",
     weight: 1,
     opacity: 0.2,
@@ -101,7 +99,7 @@ export function clarityPropertiesToIconOptions(properties) {
     radius: 4,
     shape: "diamond",
     fillColor:
-      latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"], "PM2.5"),
+      latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"]),
     color: "#000",
     weight: 1,
     opacity: 0.2,
