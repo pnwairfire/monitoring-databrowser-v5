@@ -92,10 +92,10 @@
     let PurpleAirLayer, ClarityLayer;
     let AirNowLayer, AIRSISLayer, WRCCLayer;
 
-    // Add HMS Fires to the map so it's on the bottom
-    hms_fires_geojson.load().then(function(geojsonData) {
-      HMSFiresLayer = createHMSFiresLayer(geojsonData);
-    });
+    // // Add HMS Fires to the map so it's on the bottom
+    // hms_fires_geojson.load().then(function(geojsonData) {
+    //   HMSFiresLayer = createHMSFiresLayer(geojsonData);
+    // });
 
     // Add HMS Smoke to the map before the monitor layers
     hms_smoke_geojson.load().then(function(geojsonData) {
@@ -129,8 +129,8 @@
     // Add layers in desired order after each has loaded
     await hms_smoke_geojson.load();
     HMSSmokeLayer.addTo(map);
-    await hms_fires_geojson.load();
-    HMSFiresLayer.addTo(map);
+    // await hms_fires_geojson.load();
+    // HMSFiresLayer.addTo(map);
 
     await clarity_geojson.load();
     ClarityLayer.addTo(map);
