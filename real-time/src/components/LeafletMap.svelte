@@ -9,7 +9,6 @@
 
   // Stores
   import {
-    all_monitors,
     airnow_geojson,
     airsis_geojson,
     wrcc_geojson,
@@ -19,7 +18,8 @@
 
   import { clarity, clarity_geojson } from '../stores/clarity-data-store.js';
 
-  import { hms_fires_geojson, hms_smoke_geojson } from '../stores/hms-data-store.js';
+  //import { hms_fires_geojson, hms_smoke_geojson } from '../stores/hms-data-store.js';
+  import { hms_fires_csv, hms_smoke_geojson } from '../stores/hms-data-store.js';
 
   import {
     centerLat,
@@ -79,9 +79,6 @@
 
   async function createMap() {
 
-    // Get a copy of the reactive data
-    // const monitor = $all_monitors;
-
     // Create the map
     map = L.map('map').setView([$centerLat, $centerLon], $zoom);
 
@@ -96,6 +93,13 @@
     // hms_fires_geojson.load().then(function(geojsonData) {
     //   HMSFiresLayer = createHMSFiresLayer(geojsonData);
     // });
+
+    // Add HMS Fires to the map so it's on the bottom
+    hms_fires_csv.load().then(function(csvData) {
+      let a = 1;
+      console.log(csvData.length)
+      HMSFiresLayer = createHMSFiresLayer_csv(csvData);
+    });
 
     // Add HMS Smoke to the map before the monitor layers
     hms_smoke_geojson.load().then(function(geojsonData) {
@@ -130,6 +134,7 @@
     await hms_smoke_geojson.load();
     HMSSmokeLayer.addTo(map);
     // await hms_fires_geojson.load();
+    // await hms_fires_csv.load();
     // HMSFiresLayer.addTo(map);
 
     await clarity_geojson.load();
@@ -402,17 +407,42 @@
    * @param {geojson} geojson to be converted to a leaflet layer
    * @returns
    */
-   function createHMSFiresLayer(geojson) {
-    let this_layer = L.geoJSON(geojson, {
-      // Icon appearance
-      pointToLayer: function (feature, latlng) {
-        // // //let marker = L.shapeMarker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
-        let marker = L.marker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
-        return(marker);
-      }
-    });
+  //  function createHMSFiresLayer(geojson) {
+  //   let this_layer = L.geoJSON(geojson, {
+  //     // Icon appearance
+  //     pointToLayer: function (feature, latlng) {
+  //       // // //let marker = L.shapeMarker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
+  //       let marker = L.marker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
+  //       return(marker);
+  //     }
+  //   });
+  //   return this_layer;
+  // }
+
+   /**
+   * @param {csv} csv to be converted to a leaflet layer
+   * @returns
+   */
+   function createHMSFiresLayer_csv(csv) {
+
+    let this_layer = L.canvas({ padding: 0.5 })
+
+    for (var i = 0; i < 100000; i += 1) { // 100k points
+      L.circleMarker(getRandomLatLng(), {
+        renderer: this_layer
+      }).addTo(map);
+    }
+
     return this_layer;
   }
+
+  function getRandomLatLng() {
+    return [
+      -90 + 180 * Math.random(),
+      -180 + 360 * Math.random()
+    ];
+  }
+
 
   /**
    * @param {geojson} geojson to be converted to a leaflet layer

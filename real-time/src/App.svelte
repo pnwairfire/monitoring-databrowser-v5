@@ -2,7 +2,6 @@
   // Svelte stores
   import { all_monitors } from './stores/monitor-data-store.js';
 	import { pas, patCart } from './stores/purpleair-data-store.js';
-  import { clarity } from './stores/clarity-data-store.js';
 
   import {
 		VERSION,

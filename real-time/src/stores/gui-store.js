@@ -1,7 +1,7 @@
 import { readable, writable } from "svelte/store";
 
-// Version 5.4.3 = v5 . HMS smoke and fires . fixed monitor.combine() bug
-export const VERSION = readable("5.4.3");
+// Version 5.4.3 = v5 . HMS smoke and fires . optimized HMS fires layer
+export const VERSION = readable("5.4.4");
 
 // Status messages
 export let error_message = writable("");

@@ -9,7 +9,7 @@ export let deviceType = 'monitor';
 // Svelte stores
 import { all_monitors } from '../stores/monitor-data-store.js';
 import { pas } from '../stores/purpleair-data-store.js';
-import { clarity, clarity_geojson } from '../stores/clarity-data-store.js';
+import { clarity_geojson } from '../stores/clarity-data-store.js';
 
 // Make these statements reactive
 // $: location_report_url = 'https://tools.airfire.org/location/report?monitorid=' + id;
