@@ -94,13 +94,6 @@
     //   HMSFiresLayer = createHMSFiresLayer(geojsonData);
     // });
 
-    // Add HMS Fires to the map so it's on the bottom
-    hms_fires_csv.load().then(function(csvData) {
-      let a = 1;
-      console.log(csvData.length)
-      HMSFiresLayer = createHMSFiresLayer_csv(csvData);
-    });
-
     // Add HMS Smoke to the map before the monitor layers
     hms_smoke_geojson.load().then(function(geojsonData) {
       HMSSmokeLayer = createHMSSmokeLayer(geojsonData);
@@ -136,6 +129,13 @@
     // await hms_fires_geojson.load();
     // await hms_fires_csv.load();
     // HMSFiresLayer.addTo(map);
+
+    // Add HMS Fires to the map so it's on the bottom
+    hms_fires_csv.load().then(function(csvData) {
+      let a = 1;
+      console.log(csvData.length)
+      HMSFiresLayer = createHMSFiresLayer_csv(csvData);
+    });
 
     await clarity_geojson.load();
     ClarityLayer.addTo(map);
@@ -427,11 +427,23 @@
 
     let this_layer = L.canvas({ padding: 0.5 })
 
-    for (var i = 0; i < 100000; i += 1) { // 100k points
-      L.circleMarker(getRandomLatLng(), {
-        renderer: this_layer
+    for (var i = 0; i < csv.length; i += 1) { // 100k points
+      L.circleMarker([csv[i].latitude, csv[i].longitude], {
+        renderer: this_layer,
+        radius: 2,
+        fillColor: '#fff',
+        fillOpacity: 0.5,
+        weight: 2,
+        color: "#ff9d02",
+        opacity: 0.5,
       }).addTo(map);
     }
+
+    // for (var i = 0; i < 100000; i += 1) { // 100k points
+    //   L.circleMarker(getRandomLatLng(), {
+    //     renderer: this_layer
+    //   }).addTo(map);
+    // }
 
     return this_layer;
   }
