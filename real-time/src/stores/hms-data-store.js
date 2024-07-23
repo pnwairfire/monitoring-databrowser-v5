@@ -77,10 +77,8 @@ export const hms_fires_csv = asyncReadable(
     // https://satepsanone.nesdis.noaa.gov/pub/FIRE/web/HMS/Fire_Points/Text
 
     // https://airfire-data-exports.s3.us-west-2.amazonaws.com/dev/hms_fires/hms_fire20240718.csv.gz
-    const startString =
-      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/dev/hms_fires";
-    //const url = `${startString}/hms_fire${year}${month}${day}.csv`;
-    const url = `${startString}/hms_fire20240718.csv`;
+    const url =
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/hms/v2/data/hms_latest_mv5.csv";
     const response = await fetch(url);
     // const response = await fetch(url, {
     //   mode: "no-cors",
