@@ -61,7 +61,7 @@
 
   // TODO:  Status text could say how old the map data is.
 
-  // Reload geojson data every five minutes
+  // Reload geojson data every 10 minutes
   setInterval(() => {
     airnow_geojson.reload();
     airsis_geojson.reload();
@@ -89,36 +89,33 @@
     let PurpleAirLayer, ClarityLayer;
     let AirNowLayer, AIRSISLayer, WRCCLayer;
 
-    // // Add HMS Fires to the map so it's on the bottom
-    // hms_fires_geojson.load().then(function(geojsonData) {
-    //   HMSFiresLayer = createHMSFiresLayer(geojsonData);
-    // });
-
-    // Add HMS Smoke to the map before the monitor layers
+    // Create the smoke polygons layer
     hms_smoke_geojson.load().then(function(geojsonData) {
       HMSSmokeLayer = createHMSSmokeLayer(geojsonData);
     });
 
-    // Add PurpleAir sensors to the map, always at the bottom of the layer stack
+    // Create the PurpleAir layer
     pas.load().then(function(synopticData) {
       let geojsonData = purpleairCreateGeoJSON(synopticData);
       PurpleAirLayer = createPurpleAirLayer(geojsonData);
     });
 
-    // Add Clarity sensors to the map
+    // Create the Clarity layer
     clarity_geojson.load().then(function(geojsonData) {
       ClarityLayer = createClarityLayer(geojsonData);
     });
 
-    // Add monitors to the map
+    // Create the AirNow layer
     airnow_geojson.load().then(function(geojsonData) {
       AirNowLayer = createMonitorLayer(geojsonData);
     });
 
+    // Create the AIRSIS layer
     airsis_geojson.load().then(function(geojsonData) {
       AIRSISLayer = createMonitorLayer(geojsonData);
     });
 
+    // Create the WRCC layer
     wrcc_geojson.load().then(function(geojsonData) {
       WRCCLayer = createMonitorLayer(geojsonData);
     });
@@ -126,9 +123,6 @@
     // Add layers in desired order after each has loaded
     await hms_smoke_geojson.load();
     HMSSmokeLayer.addTo(map);
-    // await hms_fires_geojson.load();
-    // await hms_fires_csv.load();
-    // HMSFiresLayer.addTo(map);
 
     // Add HMS Fires to the map so it's on the bottom
     hms_fires_csv.load().then(function(csvData) {
@@ -139,13 +133,16 @@
 
     await clarity_geojson.load();
     ClarityLayer.addTo(map);
+
     await pas.load();
     PurpleAirLayer.addTo(map);
 
     await airsis_geojson.load();
     AIRSISLayer.addTo(map);
+
     await wrcc_geojson.load();
     WRCCLayer.addTo(map);
+
     await airnow_geojson.load();
     AirNowLayer.addTo(map);
 
@@ -403,22 +400,6 @@
 
   /* ----- HMS functions ---------------------------------------------------- */
 
-  /**
-   * @param {geojson} geojson to be converted to a leaflet layer
-   * @returns
-   */
-  //  function createHMSFiresLayer(geojson) {
-  //   let this_layer = L.geoJSON(geojson, {
-  //     // Icon appearance
-  //     pointToLayer: function (feature, latlng) {
-  //       // // //let marker = L.shapeMarker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
-  //       let marker = L.marker(latlng, HMSFiresPropertiesToIconOptions(feature.properties));
-  //       return(marker);
-  //     }
-  //   });
-  //   return this_layer;
-  // }
-
    /**
    * @param {csv} csv to be converted to a leaflet layer
    * @returns
@@ -430,31 +411,17 @@
     for (var i = 0; i < csv.length; i += 1) { // 100k points
       L.circleMarker([csv[i].latitude, csv[i].longitude], {
         renderer: this_layer,
-        radius: 2,
-        fillColor: '#fff',
+        radius: 3,
+        fillColor: '#d7721c',
         fillOpacity: 0.5,
-        weight: 2,
-        color: "#ff9d02",
+        weight: 1.5,
+        color: "#e9c28f",
         opacity: 0.5,
       }).addTo(map);
     }
 
-    // for (var i = 0; i < 100000; i += 1) { // 100k points
-    //   L.circleMarker(getRandomLatLng(), {
-    //     renderer: this_layer
-    //   }).addTo(map);
-    // }
-
     return this_layer;
   }
-
-  function getRandomLatLng() {
-    return [
-      -90 + 180 * Math.random(),
-      -180 + 360 * Math.random()
-    ];
-  }
-
 
   /**
    * @param {geojson} geojson to be converted to a leaflet layer

@@ -9,6 +9,7 @@
 		monitorCount,
 		purpleairCount,
 		clarityCount,
+		hmsFiresCount,
 		centerLon,
     centerLat,
     zoom,
@@ -111,7 +112,7 @@
 	{:then}
 
 		<p class="status">
-			Showing {$monitorCount} monitors, {$purpleairCount} PurpleAir and {$clarityCount} Clarity sensors.
+			Showing {$monitorCount} monitors, {$purpleairCount} PurpleAir sensors, {$clarityCount} Clarity sensors, and {$hmsFiresCount} HMS fire detections.
 		</p>
 
 		<div >
