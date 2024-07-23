@@ -1,6 +1,6 @@
 <script>
 	// Exports
-	export let element_id = 'default-timeseries-plot';
+	export let element_id = 'default-daily-barplot';
   export let width = '400px';
   export let height = '300px';
   export let id = '';
@@ -18,12 +18,15 @@
   // Highcharts for plotting
   import Highcharts from 'highcharts';
 
-  // Plot Configuration
+  // Plot configuration
   import {
-    timeseriesPlotConfig,
-    small_timeseriesPlotConfig,
-    pm25_addAQIStackedBar
+    dailyBarplotConfig,
+    small_dailyBarplotConfig,
+    pm25_addAQIStackedBar,
   } from "air-monitor-plots";
+
+  // Special functions
+  import { dailyStats } from 'air-monitor-algorithms';
 
   // Good examples to learn from:
   //   https://www.youtube.com/watch?v=s7rk2b1ioVE
@@ -52,11 +55,14 @@
         // Get a copy of the reactive data
         const monitor = $all_monitors;
 
+        // Special method to get an object containing daily averages
+        const daily = monitor.getDailyStats(id);
+
         // Assemble required plot data
         plotData = {
-          datetime: monitor.getDatetime(),
-          pm25: monitor.getPM25(id),
-          nowcast: monitor.getNowcast(id),
+          daily_datetime: daily.datetime,
+          daily_mean: daily.mean,
+          daily_nowcast: undefined, // not required
           locationName: monitor.getMetadata(id, 'locationName'),
           timezone: monitor.getMetadata(id, 'timezone'),
           title: undefined // use default title
@@ -69,13 +75,19 @@
         let purpleairData = $patCart.items[index].data;
         // epa_pm25,epa_nowcast,local_ts
         // 9.1,9.9,2023-07-05 12:00:00-0700
+        let datetime = purpleairData.map((o) => new Date(o.local_ts));
+        let pm25 = purpleairData.map((o) => o.epa_pm25);
 
         let site = $pas.filter(o => o.sensor_index == id)[0];
+        let timezone = site.timezone;
+
+        // Special method to get an object containing daily averages
+        const daily = dailyStats(datetime, pm25, timezone);
 
         plotData = {
-          datetime: purpleairData.map((o) => new Date(o.local_ts)),
-          pm25: purpleairData.map((o) => o.epa_pm25),
-          nowcast: purpleairData.map((o) => o.epa_nowcast),
+          daily_datetime: daily.datetime,
+          daily_mean: daily.mean,
+          daily_nowcast: undefined, // not required
           locationName: "PurpleAir " + id,
           timezone: site.timezone,
           title: undefined // use default title
@@ -83,31 +95,32 @@
 
       } else if ( deviceType === "clarity" ) {
 
+        // Special method to get an object containing daily averages
+        const daily = $clarity.getDailyStats(id);
+
         // Assemble required plot data
         plotData = {
-          datetime: $clarity.getDatetime(),
-          pm25: $clarity.getPM25(id),
-          nowcast: $clarity.getNowcast(id),
+          daily_datetime: daily.datetime,
+          daily_mean: daily.mean,
+          daily_nowcast: undefined, // not required
           locationName: $clarity.getMetadata(id, 'locationName'),
           timezone: $clarity.getMetadata(id, 'timezone'),
           title: undefined // use default title
-        };
+        }
 
       }
 
       // ----- Create the chartConfig ------------------------------------------
 
       if ( size === 'small' ) {
-        plotData.title = "PM2.5 & Nowcast";
-        chartConfig = small_timeseriesPlotConfig(plotData);
+        plotData.title = "Daily Average PM2.5";
+        chartConfig = small_dailyBarplotConfig(plotData);
         // Disable hover
-        chartConfig.plotOptions.line.enableMouseTracking = false;
-        chartConfig.plotOptions.scatter.enableMouseTracking = false;
+        chartConfig.plotOptions.column.enableMouseTracking = false;
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);
       } else {
-        chartConfig = timeseriesPlotConfig(plotData);
-
+        chartConfig = dailyBarplotConfig(plotData);
         // Remove title
         chartConfig.title = "";
         // Add zoom
@@ -127,10 +140,9 @@
 
 <!-- Note that sizing needs to be included as part of the element style. -->
 <div id="{element_id}" class="chart-container"
-     style="width: {width}; height: {height};">
+      style="width: {width}; height: {height};">
 </div>
 
 <style>
 
 </style>
-

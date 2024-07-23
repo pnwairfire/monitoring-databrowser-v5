@@ -1,6 +1,6 @@
 <script>
 	// Exports
-	export let element_id = 'default-timeseries-plot';
+	export let element_id = 'default-diurnal-plot';
   export let width = '400px';
   export let height = '300px';
   export let id = '';
@@ -20,10 +20,13 @@
 
   // Plot Configuration
   import {
-    timeseriesPlotConfig,
-    small_timeseriesPlotConfig,
-    pm25_addAQIStackedBar
+    diurnalPlotConfig,
+    small_diurnalPlotConfig,
+    pm25_addAQIStackedBar,
   } from "air-monitor-plots";
+
+  // Special functions
+  import { diurnalStats } from 'air-monitor-algorithms';
 
   // Good examples to learn from:
   //   https://www.youtube.com/watch?v=s7rk2b1ioVE
@@ -52,6 +55,9 @@
         // Get a copy of the reactive data
         const monitor = $all_monitors;
 
+        // Special method to get an object containing diurnal averages
+        const diurnal = monitor.getDiurnalStats(id);
+
         // Assemble required plot data
         plotData = {
           datetime: monitor.getDatetime(),
@@ -59,7 +65,11 @@
           nowcast: monitor.getNowcast(id),
           locationName: monitor.getMetadata(id, 'locationName'),
           timezone: monitor.getMetadata(id, 'timezone'),
-          title: undefined // use default title
+          title: "",
+          // unique to this chart
+          hour_average: diurnal.mean,
+          longitude: monitor.getMetadata(id, 'longitude'),
+          latitude: monitor.getMetadata(id, 'latitude'),
         }
 
       } else if ( deviceType === "purpleair" ) {
@@ -69,19 +79,33 @@
         let purpleairData = $patCart.items[index].data;
         // epa_pm25,epa_nowcast,local_ts
         // 9.1,9.9,2023-07-05 12:00:00-0700
+        let datetime = purpleairData.map((o) => new Date(o.local_ts));
+        let pm25 = purpleairData.map((o) => o.epa_pm25);
+        let nowcast = purpleairData.map((o) => o.epa_nowcast);
 
         let site = $pas.filter(o => o.sensor_index == id)[0];
+        let timezone = site.timezone;
+
+        // Special method to get an object containing daily averages
+        const diurnal = diurnalStats(datetime, pm25, timezone);
 
         plotData = {
-          datetime: purpleairData.map((o) => new Date(o.local_ts)),
-          pm25: purpleairData.map((o) => o.epa_pm25),
-          nowcast: purpleairData.map((o) => o.epa_nowcast),
+          datetime: datetime,
+          pm25: pm25,
+          nowcast: nowcast, // not required
           locationName: "PurpleAir " + id,
           timezone: site.timezone,
-          title: undefined // use default title
+          title: "",
+          // unique to this chart
+          hour_average: diurnal.mean,
+          longitude: site.longitude,
+          latitude: site.latitude,
         };
 
       } else if ( deviceType === "clarity" ) {
+
+        // Special method to get an object containing diurnal averages
+        const diurnal = $clarity.getDiurnalStats(id);
 
         // Assemble required plot data
         plotData = {
@@ -90,24 +114,26 @@
           nowcast: $clarity.getNowcast(id),
           locationName: $clarity.getMetadata(id, 'locationName'),
           timezone: $clarity.getMetadata(id, 'timezone'),
-          title: undefined // use default title
-        };
+          title: "",
+          // unique to this chart
+          hour_average: diurnal.mean,
+          longitude: $clarity.getMetadata(id, 'longitude'),
+          latitude: $clarity.getMetadata(id, 'latitude'),
+        }
 
       }
 
       // ----- Create the chartConfig ------------------------------------------
 
       if ( size === 'small' ) {
-        plotData.title = "PM2.5 & Nowcast";
-        chartConfig = small_timeseriesPlotConfig(plotData);
-        // Disable hover
+        plotData.title = "Diurnal NowCast";
+        chartConfig = small_diurnalPlotConfig(plotData);
+        // Disable hover on 3 lines
         chartConfig.plotOptions.line.enableMouseTracking = false;
-        chartConfig.plotOptions.scatter.enableMouseTracking = false;
         myChart = Highcharts.chart(context, chartConfig);
         pm25_addAQIStackedBar(myChart, 4);
       } else {
-        chartConfig = timeseriesPlotConfig(plotData);
-
+        chartConfig = diurnalPlotConfig(plotData);
         // Remove title
         chartConfig.title = "";
         // Add zoom
@@ -127,10 +153,9 @@
 
 <!-- Note that sizing needs to be included as part of the element style. -->
 <div id="{element_id}" class="chart-container"
-     style="width: {width}; height: {height};">
+      style="width: {width}; height: {height};">
 </div>
 
 <style>
 
 </style>
-

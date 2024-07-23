@@ -1,6 +1,6 @@
 <script>
-	// Exports
-	export let element_id = 'default-timeseries-plot';
+  // Exports
+  export let element_id = 'default-hourly-barplot';
   export let width = '400px';
   export let height = '300px';
   export let id = '';
@@ -18,11 +18,10 @@
   // Highcharts for plotting
   import Highcharts from 'highcharts';
 
-  // Plot Configuration
+  // Plot configuration
   import {
-    timeseriesPlotConfig,
-    small_timeseriesPlotConfig,
-    pm25_addAQIStackedBar
+    hourlyBarplotConfig,
+    small_hourlyBarplotConfig,
   } from "air-monitor-plots";
 
   // Good examples to learn from:
@@ -34,7 +33,12 @@
   let context;
   let myChart;
 
-  function createChart() {
+  // // Recreate chart every five minutes
+  // setInterval(() => {
+  //   createChart();
+  // }, 1000 * 1 * 5) // 5 minutes
+
+  async function createChart() {
 
     context = document.getElementById(element_id);
 
@@ -52,7 +56,6 @@
         // Get a copy of the reactive data
         const monitor = $all_monitors;
 
-        // Assemble required plot data
         plotData = {
           datetime: monitor.getDatetime(),
           pm25: monitor.getPM25(id),
@@ -60,9 +63,9 @@
           locationName: monitor.getMetadata(id, 'locationName'),
           timezone: monitor.getMetadata(id, 'timezone'),
           title: undefined // use default title
-        }
+        };
 
-      } else if ( deviceType === "purpleair" ) {
+      } else if (deviceType === "purpleair" ) {
 
         // Get a copy of the reactive data
         const index = $patCart.items.findIndex((item) => item.id === id);
@@ -81,7 +84,7 @@
           title: undefined // use default title
         };
 
-      } else if ( deviceType === "clarity" ) {
+      } else if (deviceType === "clarity" ) {
 
         // Assemble required plot data
         plotData = {
@@ -98,28 +101,46 @@
       // ----- Create the chartConfig ------------------------------------------
 
       if ( size === 'small' ) {
-        plotData.title = "PM2.5 & Nowcast";
-        chartConfig = small_timeseriesPlotConfig(plotData);
+        plotData.title = "Hourly NowCast";
+        chartConfig = small_hourlyBarplotConfig(plotData);
         // Disable hover
-        chartConfig.plotOptions.line.enableMouseTracking = false;
-        chartConfig.plotOptions.scatter.enableMouseTracking = false;
+        chartConfig.plotOptions.column.enableMouseTracking = false;
         myChart = Highcharts.chart(context, chartConfig);
-        pm25_addAQIStackedBar(myChart, 4);
       } else {
-        chartConfig = timeseriesPlotConfig(plotData);
-
+        chartConfig = hourlyBarplotConfig(plotData);
         // Remove title
         chartConfig.title = "";
+        // Shorten y-axis title
+        chartConfig.yAxis.title.text = "NowCast (µg/m³)"
         // Add zoom
         chartConfig.chart.zoomBySingleTouch = true;
         chartConfig.chart.zoomType = "x";
         myChart = Highcharts.chart(context, chartConfig);
-        pm25_addAQIStackedBar(myChart, 6);
       }
+
+    } else {
+
+      chartConfig = {
+        title: {
+          text: "",
+        },
+        yAxis: {
+          min: 0,
+          max: 1,
+        },
+        xAxis: {
+          min: 1,
+          max: 50
+        },
+        series: {
+          data:[null,null]
+        }
+      };
+      myChart = Highcharts.chart(context, chartConfig);
 
     }
 
-  }
+  } // END of createChart()
 
   // Regenerate the chart after any update
   afterUpdate(createChart);
@@ -127,10 +148,9 @@
 
 <!-- Note that sizing needs to be included as part of the element style. -->
 <div id="{element_id}" class="chart-container"
-     style="width: {width}; height: {height};">
+  style="width: {width}; height: {height};">
 </div>
 
 <style>
 
 </style>
-
