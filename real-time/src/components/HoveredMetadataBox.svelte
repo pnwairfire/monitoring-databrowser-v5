@@ -173,10 +173,6 @@ function clarityIdToCurrentStatus(id) {
           <td>Latest Nowcast</td>
           <td>{purpleairIdToCurrentStatus($hovered_purpleair_id)['epa_nowcast']} &#xb5;g/m&#xb3;</td>
         </tr>
-        <tr>
-          <td>Latest PM2.5</td>
-          <td>{purpleairIdToCurrentStatus($hovered_purpleair_id)['epa_pm25']} &#xb5;g/m&#xb3;</td>
-        </tr>
       </tbody>
     </table>
     {:else if $hovered_clarity_id !== "" }
