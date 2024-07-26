@@ -93,7 +93,7 @@
 	<NavBar>
 		<img class="logo" src="images/forestservicelogo-inverted.svg"
 		     alt="US Forest Service logo">
-		<span class="mv5">Monitoring v{$VERSION}</span>
+		<span class="mv5">Monitoring v{$VERSION} -- ARA version</span>
 	</NavBar>
 
 

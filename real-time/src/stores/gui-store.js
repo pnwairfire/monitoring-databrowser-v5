@@ -1,7 +1,7 @@
 import { readable, writable } from "svelte/store";
 
-// Version 5.4.3 = v5 . HMS smoke and fires . optimized HMS fires layer
-export const VERSION = readable("5.4.4");
+// Version 5.4.3 = v5 . HMS smoke and fires . ARA version
+export const VERSION = readable("5.4.5");
 
 // Status messages
 export let error_message = writable("");
