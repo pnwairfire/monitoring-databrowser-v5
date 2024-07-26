@@ -198,9 +198,10 @@
 
 		{/each}
 
-		<hr>
+<!--
+    <hr>
 
-		<div class="flex-row">
+    <div class="flex-row">
 			<span class="selected-devices">Selected Clarity Sensors:</span>
 			<span class="selected-devices-count">{$selected_clarity_ids.length} sensors</span>
 		</div>
@@ -234,6 +235,7 @@
 				</div>
 
 		{/each}
+-->
 
 	{:catch}
 		<p style="color: red">An error occurred</p>
