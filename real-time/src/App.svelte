@@ -93,14 +93,18 @@
 	<NavBar>
 		<img class="logo" src="images/forestservicelogo-inverted.svg"
 		     alt="US Forest Service logo">
-		<span class="mv5">Monitoring v{$VERSION} -- ARA version</span>
+		<span class="mv5">Monitoring v{$VERSION} &mdash; ARA version</span>
 	</NavBar>
 
 
+	<div class="airfire-alerts" style="display: none"></div>
+
 	{#if $error_message === "" }
+	<!--
 		<AlertBox level="warning">
 			<b>This working prototype is for evaluation purposes only.</b>
 		</AlertBox>
+	-->
 	{:else}
 		<AlertBox level="error">
 			<b>{$error_message}</b>

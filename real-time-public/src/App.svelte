@@ -97,10 +97,14 @@
 	</NavBar>
 
 
+	<div class="airfire-alerts" style="display: none"></div>
+
 	{#if $error_message === "" }
+	<!--
 		<AlertBox level="warning">
 			<b>This working prototype is for evaluation purposes only.</b>
 		</AlertBox>
+	-->
 	{:else}
 		<AlertBox level="error">
 			<b>{$error_message}</b>

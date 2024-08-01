@@ -41,6 +41,35 @@ h1 {
   padding: 2em;
 }
 
+/* alerts from http://status.airfire.org/admin */
+.alert {
+  margin-top: 2px;
+  padding: 0.5rem;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.alert-success {
+  color: #3c763d;
+  background-color: #dbf4e8; /* #dfe4ec; less red, more blue = same lightness */
+}
+
+.alert-info {
+  color: #31708f;
+  background-color: #d9edf7;
+}
+
+.alert-warning {
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+}
+
+.alert-danger {
+  color: #a94442;
+  background-color: #f2cece; /* #f2dede; less blue, less green = darker */
+}
+
 #app {
   max-width: 1280px;
   margin: 0 auto;
