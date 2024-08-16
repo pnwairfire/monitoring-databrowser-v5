@@ -94,10 +94,10 @@
     });
 
     // Create the PurpleAir layer
-    pas.load().then(function(synopticData) {
-      let geojsonData = purpleairCreateGeoJSON(synopticData);
-      PurpleAirLayer = createPurpleAirLayer(geojsonData);
-    });
+    // pas.load().then(function(synopticData) {
+    //   let geojsonData = purpleairCreateGeoJSON(synopticData);
+    //   PurpleAirLayer = createPurpleAirLayer(geojsonData);
+    // });
 
     // Create the Clarity layer
     // clarity_geojson.load().then(function(geojsonData) {
@@ -133,8 +133,8 @@
     // await clarity_geojson.load();
     // ClarityLayer.addTo(map);
 
-    await pas.load();
-    PurpleAirLayer.addTo(map);
+    // await pas.load();
+    // PurpleAirLayer.addTo(map);
 
     await airsis_geojson.load();
     AIRSISLayer.addTo(map);
@@ -457,17 +457,17 @@
   }
 
   // Watcher for map-external sensor deselect events
-  $: if ($unselected_purpleair_id !== "") {
-    map.eachLayer(function(layer) {
-      if (layer instanceof L.ShapeMarker) {
-        if (layer.id == $unselected_purpleair_id) {
-          layer.setStyle({opacity: 0.2, weight: 1});
-          $unselected_purpleair_id = "";
-        }
-      }
-    })
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids); //, $selected_clarity_ids);
-  }
+  // $: if ($unselected_purpleair_id !== "") {
+  //   map.eachLayer(function(layer) {
+  //     if (layer instanceof L.ShapeMarker) {
+  //       if (layer.id == $unselected_purpleair_id) {
+  //         layer.setStyle({opacity: 0.2, weight: 1});
+  //         $unselected_purpleair_id = "";
+  //       }
+  //     }
+  //   })
+  //   replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids); //, $selected_clarity_ids);
+  // }
 
   // Watcher for map-external sensor deselect events
   // $: if ($unselected_clarity_id !== "") {

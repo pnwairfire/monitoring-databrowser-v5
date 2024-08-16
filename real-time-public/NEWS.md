@@ -1,4 +1,8 @@
-# real-time 5.4.5
+# real-time-public 5.4.5
+
+- Removed PA sensors.
+
+# real-time-public 5.4.5
 
 - Public version.
 

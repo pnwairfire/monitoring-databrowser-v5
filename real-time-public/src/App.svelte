@@ -53,7 +53,7 @@
   if ( urlParams.has('monitors') ) {
 	  $selected_monitor_ids = urlParams.get('monitors').split(',');
 	}
-
+/*
 	async function loadPurpleAirData(ids) {
 		for (let i = 0; i < ids.length; i++) {
 			let id = ids[i];
@@ -81,7 +81,7 @@
 		  loadPurpleAirData(purpleair_ids);
 		});
 	}
-
+*/
 	function unselectHovered() {
 		$hovered_monitor_id = "";
 	}
@@ -100,11 +100,6 @@
 	<div class="airfire-alerts" style="display: none"></div>
 
 	{#if $error_message === "" }
-	<!--
-		<AlertBox level="warning">
-			<b>This working prototype is for evaluation purposes only.</b>
-		</AlertBox>
-	-->
 	{:else}
 		<AlertBox level="error">
 			<b>{$error_message}</b>
@@ -116,7 +111,7 @@
 	{:then}
 
 		<p class="status">
-			Showing {$monitorCount} monitors, {$purpleairCount} PurpleAir sensors, and {$hmsFiresCount} HMS fire detections.
+			Showing {$monitorCount} monitors, and {$hmsFiresCount} HMS fire detections.
 		</p>
 
 		<div >
@@ -165,13 +160,13 @@
 
 		{/each}
 
+<!--
 		<hr>
 
 		<div class="flex-row">
 			<span class="selected-devices">Selected PurpleAir Sensors:</span>
 			<span class="selected-devices-count">{$selected_purpleair_ids.length} sensors</span>
 		</div>
-
 		<hr>
 
 		{#each $selected_purpleair_ids as id, i}
@@ -201,6 +196,7 @@
 				</div>
 
 		{/each}
+-->
 
 <!--
     <hr>
