@@ -1,4 +1,8 @@
-# real-time-public 5.4.5
+# real-time-public 5.4.7
+
+- Updated HighCharts packages fixes timezone x-axis display.
+
+# real-time-public 5.4.6
 
 - Removed PA sensors.
 

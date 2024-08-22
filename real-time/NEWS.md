@@ -1,3 +1,10 @@
+# real-time 5.4.7
+
+_NOTE: Version number keeps up w/ real-time-public_
+
+- Updated HighCharts package fixes x-axis timezone bug.
+- Added link to AQI-NowCast service.
+
 # real-time 5.4.4
 
 - Performant hms_fires.

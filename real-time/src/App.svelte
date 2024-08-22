@@ -37,6 +37,7 @@
 
   // Utility functions
   import { getPurpleAirData } from './js/utils-purpleair.js';
+  import { createAQINowCastServiceUrl } from './js/utils.js';
   import { createDataServiceUrl } from './js/utils.js';
 
 	// Initialize the leaflet map from URL parameters
@@ -99,13 +100,7 @@
 
 	<div class="airfire-alerts" style="display: none"></div>
 
-	{#if $error_message === "" }
-	<!--
-		<AlertBox level="warning">
-			<b>This working prototype is for evaluation purposes only.</b>
-		</AlertBox>
-	-->
-	{:else}
+	{#if $error_message !== "" }
 		<AlertBox level="error">
 			<b>{$error_message}</b>
 		</AlertBox>
@@ -136,7 +131,8 @@
 			<div id="service-links">
 				<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">Temporary Only</a>
 				{#if $selected_monitor_ids.length > 0}
-					<a target="_blank" rel="noreferrer" href="{createDataServiceUrl($selected_monitor_ids)}">CSV File</a>
+				<a target="_blank" rel="noreferrer" href="{createDataServiceUrl($selected_monitor_ids)}">CSV File</a>
+				<a target="_blank" rel="noreferrer" href="{createAQINowCastServiceUrl($selected_monitor_ids)}">AQI-NowCast</a>
 				{/if}
 			</div>
 		</div>

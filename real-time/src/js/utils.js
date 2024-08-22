@@ -62,3 +62,12 @@ export function createDataServiceUrl(ids = []) {
   const url = baseUrl + "?" + "monitorids=" + ids;
   return url;
 }
+
+// Create aqi-nowcast-service URL
+// https://tools.airfire.org/monitor-custom/v2/dailyhourlybarplot?outputfiletype=pdf&lookbackdays=10&monitors=f30ef89ce91eb5b4_840160150002
+export function createAQINowCastServiceUrl(ids = []) {
+  const baseUrl = "https://tools.airfire.org/monitor-custom/v2/dailyhourlybarplot";
+  const monitorids = ids.reduce((a, o) => a + "," + o);
+  const url = baseUrl + "?" + "monitorids=" + ids + "&days=10&filetype=pdf";
+  return url;
+}

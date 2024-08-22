@@ -99,8 +99,7 @@
 
 	<div class="airfire-alerts" style="display: none"></div>
 
-	{#if $error_message === "" }
-	{:else}
+	{#if $error_message !== "" }
 		<AlertBox level="error">
 			<b>{$error_message}</b>
 		</AlertBox>

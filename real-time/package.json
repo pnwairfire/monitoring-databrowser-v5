@@ -1,7 +1,7 @@
 {
   "name": "real-time",
   "private": true,
-  "version": "5.4.4",
+  "version": "5.4.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -22,7 +22,7 @@
     "arquero": "^5.1.0",
     "esri-leaflet": "^3.0.10",
     "geobuf": "^3.0.2",
-    "highcharts": "^10.3.3",
+    "highcharts": "^11.4.7",
     "leaflet": "^1.9.3",
     "leaflet-svg-shape-markers": "^1.4.0",
     "moment-timezone": "^0.5.40",
