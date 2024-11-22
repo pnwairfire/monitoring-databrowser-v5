@@ -1,7 +1,7 @@
 import { readable, writable } from "svelte/store";
 
-// Version 5.4.5 = v5 . HMS smoke and fires . removed PA sensors
-export const VERSION = readable("5.4.6");
+// Version 5.4.5 = v5 . HMS smoke and fires . updated PA url from v2 => v4
+export const VERSION = readable("5.4.10");
 
 // Status messages
 export let error_message = writable("");

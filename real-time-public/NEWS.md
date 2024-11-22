@@ -1,3 +1,7 @@
+# real-time-public 5.4.10
+
+- Updated PurpleAir data url from v2 => v4.
+
 # real-time-public 5.4.7
 
 - Updated HighCharts packages fixes timezone x-axis display.

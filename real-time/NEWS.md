@@ -1,3 +1,7 @@
+# real-time-public 5.4.10
+
+- Updated PurpleAir data url from v2 => v4.
+
 # real-time 5.4.7
 
 _NOTE: Version number keeps up w/ real-time-public_
