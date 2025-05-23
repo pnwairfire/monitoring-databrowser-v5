@@ -1,0 +1,32 @@
+{
+  "name": "ara-training",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "svelte": "^4.2.18",
+    "vite": "^5.4.1"
+  },
+  "dependencies": {
+    "@square/svelte-store": "^1.0.18",
+    "air-monitor": "github:MazamaScience/air-monitor",
+    "air-monitor-algorithms": "github:MazamaScience/air-monitor-algorithms",
+    "air-monitor-plots": "github:pnwairfire/air-monitor-plots",
+    "arquero": "^8.0.2",
+    "esri-leaflet": "^3.0.16",
+    "geobuf": "^3.0.2",
+    "highcharts": "^12.2.0",
+    "leaflet": "^1.9.4",
+    "leaflet-svg-shape-markers": "^1.4.0",
+    "moment-timezone": "^0.5.48",
+    "papaparse": "^5.5.3",
+    "pbf": "^4.0.1",
+    "suncalc": "^1.9.0"
+  }
+}

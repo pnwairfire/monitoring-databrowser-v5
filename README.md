@@ -1,7 +1,7 @@
 # monitoring-databrowser-v5
 
 This directory contains one (or more) Svelte apps that together make up the
-monitoring v5 website. These are each built using Svelte and rollup. For
+monitoring v5 website. These are each built using Svelte. For
 more information about Svelte, see https://svelte.dev.
 
 Reading at https://svelte.dev/docs#getting-started we see:
@@ -96,6 +96,7 @@ npm install leaflet
 npm install leaflet-svg-shape-markers
 npm install esri-leaflet
 npm install papaparse
+npm install geojson pbf
 # AirFire packages
 npm install github:MazamaScience/air-monitor
 npm install github:MazamaScience/air-monitor-algorithms
