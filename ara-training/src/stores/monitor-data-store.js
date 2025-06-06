@@ -28,7 +28,7 @@ export const airnow_geojson = asyncReadable(
   {},
   async () => {
     const response = await fetch(
-      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/monitoring/v2/latest/geojson/mv4_airnow_PM2.5_latest.geojson"
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/sequence-c/monitoring/v2/latest/geojson/mv4_airnow_PM2.5_latest.geojson"
     );
     if (response.ok) {
       const userObject = await response.json();
@@ -47,7 +47,7 @@ export const airsis_geojson = asyncReadable(
   {},
   async () => {
     const response = await fetch(
-      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/monitoring/v2/latest/geojson/mv4_airsis_PM2.5_latest.geojson"
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/sequence-c/monitoring/v2/latest/geojson/mv4_airsis_PM2.5_latest.geojson"
     );
     if (response.ok) {
       const userObject = await response.json();
@@ -66,7 +66,7 @@ export const wrcc_geojson = asyncReadable(
   {},
   async () => {
     const response = await fetch(
-      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/monitoring/v2/latest/geojson/mv4_wrcc_PM2.5_latest.geojson"
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/sequence-c/monitoring/v2/latest/geojson/mv4_wrcc_PM2.5_latest.geojson"
     );
     if (response.ok) {
       const userObject = await response.json();
@@ -90,7 +90,7 @@ export const airnow = asyncReadable(
     let start = Date.now();
     await monitor.loadLatest(
       "airnow",
-      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/monitoring/v2"
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/sequence-c/monitoring/v2"
     );
     let end = Date.now();
     let elapsed = (end - start) / 1000;
@@ -108,7 +108,7 @@ export const airsis = asyncReadable(
     const monitor = new Monitor();
     await monitor.loadLatest(
       "airsis",
-      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/monitoring/v2"
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/sequence-c/monitoring/v2"
     );
     return monitor;
   },
@@ -122,7 +122,7 @@ export const wrcc = asyncReadable(
     const monitor = new Monitor();
     await monitor.loadLatest(
       "wrcc",
-      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/monitoring/v2"
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/sequence-c/monitoring/v2"
     );
     return monitor;
   },

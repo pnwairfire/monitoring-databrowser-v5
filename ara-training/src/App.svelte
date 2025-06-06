@@ -94,7 +94,7 @@
 	<NavBar>
 		<img class="logo" src="images/forestservicelogo-inverted.svg"
 		     alt="US Forest Service logo">
-		<span class="mv5">Monitoring v{$VERSION} &mdash; ARA training</span>
+		<span class="mv5">Monitoring v{$VERSION} &mdash; ARA training: Sequence C</span>
 	</NavBar>
 
 
@@ -128,6 +128,7 @@
 		<div class="flex-row">
 			<span class="selected-devices">Selected Monitors:</span>
 			<span class="selected-devices-count">{$selected_monitor_ids.length} monitors</span>
+			<!--
 			<div id="service-links">
 				<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">Temporary Only</a>
 				{#if $selected_monitor_ids.length > 0}
@@ -135,6 +136,7 @@
 				<a target="_blank" rel="noreferrer" href="{createAQINowCastServiceUrl($selected_monitor_ids)}">AQI-NowCast</a>
 				{/if}
 			</div>
+			-->
 		</div>
 
 		<hr>

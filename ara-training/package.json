@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build; sed -i 's%/assets%./assets%' dist/index.html; tar -czf mv5-ara-training.tgz dist",
+    "build_osx": "vite build; sed -i '' 's%/assets%./assets%' dist/index.html; tar -czf mv5-ara-training.tgz dist",
     "preview": "vite preview"
   },
   "devDependencies": {
