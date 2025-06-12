@@ -46,7 +46,7 @@ export const hms_fires_csv = asyncReadable(
   async () => {
     // See: https://github.com/pnwairfire/data-scripts/tree/master/monitoring-v5
     const url =
-      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/hms/v2/data/hms_latest_mv5.csv";
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/sequence-c/fire-detects/hms_latest_mv5.csv";
     const response = await fetch(url);
     const text = await response.text();
     const results = Papa.parse(text, {

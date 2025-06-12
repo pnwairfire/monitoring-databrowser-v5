@@ -66,7 +66,7 @@
     airsis_geojson.reload();
     wrcc_geojson.reload();
     // clarity.reload();
-    // pas.reload();
+    pas.reload();
     // Wait 10 seconds for all data to load before recreating the map
     setTimeout(() => {
       map.remove();
@@ -94,10 +94,10 @@
     // });
 
     // Create the PurpleAir layer
-    // pas.load().then(function(synopticData) {
-    //   let geojsonData = purpleairCreateGeoJSON(synopticData);
-    //   PurpleAirLayer = createPurpleAirLayer(geojsonData);
-    // });
+    pas.load().then(function(synopticData) {
+      let geojsonData = purpleairCreateGeoJSON(synopticData);
+      PurpleAirLayer = createPurpleAirLayer(geojsonData);
+    });
 
     // Create the Clarity layer
     // clarity_geojson.load().then(function(geojsonData) {
@@ -124,17 +124,17 @@
     // HMSSmokeLayer.addTo(map);
 
     // Add HMS Fires to the map so it's on the bottom
-    // hms_fires_csv.load().then(function(csvData) {
-    //   let a = 1;
-    //   console.log(csvData.length)
-    //   HMSFiresLayer = createHMSFiresLayer_csv(csvData);
-    // });
+    hms_fires_csv.load().then(function(csvData) {
+      let a = 1;
+      console.log(csvData.length)
+      HMSFiresLayer = createHMSFiresLayer_csv(csvData);
+    });
 
     // await clarity_geojson.load();
     // ClarityLayer.addTo(map);
 
-    // await pas.load();
-    // PurpleAirLayer.addTo(map);
+    await pas.load();
+    PurpleAirLayer.addTo(map);
 
     await airsis_geojson.load();
     AIRSISLayer.addTo(map);

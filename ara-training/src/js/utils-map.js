@@ -17,7 +17,8 @@ export function monitorPropertiesToIconOptions(properties) {
     shape:
       properties["deploymentType"] == "Temporary" ? "triangle-up" : "circle",
     fillColor:
-      latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"]),
+      // // //latency > 4 ? "#bbb" : pm25ToColor(properties["last_nowcast"]), // Original
+      latency > 24 ? "#bbb" : pm25ToColor(properties["last_nowcast"]), // ARA training version
     color: "#000",
     weight: 1,
     opacity: 1,
@@ -79,7 +80,11 @@ export function purpleairPropertiesToIconOptions(properties) {
     radius: 4,
     shape: "square",
     fillColor:
-      properties.latency > 4
+      // ORIGINAL
+      // properties.latency > 4
+      //   ? "#bbb"
+      //   : pm25ToColor(properties.epa_nowcast),
+      properties.latency > 24
         ? "#bbb"
         : pm25ToColor(properties.epa_nowcast),
     color: "#000",

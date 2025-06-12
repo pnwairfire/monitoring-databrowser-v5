@@ -1,47 +1,97 @@
-# Svelte + Vite
+# Monitoring v5 for ARA training 2025
 
-This template should help get you started developing with Svelte in Vite.
+## Initial setup
 
-## Recommended IDE Setup
+At the command line:
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
-
-## Need an official Svelte framework?
-
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
-
-## Technical considerations
-
-**Why use this over SvelteKit?**
-
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
-
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
-
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
-
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
-
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
 ```
+npm init vite
+# choose framework: Svelte
+# choose variant: JavaScript
+cd real-time
+npm install
+npm run dev
+```
+
+This will create a default Svelte app visible at:
+
+And view the page at http://localhost:5173/
+
+## Copy in code
+
+Ctrl-C to stop serving the Svelte app. Copy in various files from the relevant development directory. These will include at least:
+
+```
+./src/App.svelte
+./src/components/
+./src/stores/
+```
+
+## Remove/modify example files/code
+
+Remove unneeded files that came with the example app:
+
+```
+rm -rf ./src/assets
+rm -rf ./src/lib
+```
+
+Modify `./index.html` by removing this line:
+
+```
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+```
+
+## Install required packages
+
+For monitoring v5 apps, the following packages need to be installed. At the
+command line:
+
+```
+# npm packages
+npm install arquero highcharts moment-timezone suncalc
+npm install @square/svelte-store
+npm install leaflet
+npm install leaflet-svg-shape-markers
+npm install esri-leaflet
+npm install papaparse
+npm install geojson pbf
+# AirFire packages
+npm install github:MazamaScience/air-monitor
+npm install github:MazamaScience/air-monitor-algorithms
+npm install github:pnwairfire/air-monitor-plots
+```
+
+## Test functioning
+
+Start the Svelte app with:
+
+```
+npm run dev
+```
+
+## Build the static site
+
+Compile/build the static site (on OSX) with:
+
+```
+npm run build_osx
+```
+
+Files will be found in the `dist/` directory:
+
+```
+dist
+├── assets
+│   ├── index-6187947d.js
+│   └── index-af8c322a.css
+├── images
+│   ├── fire-dot.png
+│   └── forestservicelogo-inverted.svg
+└── index.html
+```
+
+## Deploy the static site
+
+Now just copy these files to your favorite web server!
+

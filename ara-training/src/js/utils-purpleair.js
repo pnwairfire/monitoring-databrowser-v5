@@ -8,7 +8,7 @@ import Papa from "papaparse";
 // Get PurpleAir CSV data
 export async function getPurpleAirData(id) {
   const url =
-    "https://airfire-data-exports.s3.us-west-2.amazonaws.com/maps/purple_air/v4/timeseries/weekly/" +
+    "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/sequence-a/purple_air/timeseries/weekly/" +
     id +
     ".csv";
   const response = await fetch(url);

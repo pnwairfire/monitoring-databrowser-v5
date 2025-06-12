@@ -23,7 +23,7 @@ export const pas = asyncReadable(
   {},
   async () => {
     const response = await fetch(
-      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/maps/purple_air/v4/pas.csv"
+      "https://airfire-data-exports.s3.us-west-2.amazonaws.com/ara-training-2025/sequence-a/purple_air/pas.csv"
     );
     const text = await response.text();
     const results = Papa.parse(text, {
