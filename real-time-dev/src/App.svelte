@@ -20,7 +20,7 @@
 	} from './stores/gui-store.js';
   import { all_monitors } from './stores/monitor-data-store.js';
   import { pas } from './stores/purpleair-data-store.js';
-  import { clarity } from './stores/clarity-data-store.js';
+  import { clarity, clarity_geojson } from './stores/clarity-data-store.js';
   import { hms_fires_csv } from './stores/hms-data-store.js';
 
   // Svelte Components
@@ -44,10 +44,68 @@
 	} from './js/utils.js';
 
 
+
+  // // Utility functions
+  // import { getPurpleAirData } from './js/utils-purpleair.js';
+  // import { createAQINowCastServiceUrl } from './js/utils.js';
+  // import { createDataServiceUrl } from './js/utils.js';
+
+	// Initialize the leaflet map from URL parameters
+	const urlParams = new URLSearchParams(window.location.search);
+  if ( urlParams.has('centerlat') ) {
+	  $centerLat = urlParams.get('centerlat');
+	}
+  if ( urlParams.has('centerlon') ) {
+	  $centerLon = urlParams.get('centerlon');
+	}
+  if ( urlParams.has('zoom') ) {
+	  $zoom = urlParams.get('zoom');
+	}
+  if ( urlParams.has('monitors') ) {
+	  $selected_monitor_ids = urlParams.get('monitors').split(',');
+	}
+  if ( urlParams.has('clarity') ) {
+	  $selected_clarity_ids = urlParams.get('clarity').split(',');
+	}
+
+	// async function loadPurpleAirData(ids) {
+	// 	for (let i = 0; i < ids.length; i++) {
+	// 		let id = ids[i];
+  //     // Load pat data
+  //     const index = $patCart.items.findIndex((item) => item.id === id);
+  //     if (index !== -1) {
+  //       console.log("pat id: " + id + " is already loaded.");
+  //     } else {
+  //       console.log("Downloading PurpleAir data for id = " + id);
+  //       let purpleairData = await getPurpleAirData(id);
+  //       const pa_object = { id: id, data: purpleairData };
+  //       patCart.addItem(pa_object);
+  //     }
+  //     console.log("patCart.count = " + $patCart.count);
+  //     // Now update selected_purpleair_ids
+  //     const ids = $selected_purpleair_ids;
+  //     const length = ids.unshift(id);
+  //     $selected_purpleair_ids = ids;
+	// 	}
+	// }
+
+  // if ( urlParams.has('purpleair') ) {
+  //   pas.load().then(function(synopticData) {
+	// 		let purpleair_ids = urlParams.get('purpleair').split(',');
+	// 	  loadPurpleAirData(purpleair_ids);
+	// 	});
+	// }
+
+
+
+
+
+
   // Force loading to ensure ~Count is updated
   onMount(() => {
     pas.load?.();
     clarity.load?.();
+		clarity_geojson.load?.();
 		hms_fires_csv.load?.();
   });
 
@@ -115,7 +173,7 @@
 			</p>
 		{/if}
 
-		<!-- Leaflet Map -->
+		<!-- Leaflet Map ---------------------------------------------------------->
 		<div >
 			<LeafletMap width="1200px" height="400px"/>
 		</div>
@@ -141,6 +199,7 @@
 
 		<hr>
 
+		<!-- Selected Monitors ---------------------------------------------------->
 		{#each $selected_monitor_ids as id, i}
 
       <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -179,6 +238,7 @@
 
 		<hr>
 
+		<!-- Selected PurpleAir Sensors ------------------------------------------->
 		{#each $selected_purpleair_ids as id, i}
 
 			<div class="flex-row">
@@ -216,6 +276,7 @@
 
 		<hr>
 
+		<!-- Selected Clarity Sensors --------------------------------------------->
 		{#each $selected_clarity_ids as id, i}
 
 			<div class="flex-row">
