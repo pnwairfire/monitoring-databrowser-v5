@@ -129,3 +129,43 @@ dist
 ## Deploy the static site
 
 Now just copy these files to your favorite web server!
+
+On the `tools-c#` machines we have:
+
+```
+/var/www/html/monitoring/
+├── Makefile
+├── v5
+├── v5-ara
+└── v5-dev
+```
+
+## Password protect the static site
+
+Google how to password protect a directory.
+
+On the `tools-c#` machines the monitoring site
+password is defined in `/etc/apache2/.htpasswd-monitoring`. Then define the
+directories where this applies in `/etc/apache2/sites-available/default-ssl.conf`
+with chunks like this:
+
+```
+<Directory /var/www/html/monitoring/v5-ara>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+    AuthType Basic
+    AuthName "Authentication Required"
+    AuthUserFile "/etc/apache2/.htpasswd-monitoring"
+    Require valid-user
+</Directory>
+```
+
+Test and reboot with:
+
+```
+sudo apache2ctl configtest
+sudo service apache2 reload
+```
+
