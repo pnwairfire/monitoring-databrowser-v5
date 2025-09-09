@@ -18,10 +18,16 @@
 		selected_clarity_ids,
 		current_slide,
 	} from './stores/gui-store.js';
-  import { all_monitors } from './stores/monitor-data-store.js';
-  import { pas } from './stores/purpleair-data-store.js';
+  import {
+		all_monitors,
+		airnow_geojson,
+    airsis_geojson,
+    wrcc_geojson
+	} from './stores/monitor-data-store.js';
+  import { pas, patCart } from './stores/purpleair-data-store.js';
   import { clarity, clarity_geojson } from './stores/clarity-data-store.js';
-  import { hms_fires_csv } from './stores/hms-data-store.js';
+  import { hms_fires_csv, hms_smoke_geojson } from './stores/hms-data-store.js';
+	import { getPurpleAirData } from './js/utils-purpleair.js';
 
   // Svelte Components
   import NavBar from "./components/NavBar.svelte";
@@ -61,52 +67,61 @@
   if ( urlParams.has('zoom') ) {
 	  $zoom = urlParams.get('zoom');
 	}
-  if ( urlParams.has('monitors') ) {
+	// NOTE:  Guarantee that required data has been successfully loaded.
+	// NOTE:  As reactive statements, these will be false if any of the
+	// NOTE:  reactive variables are null (i.e. haven't loaded yet)
+  $: if ( urlParams.has('monitors') && $all_monitors ) {
 	  $selected_monitor_ids = urlParams.get('monitors').split(',');
 	}
-  if ( urlParams.has('clarity') ) {
+  $: if ( urlParams.has('clarity') && $clarity && $clarity_geojson ) {
 	  $selected_clarity_ids = urlParams.get('clarity').split(',');
 	}
 
-	// async function loadPurpleAirData(ids) {
-	// 	for (let i = 0; i < ids.length; i++) {
-	// 		let id = ids[i];
-  //     // Load pat data
-  //     const index = $patCart.items.findIndex((item) => item.id === id);
-  //     if (index !== -1) {
-  //       console.log("pat id: " + id + " is already loaded.");
-  //     } else {
-  //       console.log("Downloading PurpleAir data for id = " + id);
-  //       let purpleairData = await getPurpleAirData(id);
-  //       const pa_object = { id: id, data: purpleairData };
-  //       patCart.addItem(pa_object);
-  //     }
-  //     console.log("patCart.count = " + $patCart.count);
-  //     // Now update selected_purpleair_ids
-  //     const ids = $selected_purpleair_ids;
-  //     const length = ids.unshift(id);
-  //     $selected_purpleair_ids = ids;
-	// 	}
-	// }
+	// NOTE:  For purpleair, we need to individually load the ids
+  async function loadPurpleAirData(idList) {
+    for (const id of idList) {
+      console.log("loading", id);
+      // Load pat data
+      const index = $patCart.items.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        console.log("pat id: " + id + " is already loaded.");
+      } else {
+        console.log("Downloading PurpleAir data for id = " + id);
+        let purpleairData = await getPurpleAirData(id);
+        const pa_object = { id: id, data: purpleairData };
+        patCart.addItem(pa_object);
+      }
+		}
+		console.log("patCart.count = " + $patCart.count);
+	}
 
-  // if ( urlParams.has('purpleair') ) {
-  //   pas.load().then(function(synopticData) {
-	// 		let purpleair_ids = urlParams.get('purpleair').split(',');
-	// 	  loadPurpleAirData(purpleair_ids);
-	// 	});
-	// }
+  // Reactively load data only once stores + params are ready
+  $: if (urlParams.has("purpleair") && $pas ) {
+    const raw = urlParams.get("purpleair");
+    if (raw) {
+      const idList = raw.split(",").filter(Boolean); // filter out empty strings
+      if (idList.length > 0) {
+        loadPurpleAirData(idList);
+      }
+			$selected_purpleair_ids = idList;
+    }
+  }
 
-
-
-
-
-
-  // Force loading to ensure ~Count is updated
+  // Initiate loading of all map/monitor data
   onMount(() => {
-    pas.load?.();
+		// Monitors
+	  airnow_geojson.load?.();
+    airsis_geojson.load?.();
+    wrcc_geojson.load?.();
+		// NOTE:  "#await all_monitors" below controls overall rendering
+		// Clarity
     clarity.load?.();
 		clarity_geojson.load?.();
+		// PurpleAir
+    pas.load?.();
+		// Other
 		hms_fires_csv.load?.();
+		hms_smoke_geojson.load?.();
   });
 
 	function unselectHovered() {
@@ -174,9 +189,11 @@
 		{/if}
 
 		<!-- Leaflet Map ---------------------------------------------------------->
+		{#if $airnow_geojson && $airsis_geojson && $wrcc_geojson}
 		<div >
 			<LeafletMap width="1200px" height="400px"/>
 		</div>
+		{/if}
 
 		<div id="hovered-row" class="flex-row">
 			<HoveredMetadataBox element_id="hovered-metadata-box" width="350px" height="160px"/>
@@ -200,34 +217,36 @@
 		<hr>
 
 		<!-- Selected Monitors ---------------------------------------------------->
-		{#each $selected_monitor_ids as id, i}
+		{#if $all_monitors}
+			{#each $selected_monitor_ids as id, i}
 
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-			<div class="flex-row" on:mouseenter={unselectHovered}>
-				<RemoveRowButton id={id}/>
-				<MetadataBox element_id="row{i}_metadata" width="300px" height="200px" id={id}/>
-				<div class="flex-row">
-					{#if $current_slide === "all"}
-						<div class="flex-row">
-							<MiniMap element_id="row{i}_map" width="200px" height="180px" id={id}/>
-							<TimeseriesPlot element_id="row{i}_small_timeseries" width="200px" height="200px" id={id}  size="small"/>
-							<DailyBarplot element_id="row{i}_small_daily" width="200px" height="200px" id={id}  size="small"/>
-							<DiurnalPlot element_id="row{i}_small_diurnal" width="200px" height="200px" id={id}  size="small"/>
-						</div>
-					{:else if $current_slide === "timeseries"}
-						<TimeseriesPlot element_id="row{i}_timeseries" width="800px" height="200px" id={id}  size="large"/>
-					{:else if $current_slide === "hourly"}
-						<HourlyBarplot element_id="row{i}_hourly" width="800px" height="200px" id={id}  size="large"/>
-					{:else if $current_slide === "daily"}
-						<DailyBarplot element_id="row{i}_daily" width="800px" height="200px" id={id}  size="large"/>
-					{:else if $current_slide === "diurnal"}
-						<DiurnalPlot element_id="row{i}_diurnal" width="800px" height="200px" id={id}  size="large"/>
-					{/if}
-					<SlideAdvance element_id="row{i}_slideAdvance"/>
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<div class="flex-row" on:mouseenter={unselectHovered}>
+					<RemoveRowButton id={id}/>
+					<MetadataBox element_id="row{i}_metadata" width="300px" height="200px" id={id}/>
+					<div class="flex-row">
+						{#if $current_slide === "all"}
+							<div class="flex-row">
+								<MiniMap element_id="row{i}_map" width="200px" height="180px" id={id}/>
+								<TimeseriesPlot element_id="row{i}_small_timeseries" width="200px" height="200px" id={id}  size="small"/>
+								<DailyBarplot element_id="row{i}_small_daily" width="200px" height="200px" id={id}  size="small"/>
+								<DiurnalPlot element_id="row{i}_small_diurnal" width="200px" height="200px" id={id}  size="small"/>
+							</div>
+						{:else if $current_slide === "timeseries"}
+							<TimeseriesPlot element_id="row{i}_timeseries" width="800px" height="200px" id={id}  size="large"/>
+						{:else if $current_slide === "hourly"}
+							<HourlyBarplot element_id="row{i}_hourly" width="800px" height="200px" id={id}  size="large"/>
+						{:else if $current_slide === "daily"}
+							<DailyBarplot element_id="row{i}_daily" width="800px" height="200px" id={id}  size="large"/>
+						{:else if $current_slide === "diurnal"}
+							<DiurnalPlot element_id="row{i}_diurnal" width="800px" height="200px" id={id}  size="large"/>
+						{/if}
+						<SlideAdvance element_id="row{i}_slideAdvance"/>
+					</div>
 				</div>
-			</div>
 
-		{/each}
+			{/each}
+		{/if}
 
 		<hr>
 
@@ -239,33 +258,35 @@
 		<hr>
 
 		<!-- Selected PurpleAir Sensors ------------------------------------------->
-		{#each $selected_purpleair_ids as id, i}
+		{#if $pas}
+			{#each $selected_purpleair_ids as id, i}
 
-			<div class="flex-row">
-				<RemoveRowButton id={id} deviceType="purpleair"/>
-				<MetadataBox element_id="purpleair_row{i}_metadata" width="300px" height="200px" id={id} deviceType="purpleair"/>
 				<div class="flex-row">
-					{#if $current_slide === "all"}
-						<div class="flex-row">
-							<MiniMap element_id="purpleair_row{i}_map" width="200px" height="180px" id={id} deviceType="purpleair"/>
-							<TimeseriesPlot element_id="purpleair_row{i}_small_timeseries" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
-							<DailyBarplot element_id="purpleair_row{i}_small_daily" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
-							<DiurnalPlot element_id="purpleair_row{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
+					<RemoveRowButton id={id} deviceType="purpleair"/>
+					<MetadataBox element_id="purpleair_row{i}_metadata" width="300px" height="200px" id={id} deviceType="purpleair"/>
+					<div class="flex-row">
+						{#if $current_slide === "all"}
+							<div class="flex-row">
+								<MiniMap element_id="purpleair_row{i}_map" width="200px" height="180px" id={id} deviceType="purpleair"/>
+								<TimeseriesPlot element_id="purpleair_row{i}_small_timeseries" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
+								<DailyBarplot element_id="purpleair_row{i}_small_daily" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
+								<DiurnalPlot element_id="purpleair_row{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="purpleair"/>
+							</div>
+							{:else if $current_slide === "timeseries"}
+								<TimeseriesPlot element_id="purpleair_row{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
+							{:else if $current_slide === "hourly"}
+								<HourlyBarplot element_id="purpleair_row{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
+							{:else if $current_slide === "daily"}
+								<DailyBarplot element_id="purpleair_row{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
+							{:else if $current_slide === "diurnal"}
+								<DiurnalPlot element_id="purpleair_row{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
+							{/if}
+							<SlideAdvance element_id="purpleair_row{i}_SlideAdvance"/>
 						</div>
-						{:else if $current_slide === "timeseries"}
-							<TimeseriesPlot element_id="purpleair_row{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
-						{:else if $current_slide === "hourly"}
-							<HourlyBarplot element_id="purpleair_row{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
-						{:else if $current_slide === "daily"}
-							<DailyBarplot element_id="purpleair_row{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
-						{:else if $current_slide === "diurnal"}
-							<DiurnalPlot element_id="purpleair_row{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="purpleair"/>
-						{/if}
-						<SlideAdvance element_id="purpleair_row{i}_SlideAdvance"/>
 					</div>
-				</div>
 
-		{/each}
+			{/each}
+		{/if}
 
 		<hr>
 
@@ -277,33 +298,35 @@
 		<hr>
 
 		<!-- Selected Clarity Sensors --------------------------------------------->
-		{#each $selected_clarity_ids as id, i}
+		{#if $clarity && $clarity_geojson}
+			{#each $selected_clarity_ids as id, i}
 
-			<div class="flex-row">
-				<RemoveRowButton id={id} deviceType="clarity"/>
-				<MetadataBox element_id="clarity_row{i}_metadata" width="300px" height="200px" id={id} deviceType="clarity"/>
 				<div class="flex-row">
-					{#if $current_slide === "all"}
-						<div class="flex-row">
-							<MiniMap element_id="clarity_row{i}_map" width="200px" height="180px" id={id} deviceType="clarity"/>
-							<TimeseriesPlot element_id="clarity_row{i}_small_timeseries" width="200px" height="200px" id={id} size="small" deviceType="clarity"/>
-							<DailyBarplot element_id="clarity_row{i}_small_daily" width="200px" height="200px" id={id} size="small" deviceType="clarity"/>
-							<DiurnalPlot element_id="clarity_row{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="clarity"/>
+					<RemoveRowButton id={id} deviceType="clarity"/>
+					<MetadataBox element_id="clarity_row{i}_metadata" width="300px" height="200px" id={id} deviceType="clarity"/>
+					<div class="flex-row">
+						{#if $current_slide === "all"}
+							<div class="flex-row">
+								<MiniMap element_id="clarity_row{i}_map" width="200px" height="180px" id={id} deviceType="clarity"/>
+								<TimeseriesPlot element_id="clarity_row{i}_small_timeseries" width="200px" height="200px" id={id} size="small" deviceType="clarity"/>
+								<DailyBarplot element_id="clarity_row{i}_small_daily" width="200px" height="200px" id={id} size="small" deviceType="clarity"/>
+								<DiurnalPlot element_id="clarity_row{i}_small_diurnal" width="200px" height="200px" id={id} size="small" deviceType="clarity"/>
+							</div>
+							{:else if $current_slide === "timeseries"}
+								<TimeseriesPlot element_id="clarity_row{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
+							{:else if $current_slide === "hourly"}
+								<HourlyBarplot element_id="clarity_row{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
+							{:else if $current_slide === "daily"}
+								<DailyBarplot element_id="clarity_row{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
+							{:else if $current_slide === "diurnal"}
+								<DiurnalPlot element_id="clarity_row{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
+							{/if}
+							<SlideAdvance element_id="clarity_row{i}_SlideAdvance"/>
 						</div>
-						{:else if $current_slide === "timeseries"}
-							<TimeseriesPlot element_id="clarity_row{i}_timeseries" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
-						{:else if $current_slide === "hourly"}
-							<HourlyBarplot element_id="clarity_row{i}_hourly" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
-						{:else if $current_slide === "daily"}
-							<DailyBarplot element_id="clarity_row{i}_daily" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
-						{:else if $current_slide === "diurnal"}
-							<DiurnalPlot element_id="clarity_row{i}_diurnal" width="800px" height="200px" id={id} size="large" deviceType="clarity"/>
-						{/if}
-						<SlideAdvance element_id="clarity_row{i}_SlideAdvance"/>
 					</div>
-				</div>
 
-		{/each}
+			{/each}
+		{/if}
 
   {:catch}
 		<p style="color: red">An error occurred</p>

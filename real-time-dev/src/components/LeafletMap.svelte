@@ -216,14 +216,7 @@
       enforceLayerGroupOrder();
     });
 
-    // Kick off initial load of all data
-    hms_smoke_geojson.reload();
-    hms_fires_csv.reload();
-    clarity_geojson.reload();
-    pas.reload();
-    airnow_geojson.reload();
-    airsis_geojson.reload();
-    wrcc_geojson.reload();
+    // Kick off initial load of all data that hasn't been loaded in App.svelte
     mapLastUpdated.set(DateTime.now());
 
     // Make layers toggleable
