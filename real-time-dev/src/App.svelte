@@ -189,7 +189,7 @@
 		{/if}
 
 		<!-- Leaflet Map ---------------------------------------------------------->
-		{#if $airnow_geojson && $airsis_geojson && $wrcc_geojson}
+		{#if $airnow_geojson && $airsis_geojson && $wrcc_geojson && $clarity_geojson && $pas}
 		<div >
 			<LeafletMap width="1200px" height="400px"/>
 		</div>
@@ -202,6 +202,7 @@
 
 		<hr>
 
+		<!-- Selected Monitors ---------------------------------------------------->
 		<div class="flex-row">
 			<span class="selected-devices">Selected Monitors:</span>
 			<span class="selected-devices-count">{$selected_monitor_ids.length} monitors</span>
@@ -216,7 +217,6 @@
 
 		<hr>
 
-		<!-- Selected Monitors ---------------------------------------------------->
 		{#if $all_monitors}
 			{#each $selected_monitor_ids as id, i}
 
@@ -250,6 +250,7 @@
 
 		<hr>
 
+		<!-- Selected PurpleAir Sensors ------------------------------------------->
 		<div class="flex-row">
 			<span class="selected-devices">Selected PurpleAir Sensors:</span>
 			<span class="selected-devices-count">{$selected_purpleair_ids.length} sensors</span>
@@ -257,7 +258,6 @@
 
 		<hr>
 
-		<!-- Selected PurpleAir Sensors ------------------------------------------->
 		{#if $pas}
 			{#each $selected_purpleair_ids as id, i}
 
@@ -290,6 +290,7 @@
 
 		<hr>
 
+		<!-- Selected Clarity Sensors --------------------------------------------->
 		<div class="flex-row">
 			<span class="selected-devices">Selected Clarity Sensors:</span>
 			<span class="selected-devices-count">{$selected_clarity_ids.length} sensors</span>
@@ -297,7 +298,6 @@
 
 		<hr>
 
-		<!-- Selected Clarity Sensors --------------------------------------------->
 		{#if $clarity && $clarity_geojson}
 			{#each $selected_clarity_ids as id, i}
 

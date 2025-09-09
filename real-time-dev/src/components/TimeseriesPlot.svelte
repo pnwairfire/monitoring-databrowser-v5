@@ -35,42 +35,42 @@
   let myChart;
 
   function createChart() {
-
     context = document.getElementById(element_id);
 
-    // See https://www.youtube.com/watch?v=s7rk2b1ioVE @6:30
+    // Destroy old chart if it exists
     if (myChart) myChart.destroy();
 
-    if ( id !== "" ) {
+    // Don’t proceed if no ID is set
+    if (id === "") {
+      chartConfig = {
+        title: { text: "" },
+        yAxis: { min: 0, max: 1 },
+        xAxis: { min: 1, max: 50 },
+        series: [{ data: [null, null] }]
+      };
+      myChart = Highcharts.chart(context, chartConfig);
+      return;
+    }
 
-      // ----- Assemble required plot data -------------------------------------
+    // ----- Assemble required plot data -----
+    let plotData;
 
-      let plotData;
-
-      if ( deviceType === "monitor" ) {
-
-        // Get a copy of the reactive data
+    try {
+      if (deviceType === "monitor") {
         const monitor = $all_monitors;
-
-        // Assemble required plot data
         plotData = {
           datetime: monitor.getDatetime(),
           pm25: monitor.getPM25(id),
           nowcast: monitor.getNowcast(id),
-          locationName: monitor.getMetadata(id, 'locationName'),
-          timezone: monitor.getMetadata(id, 'timezone'),
-          title: undefined // use default title
-        }
+          locationName: monitor.getMetadata(id, "locationName"),
+          timezone: monitor.getMetadata(id, "timezone"),
+          title: undefined
+        };
 
-      } else if ( deviceType === "purpleair" ) {
-
-        // Get a copy of the reactive data
+      } else if (deviceType === "purpleair") {
         const index = $patCart.items.findIndex((item) => item.id === id);
         let purpleairData = $patCart.items[index].data;
-        // epa_pm25,epa_nowcast,local_ts
-        // 9.1,9.9,2023-07-05 12:00:00-0700
-
-        let site = $pas.filter(o => o.sensor_index == id)[0];
+        let site = $pas.filter((o) => o.sensor_index == id)[0];
 
         plotData = {
           datetime: purpleairData.map((o) => o.datetime),
@@ -78,67 +78,68 @@
           nowcast: purpleairData.map((o) => o.epa_nowcast),
           locationName: "PurpleAir " + id,
           timezone: site.timezone,
-          title: undefined // use default title
+          title: undefined
         };
 
-      } else if ( deviceType === "clarity" ) {
-
-        // Assemble required plot data
+      } else if (deviceType === "clarity") {
+        // Wrap risky accessors in try/catch
         plotData = {
           datetime: $clarity.getDatetime(),
           pm25: $clarity.getPM25(id),
           nowcast: $clarity.getNowcast(id),
-          locationName: $clarity.getMetadata(id, 'locationName'),
-          timezone: $clarity.getMetadata(id, 'timezone'),
-          title: undefined // use default title
+          locationName: $clarity.getMetadata(id, "locationName"),
+          timezone: $clarity.getMetadata(id, "timezone"),
+          title: undefined
         };
-
       }
+    } catch (err) {
+      console.error("Failed to build plotData:", err);
 
-      // ----- Create the chartConfig ------------------------------------------
-
-      if ( size === 'small' ) {
-        plotData.title = "PM2.5 & Nowcast";
-        chartConfig = small_timeseriesPlotConfig(plotData);
-        // Disable hover
-        chartConfig.plotOptions.line.enableMouseTracking = false;
-        chartConfig.plotOptions.scatter.enableMouseTracking = false;
-        myChart = Highcharts.chart(context, chartConfig);
-        pm25_addAQIStackedBar(myChart, 4);
-      } else {
-        chartConfig = timeseriesPlotConfig(plotData);
-
-        // Remove title
-        chartConfig.title = { text: '' };
-        // Add zoom
-        chartConfig.chart.zoomBySingleTouch = true;
-        chartConfig.chart.zoomType = "x";
-        myChart = Highcharts.chart(context, chartConfig);
-        pm25_addAQIStackedBar(myChart, 6);
-      }
-
-    } else {
-
-      chartConfig = {
-        title: {
-          text: "",
-        },
-        yAxis: {
-          min: 0,
-          max: 1,
-        },
-        xAxis: {
-          min: 1,
-          max: 50
-        },
-        series: {
-          data:[null,null]
-        }
+      // Provide safe fallback
+      plotData = {
+        datetime: [],
+        pm25: [],
+        nowcast: [],
+        locationName: "Unavailable",
+        timezone: "UTC",
+        title: "Data unavailable"
       };
-      myChart = Highcharts.chart(context, chartConfig);
-
     }
 
+    // ----- Build chartConfig -----
+    if (!plotData.datetime?.length) {
+      // Fallback "no data" chart
+      chartConfig = {
+        title: { text: plotData.title || "No data available" },
+        xAxis: { type: "datetime" },
+        series: [{ data: [] }]
+      };
+      myChart = Highcharts.chart(context, chartConfig);
+      return;
+    }
+
+    if (size === "small") {
+      plotData.title = "PM2.5 & Nowcast";
+      chartConfig = small_timeseriesPlotConfig(plotData);
+
+      // Disable hover
+      chartConfig.plotOptions.line.enableMouseTracking = false;
+      chartConfig.plotOptions.scatter.enableMouseTracking = false;
+
+      myChart = Highcharts.chart(context, chartConfig);
+      pm25_addAQIStackedBar(myChart, 4);
+
+    } else {
+      chartConfig = timeseriesPlotConfig(plotData);
+
+      // Remove title + add zoom
+      chartConfig.title = { text: "" };
+      chartConfig.chart.zoomBySingleTouch = true;
+      chartConfig.chart.zoomType = "x";
+
+      myChart = Highcharts.chart(context, chartConfig);
+      pm25_addAQIStackedBar(myChart, 6);
+    }
   }
 
   // Regenerate the chart after any update
