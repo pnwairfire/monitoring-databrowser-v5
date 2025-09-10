@@ -1,6 +1,7 @@
 import Papa from "papaparse";
-import { asyncReadable, writable } from "@square/svelte-store";
+import { asyncReadable, writable, derived } from "@square/svelte-store";
 
+import { purpleairCreateGeoJSON } from "../js/utils-map.js";
 import { error_message, purpleairCount } from "./gui-store.js";
 
 // NOTE:  The @square/svelte-store replacement for svelte-store is
@@ -47,6 +48,24 @@ export const pas = asyncReadable(
   },
   { reloadable: true }
 );
+
+// ----- geojson ---------------------------------------------------------------
+
+/**
+ * Derived store that converts $pas synoptic data into GeoJSON.
+ *
+ * Unlike asyncReadable-based stores, this one updates automatically
+ * whenever $pas changes, and does not require calling `.load()`.
+ */
+export const purpleair_geojson = derived(pas, ($pas) => {
+  if (!$pas) return null; // still loading or unavailable
+  try {
+    return purpleairCreateGeoJSON($pas);
+  } catch (err) {
+    console.error("[purpleair_geojson] Failed to create GeoJSON:", err);
+    return null;
+  }
+});
 
 // ----- time series -----------------------------------------------------------
 

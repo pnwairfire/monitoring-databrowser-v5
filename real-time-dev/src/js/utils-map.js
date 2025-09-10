@@ -56,7 +56,7 @@ export function purpleairCreateGeoJSON(synopticData) {
         coordinates: [site.longitude, site.latitude],
       },
       properties: {
-        deviceDeploymentID: site.sensor_index,
+        deviceDeploymentID: String(site.sensor_index),
         locationName: `PurpleAir ${site.sensor_index}`,
         epa_nowcast: site.epa_nowcast,
         epa_pm25: site.epa_pm25,

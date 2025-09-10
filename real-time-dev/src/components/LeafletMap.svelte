@@ -20,7 +20,7 @@
     wrcc_geojson,
   } from '../stores/monitor-data-store.js';
 
-  import { pas, patCart } from '../stores/purpleair-data-store.js';
+  import { pas, purpleair_geojson, patCart } from '../stores/purpleair-data-store.js';
 
   import { clarity_geojson } from '../stores/clarity-data-store.js';
 
@@ -61,17 +61,11 @@
   let map;
   let refreshInterval;
 
-  let layers = {
-    hmsSmoke: null,
-    hmsFires: null,
-    clarity: null,
-    purpleair: null,
-    airnow: null,
-    airsis: null,
-    wrcc: null,
-  };
+  // Layers are created in the map initialization section.
+  let layers = {};
+  let unsubscribers = [];
 
-  // --- Enforce stacking order (bottom to top) ---
+  // Enforce stacking order (bottom to top)
   function enforceLayerGroupOrder() {
     layers.hmsSmoke?.bringToBack?.();
     layers.hmsFires?.bringToBack?.();
@@ -126,6 +120,7 @@
   onDestroy(() => {
     if (map) map.remove();
     if (refreshInterval) clearInterval(refreshInterval);
+    unsubscribers.forEach((fn) => fn()); // clean up Svelte store subscriptions
   });
 
   async function createMap() {
@@ -134,87 +129,42 @@
     map = L.map('map').setView([$centerLat, $centerLon], $zoom);
     basemapLayer('Topographic').addTo(map);
 
-    // ----- Add Layers --------------------------------------------------------
+    // ----- Add layers through subscriptions ----------------------------------
 
-    // HMS Smoke
-    layers.hmsSmoke = L.layerGroup().addTo(map);
-    replaceLayerContent(layers.hmsSmoke, createHMSSmokeLayer($hms_smoke_geojson));
+    /**
+     * Helper to keep a Leaflet layer in sync with a Svelte store.
+     *
+     * Ensures that a layer group exists in `layers` for the given key,
+     * then replaces its content whenever the store updates.
+     *
+     * @param {Readable<any>} store - Svelte store providing raw data (GeoJSON, CSV, etc.).
+     * @param {Function} createFn - Function that builds a Leaflet layer from store value.
+     * @param {string} key - Key into the `layers` object.
+     * @param {L.Map} map - Leaflet map instance to attach the layer group to.
+     */
+    function watchLayer(store, createFn, key, map) {
+      // Create the layer group lazily if missing
+      if (!layers[key]) {
+        layers[key] = L.layerGroup().addTo(map);
+      }
 
-    // HMS Fires
-    layers.hmsFires = L.layerGroup().addTo(map);
-    replaceLayerContent(layers.hmsFires, createHMSFiresLayer_csv($hms_fires_csv));
+      const unsubscribe = store.subscribe((data) => {
+        const newLayer = data ? createFn(data) : null;
+        replaceLayerContent(layers[key], newLayer);
+        enforceLayerGroupOrder();
+      });
 
-    // Clarity
-    layers.clarity = L.layerGroup().addTo(map);
-    replaceLayerContent(layers.clarity, createClarityLayer($clarity_geojson));
+      unsubscribers.push(unsubscribe); // auto-register for cleanup
+    }
 
-    // PurpleAir
-    layers.purpleair = L.layerGroup().addTo(map);
-    replaceLayerContent(layers.purpleair, createPurpleAirLayer(purpleairCreateGeoJSON($pas)));
-
-    // AirNow
-    layers.airnow = L.layerGroup().addTo(map);
-    replaceLayerContent(layers.airnow, createClarityLayer($airnow_geojson));
-
-    // AIRSIS
-    layers.airsis = L.layerGroup().addTo(map);
-    replaceLayerContent(layers.airsis, createClarityLayer($airsis_geojson));
-
-    // WRCC
-    layers.wrcc = L.layerGroup().addTo(map);
-    replaceLayerContent(layers.wrcc, createClarityLayer($wrcc_geojson));
-
-    // ----- Subscriptions for Reactive Updates ---------------------------------
-
-    // HMS Smoke
-    hms_smoke_geojson.subscribe((geojson) => {
-      const newLayer = geojson ? createHMSSmokeLayer(geojson) : null;
-      replaceLayerContent(layers.hmsSmoke, newLayer);
-      enforceLayerGroupOrder();
-    });
-
-
-    // HMS Fires
-    hms_fires_csv.subscribe((csvData) => {
-      const newMarkers = csvData ? createHMSFiresLayer_csv(csvData) : null;
-      replaceLayerContent(layers.hmsFires, newMarkers);
-      enforceLayerGroupOrder();
-    });
-
-    // Clarity
-    clarity_geojson.subscribe((geojson) => {
-      const newLayer = geojson ? createClarityLayer(geojson) : null;
-      replaceLayerContent(layers.clarity, newLayer);
-      enforceLayerGroupOrder();
-    });
-
-    // PurpleAir
-    pas.subscribe((synopticData) => {
-      const newLayer = synopticData ? createPurpleAirLayer(purpleairCreateGeoJSON($pas)) : null;
-      replaceLayerContent(layers.purpleair, newLayer);
-      enforceLayerGroupOrder();
-    });
-
-    // AirNow
-    airnow_geojson.subscribe((geojson) => {
-      const newLayer = geojson ? createMonitorLayer(geojson) : null;
-      replaceLayerContent(layers.airnow, newLayer);
-      enforceLayerGroupOrder();
-    });
-
-    // AIRSIS
-    airsis_geojson.subscribe((geojson) => {
-      const newLayer = geojson ? createMonitorLayer(geojson) : null;
-      replaceLayerContent(layers.airsis, newLayer);
-      enforceLayerGroupOrder();
-    });
-
-    // WRCC
-    wrcc_geojson.subscribe((geojson) => {
-      const newLayer = geojson ? createMonitorLayer(geojson) : null;
-      replaceLayerContent(layers.wrcc, newLayer);
-      enforceLayerGroupOrder();
-    });
+    // --- Watch all layers
+    watchLayer(hms_smoke_geojson, createHMSSmokeLayer, "hmsSmoke", map);
+    watchLayer(hms_fires_csv, createHMSFiresLayer_csv, "hmsFires", map);
+    watchLayer(clarity_geojson, createClarityLayer, "clarity", map);
+    watchLayer(purpleair_geojson, createPurpleAirLayer, "purpleair", map);
+    watchLayer(airnow_geojson, createMonitorLayer, "airnow", map);
+    watchLayer(airsis_geojson, createMonitorLayer, "airsis", map);
+    watchLayer(wrcc_geojson, createMonitorLayer, "wrcc", map);
 
     // Kick off initial load of all data that hasn't been loaded in App.svelte
     mapLastUpdated.set(DateTime.now());
@@ -232,7 +182,7 @@
 
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_clarity_ids, $selected_purpleair_ids);
 
-    // ----- Add lastUpdated  custom control -----------------------------------
+    // ----- Add lastUpdated custom control ------------------------------------
 
     let lastUpdatedDiv = L.control({ position: 'bottomright' });
 
@@ -432,12 +382,12 @@
    */
   function createPurpleAirLayer(geojson) {
     const this_layer = L.geoJSON(geojson, {
-      // Customize marker rendering
+
+      // Icon appearance
       pointToLayer: function (feature, latlng) {
         const props = feature.properties;
 
-        // Filter out stale sensors (>3 days latency)
-        if (parseInt(props.latency) >= 24 * 3) return;
+        if (parseInt(props.latency) >= 24 * 3) return; // Skip stale sensors
 
         const marker = L.shapeMarker(latlng, purpleairPropertiesToIconOptions(props));
         const isSelected = $selected_purpleair_ids.includes(props.deviceDeploymentID);
@@ -451,18 +401,14 @@
 
       // Define interactive behavior
       onEachFeature: function (feature, layer) {
-        const id = feature.properties.deviceDeploymentID;
-
         layer.on('mouseover', () => {
-          $hovered_purpleair_id = id;
+          $hovered_purpleair_id = feature.properties.deviceDeploymentID;
           $use_hovered_purpleair = true;
         });
-
         layer.on('mouseout', () => {
           $hovered_purpleair_id = "";
           $use_hovered_purpleair = false;
         });
-
         layer.on('click', (e) => {
           purpleairIconClick(e);
         });
