@@ -1,7 +1,7 @@
 import Papa from "papaparse";
 import { asyncReadable, writable, derived } from "@square/svelte-store";
 
-import { purpleairCreateGeoJSON } from "../js/utils-map.js";
+import { purpleairCreateGeoJSON } from "../js/utils-purpleair.js";
 import { error_message, purpleairCount } from "./gui-store.js";
 
 // NOTE:  The @square/svelte-store replacement for svelte-store is

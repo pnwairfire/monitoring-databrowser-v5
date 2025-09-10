@@ -5,6 +5,54 @@
 import Papa from "papaparse";
 import { DateTime } from "luxon";
 
+/**
+ * Converts a PurpleAir synoptic CSV-style array into a GeoJSON FeatureCollection.
+ *
+ * 'pas' synopticData:
+ *   epa_nowcast: 7.7
+ *   epa_pm25: 7.2
+ *   latitude: 45.031963
+ *    longitude: -110.71382
+ *   raw_pm25: 4.4
+ *   sensor_index: 154193
+ *   timezone: "America/Denver"
+ *   utc_ts: "2023-07-11 21:00:00+0000"
+ *
+ * @param {Array<Object>} synopticData - Array of sensor records with fields like `latitude`, `longitude`, `epa_pm25`, etc.
+ * @returns {Object} A GeoJSON FeatureCollection of PurpleAir sensor points.
+ */
+export function purpleairCreateGeoJSON(synopticData) {
+  const now = DateTime.utc();
+
+  const features = synopticData.map((site) => {
+    const siteTime = DateTime.fromISO(site.utc_ts, { zone: "utc" });
+    const latency = now.diff(siteTime, "hours").hours;
+
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [site.longitude, site.latitude],
+      },
+      properties: {
+        deviceDeploymentID: String(site.sensor_index),
+        locationName: `PurpleAir ${site.sensor_index}`,
+        epa_nowcast: site.epa_nowcast,
+        epa_pm25: site.epa_pm25,
+        raw_pm25: site.raw_pm25,
+        timezone: site.timezone,
+        utc_ts: site.utc_ts,
+        latency: latency,
+      },
+    };
+  });
+
+  return {
+    type: "FeatureCollection",
+    features,
+  };
+}
+
 // Get PurpleAir CSV data and return parsed array
 export async function getPurpleAirData(id) {
   const url =
