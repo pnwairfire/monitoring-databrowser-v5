@@ -1,8 +1,8 @@
 import { readable, writable } from "svelte/store";
 import { DateTime } from 'luxon';
 
-// Version 5.5.0 = v5 . package update refactor . fist pass
-export const VERSION = readable("5.5.0");
+// Version 5.5.0 = v5 . package update refactor . save state during refresh
+export const VERSION = readable("5.5.1");
 
 // Status messages
 export let error_message = writable("");
@@ -35,4 +35,4 @@ export let map_update_needed = writable(false);
 export let use_hovered_purpleair = writable(false);
 export let use_hovered_clarity = writable(false);
 
-export let current_slide = writable("timeseries");
+export let current_slide = writable("all");

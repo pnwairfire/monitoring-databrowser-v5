@@ -38,6 +38,7 @@ export const pas = asyncReadable(
         return [];
       }
 
+      console.log(`loaded pas data`);
       purpleairCount.set(results.data.length);
       return results.data;
     } catch (err) {

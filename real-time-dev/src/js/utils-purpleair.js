@@ -47,6 +47,7 @@ export function purpleairCreateGeoJSON(synopticData) {
     };
   });
 
+  console.log(`created purupleair geojson`);
   return {
     type: "FeatureCollection",
     features,

@@ -102,18 +102,6 @@
 
   onMount(() => {
     createMap();
-
-    // Refresh store data every 10 minutes
-    refreshInterval = setInterval(() => {
-      airnow_geojson.reload();
-      airsis_geojson.reload();
-      wrcc_geojson.reload();
-      pas.reload();
-      clarity_geojson.reload();
-      hms_smoke_geojson.reload();
-      hms_fires_csv.reload();
-      mapLastUpdated.set(DateTime.now());
-    }, 5 * 60 * 1000); // 5 minutes
   });
 
   onDestroy(() => {

@@ -1,7 +1,7 @@
 {
   "name": "mv5-2025",
   "private": true,
-  "version": "0.0.0",
+  "version": "5.5.1",
   "type": "module",
   "scripts": {
     "dev": "vite",

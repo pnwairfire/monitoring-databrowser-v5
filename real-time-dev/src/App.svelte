@@ -1,133 +1,161 @@
 <script>
-	import { onMount } from 'svelte';
+  import { onMount } from "svelte";
+  import { DateTime } from "luxon";
 
-  // Svelte stores
+  // --- Svelte stores ---
   import {
-		VERSION,
-		error_message,
-		monitorCount,
-		purpleairCount,
-		clarityCount,
-		hmsFiresCount,
-		centerLon,
+    VERSION,
+    error_message,
+    monitorCount,
+    purpleairCount,
+    clarityCount,
+    hmsFiresCount,
+    centerLon,
     centerLat,
     zoom,
-		hovered_monitor_id,
-		selected_monitor_ids,
-		selected_purpleair_ids,
-		selected_clarity_ids,
-		current_slide,
-	} from './stores/gui-store.js';
-  import {
-		all_monitors,
-		airnow_geojson,
-    airsis_geojson,
-    wrcc_geojson
-	} from './stores/monitor-data-store.js';
-  import { pas, patCart } from './stores/purpleair-data-store.js';
-  import { clarity, clarity_geojson } from './stores/clarity-data-store.js';
-  import { hms_fires_csv, hms_smoke_geojson } from './stores/hms-data-store.js';
-	import { getPurpleAirData } from './js/utils-purpleair.js';
+    hovered_monitor_id,
+    selected_monitor_ids,
+    selected_purpleair_ids,
+    selected_clarity_ids,
+    current_slide,
+    mapLastUpdated,
+  } from "./stores/gui-store.js";
 
-  // Svelte Components
+  import {
+    all_monitors,
+    airnow_geojson,
+    airsis_geojson,
+    wrcc_geojson,
+  } from "./stores/monitor-data-store.js";
+
+  import { pas, patCart } from "./stores/purpleair-data-store.js";
+  import { clarity, clarity_geojson } from "./stores/clarity-data-store.js";
+  import { hms_fires_csv, hms_smoke_geojson } from "./stores/hms-data-store.js";
+
+  // --- Components ---
   import NavBar from "./components/NavBar.svelte";
   import AlertBox from "./components/AlertBox.svelte";
-	import LeafletMap from "./components/LeafletMap.svelte";
+  import LeafletMap from "./components/LeafletMap.svelte";
   import HoveredMetadataBox from "./components/HoveredMetadataBox.svelte";
   import HoveredHourlyBarplot from "./components/HoveredHourlyBarplot.svelte";
-	import RemoveRowButton from "./components/RemoveRowButton.svelte";
-	import SlideAdvance from "./components/SlideAdvance.svelte";
+  import RemoveRowButton from "./components/RemoveRowButton.svelte";
+  import SlideAdvance from "./components/SlideAdvance.svelte";
   import MetadataBox from "./components/MetadataBox.svelte";
   import MiniMap from "./components/MiniMap.svelte";
   import TimeseriesPlot from "./components/TimeseriesPlot.svelte";
-	import HourlyBarplot from "./components/HourlyBarplot.svelte";
-	import DailyBarplot from "./components/DailyBarplot.svelte";
-	import DiurnalPlot from "./components/DiurnalPlot.svelte";
+  import HourlyBarplot from "./components/HourlyBarplot.svelte";
+  import DailyBarplot from "./components/DailyBarplot.svelte";
+  import DiurnalPlot from "./components/DiurnalPlot.svelte";
 
-	import {
-		createAQINowCastServiceUrl,
-		createDataServiceUrl
-	} from './js/utils.js';
+  // --- Utilities ---
+  import {
+    createAQINowCastServiceUrl,
+    createDataServiceUrl,
+    parseWindowQueryParams,
+  } from "./js/utils.js";
+  import { getPurpleAirData } from "./js/utils-purpleair.js";
 
+  // --- Parse URL params once on startup ---
+  const urlParams = parseWindowQueryParams();
 
+  // --- Apply initial map center/zoom ---
+  if (urlParams.centerlat !== undefined) $centerLat = urlParams.centerlat;
+  if (urlParams.centerlon !== undefined) $centerLon = urlParams.centerlon;
+  if (urlParams.zoom !== undefined) $zoom = urlParams.zoom;
 
-  // // Utility functions
-  // import { getPurpleAirData } from './js/utils-purpleair.js';
-  // import { createAQINowCastServiceUrl } from './js/utils.js';
-  // import { createDataServiceUrl } from './js/utils.js';
+  // --- Apply initial monitor/clarity selections (after data loads) ---
+  $: if (urlParams.monitors && $all_monitors) {
+    $selected_monitor_ids = urlParams.monitors;
+  }
+  $: if (urlParams.clarity && $clarity && $clarity_geojson) {
+    $selected_clarity_ids = urlParams.clarity;
+  }
 
-	// Initialize the leaflet map from URL parameters
-	const urlParams = new URLSearchParams(window.location.search);
-  if ( urlParams.has('centerlat') ) {
-	  $centerLat = urlParams.get('centerlat');
-	}
-  if ( urlParams.has('centerlon') ) {
-	  $centerLon = urlParams.get('centerlon');
-	}
-  if ( urlParams.has('zoom') ) {
-	  $zoom = urlParams.get('zoom');
-	}
-	// NOTE:  Guarantee that required data has been successfully loaded.
-	// NOTE:  As reactive statements, these will be false if any of the
-	// NOTE:  reactive variables are null (i.e. haven't loaded yet)
-  $: if ( urlParams.has('monitors') && $all_monitors ) {
-	  $selected_monitor_ids = urlParams.get('monitors').split(',');
-	}
-  $: if ( urlParams.has('clarity') && $clarity && $clarity_geojson ) {
-	  $selected_clarity_ids = urlParams.get('clarity').split(',');
-	}
-
-	// NOTE:  For purpleair, we need to individually load the ids
+  // --- PurpleAir handling ---
   async function loadPurpleAirData(idList) {
     for (const id of idList) {
-      console.log("loading", id);
-      // Load pat data
-      const index = $patCart.items.findIndex((item) => item.id === id);
-      if (index !== -1) {
-        console.log("pat id: " + id + " is already loaded.");
-      } else {
-        console.log("Downloading PurpleAir data for id = " + id);
-        let purpleairData = await getPurpleAirData(id);
-        const pa_object = { id: id, data: purpleairData };
-        patCart.addItem(pa_object);
+      // Skip if already loaded
+      if ($patCart.items.some((item) => item.id === id)) {
+        console.log(`PurpleAir id ${id} already loaded`);
+        continue;
       }
-		}
-		console.log("patCart.count = " + $patCart.count);
-	}
 
-  // Reactively load data only once stores + params are ready
-  $: if (urlParams.has("purpleair") && $pas ) {
-    const raw = urlParams.get("purpleair");
-    if (raw) {
-      const idList = raw.split(",").filter(Boolean); // filter out empty strings
-      if (idList.length > 0) {
-        loadPurpleAirData(idList);
+      try {
+        console.log(`Downloading PurpleAir data for id = ${id}`);
+        const purpleairData = await getPurpleAirData(id);
+        patCart.addItem({ id, data: purpleairData });
+      } catch (err) {
+        console.error(`Failed to load PurpleAir id ${id}:`, err);
       }
-			$selected_purpleair_ids = idList;
+    }
+    console.log("patCart.count =", $patCart.count);
+  }
+
+  // Apply PurpleAir selections once stores are ready
+  $: if (urlParams.purpleair && $pas) {
+    const idList = urlParams.purpleair;
+    if (idList.length > 0) {
+      loadPurpleAirData(idList);
+      $selected_purpleair_ids = idList;
     }
   }
 
-  // Initiate loading of all map/monitor data
+  // --- Initial load + refresh ---
   onMount(() => {
-		// Monitors
-	  airnow_geojson.load?.();
+    // Initial load
+    airnow_geojson.load?.();
     airsis_geojson.load?.();
     wrcc_geojson.load?.();
-		// NOTE:  "#await all_monitors" below controls overall rendering
-		// Clarity
     clarity.load?.();
-		clarity_geojson.load?.();
-		// PurpleAir
+    clarity_geojson.load?.();
     pas.load?.();
-		// Other
-		hms_fires_csv.load?.();
-		hms_smoke_geojson.load?.();
+    hms_fires_csv.load?.();
+    hms_smoke_geojson.load?.();
+
+    // Periodic refresh every 5 minutes
+    const refreshInterval = setInterval(() => {
+      airnow_geojson.reload();
+      airsis_geojson.reload();
+      wrcc_geojson.reload();
+      pas.reload();
+      clarity_geojson.reload();
+      hms_smoke_geojson.reload();
+      hms_fires_csv.reload();
+      mapLastUpdated.set(DateTime.now());
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(refreshInterval);
   });
 
-	function unselectHovered() {
-		$hovered_monitor_id = "";
-	}
+  // --- Keep URL in sync with app state ---
+  function updateUrl() {
+    const params = new URLSearchParams();
 
+    if ($centerLat != null) params.set("centerlat", $centerLat.toFixed(4));
+    if ($centerLon != null) params.set("centerlon", $centerLon.toFixed(4));
+    if ($zoom != null) params.set("zoom", $zoom);
+
+    if ($selected_monitor_ids?.length) {
+      params.set("monitors", $selected_monitor_ids.join(","));
+    }
+    if ($selected_purpleair_ids?.length) {
+      params.set("purpleair", $selected_purpleair_ids.join(","));
+    }
+    if ($selected_clarity_ids?.length) {
+      params.set("clarity", $selected_clarity_ids.join(","));
+    }
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    history.replaceState(null, "", newUrl);
+  }
+
+  // Reactively update URL whenever relevant state changes
+  $: updateUrl();
+
+  // --- Helpers ---
+  function unselectHovered() {
+    $hovered_monitor_id = "";
+  }
 </script>
 
 <main>

@@ -61,20 +61,22 @@ export function replaceWindowHistory(
 
 /**
  * Parse strongly-typed values out of the current window location.
+ *
  * Returns numbers for center/zoom and string[] for id lists.
+ *
+ * @returns {{
+ *   centerlat?: number,
+ *   centerlon?: number,
+ *   zoom?: number,
+ *   monitors?: string[],
+ *   purpleair?: string[],
+ *   clarity?: string[]
+ * }}
  */
 export function parseWindowQueryParams() {
   const params = new URLSearchParams(window.location.search);
 
-  const result = /** @type {{
-    centerlat?: number,
-    centerlon?: number,
-    zoom?: number,
-    monitors?: string[],
-    purpleair?: string[],
-    clarity?: string[]
-  }} */ ({});
-
+  // Helpers
   const toNum = (s, parser) => {
     const n = parser(s);
     return Number.isFinite(n) ? n : undefined;
@@ -82,18 +84,21 @@ export function parseWindowQueryParams() {
   const toList = (s) =>
     s.split(",").map(x => x.trim()).filter(Boolean);
 
+  // Build result object
+  const result = {};
+
+  // Numbers
   if (params.has("centerlat")) {
-    const v = toNum(params.get("centerlat"), parseFloat);
-    if (v !== undefined) result.centerlat = v;
+    result.centerlat = toNum(params.get("centerlat"), parseFloat);
   }
   if (params.has("centerlon")) {
-    const v = toNum(params.get("centerlon"), parseFloat);
-    if (v !== undefined) result.centerlon = v;
+    result.centerlon = toNum(params.get("centerlon"), parseFloat);
   }
   if (params.has("zoom")) {
-    const v = toNum(params.get("zoom"), (x) => parseInt(x, 10));
-    if (v !== undefined) result.zoom = v;
+    result.zoom = toNum(params.get("zoom"), (x) => parseInt(x, 10));
   }
+
+  // Lists
   if (params.has("monitors")) {
     result.monitors = toList(params.get("monitors"));
   }
@@ -106,6 +111,7 @@ export function parseWindowQueryParams() {
 
   return result;
 }
+
 
 // Create data-service URL
 export function createDataServiceUrl(ids = []) {
