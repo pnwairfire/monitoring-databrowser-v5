@@ -36,3 +36,9 @@ export let use_hovered_purpleair = writable(false);
 export let use_hovered_clarity = writable(false);
 
 export let current_slide = writable("all");
+
+/**
+ * IDs of monitors that should be excluded from display.
+ * Populated at runtime from a URL in App.svelte.
+ */
+export const exclusion_ids = writable(new Set());

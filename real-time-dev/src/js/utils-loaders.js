@@ -5,7 +5,30 @@ import { asyncReadable } from "@square/svelte-store";
 import Pbf from "pbf";
 import geobuf from "geobuf";
 
-import { error_message } from "../stores/gui-store.js";
+import { exclusion_ids, error_message } from "../stores/gui-store.js";
+
+/**
+ * Loads an exclusion list from a JSON file at the given URL
+ * and stores it in `exclusion_ids`.
+ *
+ * @param {string} url - URL of the JSON file containing an array of IDs
+ */
+export async function loadExclusionList(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch exclusion list: ${response.status}`);
+    }
+    const ids = await response.json();
+
+    // Normalize to strings and store in a Set
+    exclusion_ids.set(new Set(ids.map(String)));
+    console.log(`Loaded ${ids.length} exclusion IDs`);
+  } catch (err) {
+    console.error("Error loading exclusion list:", err);
+    error_message.set("Failed to load exclusion list");
+  }
+}
 
 /**
  * Create a reloadable asyncReadable store that loads GeoJSON from a remote URL.

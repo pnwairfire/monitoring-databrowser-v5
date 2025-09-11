@@ -32,6 +32,7 @@
     centerLat,
     centerLon,
     zoom,
+    exclusion_ids,
     hovered_monitor_id,
     hovered_purpleair_id,
     hovered_clarity_id,
@@ -241,14 +242,18 @@
       // Icon appearance
       pointToLayer: function (feature, latlng) {
         const props = feature.properties;
+        const id = String(props.deviceDeploymentID);
 
-        if (
-          props.deviceDeploymentID.includes('_pnwusfs') || // Skip Susan's JBLM research monitors
-          parseInt(props.last_latency) >= 24 * 3           // Skip stale monitors
-        ) return;
+        // Exclusion rules
+        const isExcluded =
+          id.includes("_pnwusfs") || // Skip JBLM research monitors
+          $exclusion_ids.has(id) ||  // Skip runtime exclusion list
+          parseInt(props.last_latency) >= 24 * 3; // Skip stale monitors
+
+        if (isExcluded) return;
 
         const marker = L.shapeMarker(latlng, monitorPropertiesToIconOptions(props));
-        const isSelected = $selected_monitor_ids.includes(props.deviceDeploymentID);
+        const isSelected = $selected_monitor_ids.includes(id);
         marker.setStyle({ weight: isSelected ? 3 : 1 });
 
         return marker;
@@ -305,11 +310,17 @@
       // Icon appearance
       pointToLayer: function (feature, latlng) {
         const props = feature.properties;
+        const id = String(props.deviceDeploymentID);
 
-        if (parseInt(props.last_latency) >= 24 * 3) return; // Skip stale sensors
+        // Exclusion rules
+        const isExcluded =
+          $exclusion_ids.has(id) ||  // Skip runtime exclusion list
+          parseInt(props.last_latency) >= 24 * 3; // Skip stale monitors
+
+        if (isExcluded) return;
 
         const marker = L.shapeMarker(latlng, clarityPropertiesToIconOptions(props));
-        const isSelected = $selected_clarity_ids.includes(props.deviceDeploymentID);
+        const isSelected = $selected_clarity_ids.includes(id);
         marker.setStyle({
           opacity: isSelected ? 1.0 : 0.2,
           weight: isSelected ? 2 : 1
@@ -373,11 +384,17 @@
       // Icon appearance
       pointToLayer: function (feature, latlng) {
         const props = feature.properties;
+        const id = String(props.deviceDeploymentID);
 
-        if (parseInt(props.latency) >= 24 * 3) return; // Skip stale sensors
+        // Exclusion rules
+        const isExcluded =
+          $exclusion_ids.has(id) ||  // Skip runtime exclusion list
+          parseInt(props.latency) >= 24 * 3; // Skip stale monitors
+
+        if (isExcluded) return;
 
         const marker = L.shapeMarker(latlng, purpleairPropertiesToIconOptions(props));
-        const isSelected = $selected_purpleair_ids.includes(props.deviceDeploymentID);
+        const isSelected = $selected_purpleair_ids.includes(id);
         marker.setStyle({
           opacity: isSelected ? 1.0 : 0.2,
           weight: isSelected ? 2 : 1

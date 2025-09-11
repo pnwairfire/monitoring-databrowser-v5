@@ -13,6 +13,7 @@
     centerLon,
     centerLat,
     zoom,
+		exclusion_ids,
     hovered_monitor_id,
     selected_monitor_ids,
     selected_purpleair_ids,
@@ -53,7 +54,13 @@
     createDataServiceUrl,
     parseWindowQueryParams,
   } from "./js/utils.js";
+
+	// Loaders
   import { getPurpleAirData } from "./js/utils-purpleair.js";
+  import { loadExclusionList } from "./js/utils-loaders.js";
+
+  const EXCLUSION_IDS_URL =
+    "https://raw.githubusercontent.com/pnwairfire/monitoring-v5-CONFIG/refs/heads/main/exclusion_ids.json";
 
   // --- Parse URL params once on startup ---
   const urlParams = parseWindowQueryParams();
@@ -111,6 +118,9 @@
     pas.load?.();
     hms_fires_csv.load?.();
     hms_smoke_geojson.load?.();
+
+		// Fetch exclusion IDs (async work)
+   loadExclusionList(EXCLUSION_IDS_URL);
 
     // Periodic refresh every 5 minutes
     const refreshInterval = setInterval(() => {
