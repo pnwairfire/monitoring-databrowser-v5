@@ -49,7 +49,6 @@
   // Plotting helper functions
   import {
     monitorPropertiesToIconOptions,
-    purpleairCreateGeoJSON,
     purpleairPropertiesToIconOptions,
     clarityPropertiesToIconOptions,
   } from '../js/utils-map.js';
