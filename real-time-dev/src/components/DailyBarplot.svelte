@@ -8,12 +8,13 @@
   export let deviceType = 'monitor';
 
   // Svelte methods
-  import { afterUpdate } from 'svelte';
+  import { onMount } from 'svelte';
 
   // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
   import { pas, patCart } from '../stores/purpleair-data-store.js';
   import { clarity } from '../stores/clarity-data-store.js';
+  import { mapLastUpdated } from "../stores/gui-store.js";
 
   // Highcharts for plotting
   import Highcharts from 'highcharts';
@@ -40,6 +41,9 @@
   function createChart() {
 
     context = document.getElementById(element_id);
+
+    // Bail out if the container is not in the DOM yet
+    if (!context) return;
 
     // See https://www.youtube.com/watch?v=s7rk2b1ioVE @6:30
     if (myChart) myChart.destroy();
@@ -154,8 +158,15 @@
 
   }
 
-  // Regenerate the chart after any update
-  afterUpdate(createChart);
+  // Build chart on first mount (for slide changes)
+  onMount(() => {
+    createChart();
+  });
+
+  // Refresh chart whenever data updates
+  $: if ($mapLastUpdated) {
+    createChart();
+  }
 </script>
 
 <!-- Note that sizing needs to be included as part of the element style. -->

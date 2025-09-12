@@ -2,7 +2,7 @@ import { readable, writable } from "svelte/store";
 import { DateTime } from 'luxon';
 
 // Version 5.5.0 = v5 . package update refactor . save state during refresh
-export const VERSION = readable("5.5.1");
+export const VERSION = readable("5.5.2");
 
 // Status messages
 export let error_message = writable("");

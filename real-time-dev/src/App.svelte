@@ -13,7 +13,6 @@
     centerLon,
     centerLat,
     zoom,
-		exclusion_ids,
     hovered_monitor_id,
     selected_monitor_ids,
     selected_purpleair_ids,
@@ -122,7 +121,7 @@
 		// Fetch exclusion IDs (async work)
    loadExclusionList(EXCLUSION_IDS_URL);
 
-    // Periodic refresh every 5 minutes
+    // Refresh data every 5 minutes
     const refreshInterval = setInterval(() => {
       airnow_geojson.reload();
       airsis_geojson.reload();
@@ -131,10 +130,15 @@
       clarity_geojson.reload();
       hms_smoke_geojson.reload();
       hms_fires_csv.reload();
-      mapLastUpdated.set(DateTime.now());
-    }, 5 * 60 * 1000);
+			const now = DateTime.now();
+			mapLastUpdated.set(now);
+			console.log(`${now.toFormat("yyyy-LL-dd HH:mm:ss ZZZ")} Data refresh complete.`);
+    }, 10 * 60 * 1000);
 
-    return () => clearInterval(refreshInterval);
+		// Cleanup when component is destroyed
+		return () => {
+			clearInterval(refreshInterval);
+		};
   });
 
   // --- Keep URL in sync with app state ---
@@ -266,18 +270,18 @@
 						{#if $current_slide === "all"}
 							<div class="flex-row">
 								<MiniMap element_id="row{i}_map" width="200px" height="180px" id={id}/>
-								<TimeseriesPlot element_id="row{i}_small_timeseries" width="200px" height="200px" id={id}  size="small"/>
-								<DailyBarplot element_id="row{i}_small_daily" width="200px" height="200px" id={id}  size="small"/>
-								<DiurnalPlot element_id="row{i}_small_diurnal" width="200px" height="200px" id={id}  size="small"/>
+								<TimeseriesPlot element_id="row{i}_small_timeseries" width="200px" height="200px" id={id} size="small"/>
+								<DailyBarplot element_id="row{i}_small_daily" width="200px" height="200px" id={id} size="small"/>
+								<DiurnalPlot element_id="row{i}_small_diurnal" width="200px" height="200px" id={id} size="small"/>
 							</div>
 						{:else if $current_slide === "timeseries"}
-							<TimeseriesPlot element_id="row{i}_timeseries" width="800px" height="200px" id={id}  size="large"/>
+							<TimeseriesPlot element_id="row{i}_timeseries" width="800px" height="200px" id={id} size="large"/>
 						{:else if $current_slide === "hourly"}
-							<HourlyBarplot element_id="row{i}_hourly" width="800px" height="200px" id={id}  size="large"/>
+							<HourlyBarplot element_id="row{i}_hourly" width="800px" height="200px" id={id} size="large"/>
 						{:else if $current_slide === "daily"}
-							<DailyBarplot element_id="row{i}_daily" width="800px" height="200px" id={id}  size="large"/>
+							<DailyBarplot element_id="row{i}_daily" width="800px" height="200px" id={id} size="large"/>
 						{:else if $current_slide === "diurnal"}
-							<DiurnalPlot element_id="row{i}_diurnal" width="800px" height="200px" id={id}  size="large"/>
+							<DiurnalPlot element_id="row{i}_diurnal" width="800px" height="200px" id={id} size="large"/>
 						{/if}
 						<SlideAdvance element_id="row{i}_slideAdvance"/>
 					</div>
