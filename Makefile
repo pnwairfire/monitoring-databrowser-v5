@@ -9,22 +9,22 @@
 ################################################################################
 # From Jon's desktop
 
-copy_mv5-dev:
+scp_mv5-dev:
 	scp real-time-dev/mv5-dev.tgz ubuntu@tools-c1.airfire.org:/home/ubuntu/Uploads
 	scp real-time-dev/mv5-dev.tgz ubuntu@tools-c2.airfire.org:/home/ubuntu/Uploads
 	scp real-time-dev/mv5-dev.tgz ubuntu@tools-c3.airfire.org:/home/ubuntu/Uploads
 
-copy_mv5-ara:
+scp_mv5-ara:
 	scp real-time-ara/mv5-ara.tgz ubuntu@tools-c1.airfire.org:/home/ubuntu/Uploads
 	scp real-time-ara/mv5-ara.tgz ubuntu@tools-c2.airfire.org:/home/ubuntu/Uploads
 	scp real-time-ara/mv5-ara.tgz ubuntu@tools-c3.airfire.org:/home/ubuntu/Uploads
 
-copy_mv5-public:
+scp_mv5-public:
 	scp real-time-public/mv5-public.tgz ubuntu@tools-c1.airfire.org:/home/ubuntu/Uploads
 	scp real-time-public/mv5-public.tgz ubuntu@tools-c2.airfire.org:/home/ubuntu/Uploads
 	scp real-time-public/mv5-public.tgz ubuntu@tools-c3.airfire.org:/home/ubuntu/Uploads
 
-copy_mv5: copy_mv5-ara copy_mv5-public
+scp_mv5: scp_mv5-ara scp_mv5-public
 
 ################################################################################
 # On AWS "tools" instances in the /var/www/html/monitoring/ directory
