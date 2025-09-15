@@ -177,7 +177,7 @@
 	<NavBar>
 		<img class="logo" src="images/forestservicelogo-inverted.svg"
 		     alt="US Forest Service logo">
-		<span class="mv5">Monitoring v{$VERSION}</span>
+		<span class="mv5">Monitoring v{$VERSION} &mdash; ARA version</span>
 	</NavBar>
 
 	<div class="airfire-alerts" style="display: none"></div>

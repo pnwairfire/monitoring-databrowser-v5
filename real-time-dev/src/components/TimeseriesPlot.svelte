@@ -8,7 +8,7 @@
   export let deviceType = 'monitor';
 
   // Svelte methods
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
@@ -19,7 +19,7 @@
   // Highcharts for plotting
   import Highcharts from 'highcharts';
 
-  // Plot Configuration
+  // Plot configuration
   import {
     timeseriesPlotConfig,
     small_timeseriesPlotConfig,
@@ -33,16 +33,26 @@
   // We need these variables to live on after an individual chart is destroyed
   let chartConfig;
   let context;
-  let myChart;
+  let chart;
+
+  // Cleanup when component is destroyed
+  onDestroy(() => {
+    if (chart) {
+      chart.destroy();
+      chart = null;
+    }
+  });
 
   function createChart() {
-    context = document.getElementById(element_id);
+    // Safety: destroy old chart before creating new
+    if (chart) {
+      chart.destroy();
+      chart = null;
+    }
 
     // Bail out if the container is not in the DOM yet
+    context = document.getElementById(element_id);
     if (!context) return;
-
-    // Destroy old chart if it exists
-    if (myChart) myChart.destroy();
 
     // Don’t proceed if no ID is set
     if (id === "") {
@@ -52,7 +62,7 @@
         xAxis: { min: 1, max: 50 },
         series: [{ data: [null, null] }]
       };
-      myChart = Highcharts.chart(context, chartConfig);
+      chart = Highcharts.chart(context, chartConfig);
       return;
     }
 
@@ -118,7 +128,7 @@
         xAxis: { type: "datetime" },
         series: [{ data: [] }]
       };
-      myChart = Highcharts.chart(context, chartConfig);
+      chart = Highcharts.chart(context, chartConfig);
       return;
     }
 
@@ -130,8 +140,8 @@
       chartConfig.plotOptions.line.enableMouseTracking = false;
       chartConfig.plotOptions.scatter.enableMouseTracking = false;
 
-      myChart = Highcharts.chart(context, chartConfig);
-      pm25_addAQIStackedBar(myChart, 4);
+      chart = Highcharts.chart(context, chartConfig);
+      pm25_addAQIStackedBar(chart, 4);
 
     } else {
       chartConfig = timeseriesPlotConfig(plotData);
@@ -141,17 +151,19 @@
       chartConfig.chart.zoomBySingleTouch = true;
       chartConfig.chart.zoomType = "x";
 
-      myChart = Highcharts.chart(context, chartConfig);
-      pm25_addAQIStackedBar(myChart, 6);
+      chart = Highcharts.chart(context, chartConfig);
+      pm25_addAQIStackedBar(chart, 6);
     }
   }
 
   // Build chart on first mount (for slide changes)
-  onMount(() => {
-    createChart();
-  });
+  onMount(createChart);
 
-  // Refresh chart whenever data updates
+  // Rebuild chart whenever id changes
+  $: if (id) {
+    createChart();
+  }
+  // Rebuild chart whenever data updates
   $: if ($mapLastUpdated) {
     createChart();
   }

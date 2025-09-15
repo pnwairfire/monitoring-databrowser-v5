@@ -8,7 +8,7 @@
   export let deviceType = 'monitor';
 
   // Svelte methods
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   // Stores
   import { all_monitors } from '../stores/monitor-data-store.js';
@@ -32,17 +32,26 @@
   // We need these variables to live on after an individual chart is destroyed
   let chartConfig;
   let context;
-  let myChart;
+  let chart;
 
-  async function createChart() {
+  // Cleanup when component is destroyed
+  onDestroy(() => {
+    if (chart) {
+      chart.destroy();
+      chart = null;
+    }
+  });
 
-    context = document.getElementById(element_id);
+  function createChart() {
+    // Safety: destroy old chart before creating new
+    if (chart) {
+      chart.destroy();
+      chart = null;
+    }
 
     // Bail out if the container is not in the DOM yet
+    context = document.getElementById(element_id);
     if (!context) return;
-
-    // See https://www.youtube.com/watch?v=s7rk2b1ioVE @6:30
-    if (myChart) myChart.destroy();
 
     if ( id !== "" ) {
 
@@ -104,7 +113,7 @@
         chartConfig = small_hourlyBarplotConfig(plotData);
         // Disable hover
         chartConfig.plotOptions.column.enableMouseTracking = false;
-        myChart = Highcharts.chart(context, chartConfig);
+        chart = Highcharts.chart(context, chartConfig);
       } else {
         chartConfig = hourlyBarplotConfig(plotData);
         // Remove title
@@ -114,7 +123,7 @@
         // Add zoom
         chartConfig.chart.zoomBySingleTouch = true;
         chartConfig.chart.zoomType = "x";
-        myChart = Highcharts.chart(context, chartConfig);
+        chart = Highcharts.chart(context, chartConfig);
       }
 
     } else {
@@ -135,18 +144,20 @@
           data:[null,null]
         }
       };
-      myChart = Highcharts.chart(context, chartConfig);
+      chart = Highcharts.chart(context, chartConfig);
 
     }
 
   } // END of createChart()
 
   // Build chart on first mount (for slide changes)
-  onMount(() => {
-    createChart();
-  });
+  onMount(createChart);
 
-  // Refresh chart whenever data updates
+  // Rebuild chart whenever id changes
+  $: if (id) {
+    createChart();
+  }
+  // Rebuild chart whenever data updates
   $: if ($mapLastUpdated) {
     createChart();
   }
