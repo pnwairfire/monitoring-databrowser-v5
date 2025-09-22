@@ -1,8 +1,8 @@
 import { readable, writable } from "svelte/store";
 import { DateTime } from 'luxon';
 
-// Version 5.5.0 = v5 . package update refactor . save state during refresh
-export const VERSION = readable("5.5.3");
+// Version 5.5.0 = v5 . package update refactor . HMS_FIRES_PBF_URL
+export const VERSION = readable("5.5.4");
 
 // Status messages
 export let error_message = writable("");

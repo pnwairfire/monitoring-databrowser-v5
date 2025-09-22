@@ -24,7 +24,7 @@
 
   import { clarity_geojson } from '../stores/clarity-data-store.js';
 
-  import { hms_fires_csv, hms_smoke_geojson } from '../stores/hms-data-store.js';
+  import { hms_fires_geojson, hms_smoke_geojson } from '../stores/hms-data-store.js';
 
   import { mapLastUpdated } from '../stores/gui-store.js';
 
@@ -147,7 +147,7 @@
 
     // --- Watch all layers
     watchLayer(hms_smoke_geojson, createHMSSmokeLayer, "hmsSmoke", map);
-    watchLayer(hms_fires_csv, createHMSFiresLayer_csv, "hmsFires", map);
+    watchLayer(hms_fires_geojson, createHMSFiresLayer_geojson, "hmsFires", map);
     watchLayer(clarity_geojson, createClarityLayer, "clarity", map);
     watchLayer(purpleair_geojson, createPurpleAirLayer, "purpleair", map);
     watchLayer(airnow_geojson, createMonitorLayer, "airnow", map);
@@ -460,24 +460,29 @@
 
   /* ----- HMS functions ---------------------------------------------------- */
 
-
   /**
-   * Creates an array of Leaflet circle markers for HMS fire detections.
+   * Creates an array of Leaflet circle markers for HMS fire detections
+   * from a GeoJSON FeatureCollection.
    *
-   * @param {Array<Object>} csv - Array of fire detection records with latitude and longitude.
+   * @param {Object} geojson - GeoJSON FeatureCollection of fire detections.
    * @returns {Array<L.CircleMarker>} Array of Leaflet circle markers.
    */
-  function createHMSFiresLayer_csv(csv) {
+  function createHMSFiresLayer_geojson(geojson) {
     const circleMarkers = [];
 
-    // Bail out early if csv is bad/empty
-    if (!Array.isArray(csv) || csv.length === 0) return circleMarkers;
+    // Bail out if input is invalid
+    if (!geojson || !geojson.features || geojson.features.length === 0) {
+      return circleMarkers;
+    }
 
     const renderer = L.canvas({ padding: 0.5 });
 
-    for (const row of csv) {
-      const lat = Number(row?.latitude);
-      const lon = Number(row?.longitude);
+    for (const feature of geojson.features) {
+      if (!feature.geometry || feature.geometry.type !== "Point") continue;
+
+      const coords = feature.geometry.coordinates; // [lon, lat]
+      const lon = Number(coords[0]);
+      const lat = Number(coords[1]);
 
       if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
 
@@ -485,16 +490,16 @@
         L.circleMarker([lat, lon], {
           renderer,
           radius: 3,
-          fillColor: '#d7721c',
+          fillColor: "#d7721c",
           fillOpacity: 0.5,
           weight: 1.5,
-          color: '#e9c28f',
+          color: "#e9c28f",
           opacity: 0.5,
         })
       );
     }
 
-    return circleMarkers; // array of plain Leaflet circleMarkers
+    return circleMarkers; // array of Leaflet circle markers
   }
 
   /**
