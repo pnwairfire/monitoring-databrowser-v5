@@ -1,11 +1,6 @@
 
-import Papa from "papaparse";
-import Pbf from "pbf";
-import geobuf from "geobuf";
-import { asyncReadable, derived, writable } from "@square/svelte-store";
-
-import { error_message, hmsFiresCount } from "./gui-store.js";
 import { loadGeobuf } from "../js/utils-loaders.js";
+import { error_message, hmsFiresCount } from "./gui-store.js";
 
 // NOTE:  The @square/svelte-store replacement for svelte-store is
 // NOTE:  Incredibly helpful for us. The problem it solves is explained here:
@@ -30,3 +25,11 @@ export const hms_smoke_geojson = loadGeobuf(HMS_SMOKE_PBF_URL, "hms_smoke");
 
 export const hms_fires_geojson = loadGeobuf(HMS_FIRES_PBF_URL, "hms_fire");
 
+// Watch for updates and update the count
+hms_fires_geojson.subscribe((geojson) => {
+  if (geojson && geojson.features) {
+    hmsFiresCount.set(geojson.features.length);
+  } else {
+    hmsFiresCount.set(0);
+  }
+});
