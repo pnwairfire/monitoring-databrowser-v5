@@ -31,6 +31,7 @@
   import { pas, patCart } from "./stores/purpleair-data-store.js";
   import { clarity, clarity_geojson } from "./stores/clarity-data-store.js";
   import { hms_fires_geojson, hms_smoke_geojson } from "./stores/hms-data-store.js";
+  import { inciweb_geojson } from "./stores/inciweb-data-store.js";
 
   // --- Components ---
   import NavBar from "./components/NavBar.svelte";
@@ -117,6 +118,7 @@
     pas.load?.();
     hms_fires_geojson.load?.();
     hms_smoke_geojson.load?.();
+		inciweb_geojson.load?.();
 
 		// Fetch exclusion IDs (async work)
    loadExclusionList(EXCLUSION_IDS_URL);
@@ -128,8 +130,9 @@
       wrcc_geojson.reload();
       pas.reload();
       clarity_geojson.reload();
-      hms_smoke_geojson.reload();
       hms_fires_geojson.reload();
+      hms_smoke_geojson.reload();
+			inciweb_geojson.reload();
 			const now = DateTime.now();
 			mapLastUpdated.set(now);
 			console.log(`${now.toFormat("yyyy-LL-dd HH:mm:ss ZZZ")} Data refresh complete.`);

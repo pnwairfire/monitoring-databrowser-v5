@@ -23,12 +23,12 @@ const CLARITY_LATEST_GEOJSON =
 
 // ----- geojson ---------------------------------------------------------------
 
-// Reloadable AirNow geojson data
+// Reloadable Clarity geojson data
 export const clarity_geojson = loadGeojson(CLARITY_LATEST_GEOJSON, "clarity");
 
 // ----- time series -----------------------------------------------------------
 
-// Reloadable AirNow data
+// Reloadable Clarity data
 export const clarity = asyncReadable(
   new Monitor(),
   async () => {
