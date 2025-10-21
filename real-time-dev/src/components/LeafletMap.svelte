@@ -629,10 +629,4 @@
   opacity: 0.5;
   filter: grayscale(100%);
 }
-
-.inciweb-popup details summary {
-  cursor: pointer;
-  color: #444;
-  font-size: 0.9em;
-}
 </style>
