@@ -72,7 +72,7 @@ function inciwebToGeoJSON(jsonArray) {
 
 // ----- configuration ---------------------------------------------------------
 
-const INCIWEB_URL = "https://inciweb-testing.fs2c.usda.gov/api/map_data";
+const INCIWEB_URL = "https://inciweb.wildfire.gov/api/map_data";
 export const inciwebLoadTime = writable(0);
 
 // ----- store -----------------------------------------------------------------

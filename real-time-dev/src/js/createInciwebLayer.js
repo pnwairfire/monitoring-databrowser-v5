@@ -35,31 +35,30 @@ export function createInciwebLayer(geojson) {
       const p = feature.properties;
       const popup = `
         <div class="inciweb-popup">
-          <strong>${p.title || "Unnamed Incident"}</strong><br>
-          <em>${p.type || "Incident"}</em><br>
-          <b>Status:</b> ${p.active ? "🔥 Active" : "✅ Contained"}<br>
-          ${
-            p.size
-              ? `<b>Size:</b> ${p.size} ${p.measurement_type || ""}<br>`
-              : ""
-          }
-          ${
-            p.percent_of_perimeter
-              ? `<b>Contained:</b> ${p.percent_of_perimeter}%<br>`
-              : ""
-          }
-          ${
-            p.url
-              ? `<a href="${p.url}" target="_blank" rel="noopener noreferrer">View on Inciweb</a><br>`
-              : ""
-          }
-          ${
-            p.overview
-              ? `<details><summary>Overview</summary>${p.overview}</details>`
-              : ""
-          }
-          ${p.created ? `<small>Created: ${p.created}</small><br>` : ""}
-          ${p.changed ? `<small>Updated: ${p.changed}</small>` : ""}
+          <div class="inciweb-popup-title"
+               style="font-size: 1.2rem; margin-bottom: 1rem;">
+            ${p.title || "Unnamed Incident"}
+          </div>
+          <div class="inciweb-popup-content">
+            <strong>Incident Type:</strong> ${p.type || "Incident"}<br>
+            ${p.changed ? `<strong>Updated:</strong> ${p.changed}<br>` : ""}
+            ${
+              p.size
+                ? `<strong>Size:</strong> ${p.size} ${p.measurement_type || ""}<br>`
+                : ""
+            }
+            ${
+              p.percent_of_perimeter
+                ? `<strong>Contained:</strong> ${p.percent_of_perimeter}%<br>`
+                : ""
+            }
+            <br>
+            ${
+              p.url
+                ? `<a href="${p.url}" target="_blank" rel="noopener noreferrer">View on Inciweb</a><br>`
+                : ""
+            }
+          </div>
         </div>
       `;
       layer.bindPopup(popup, { maxWidth: 300 });
