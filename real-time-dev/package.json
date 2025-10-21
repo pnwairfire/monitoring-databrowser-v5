@@ -1,12 +1,12 @@
 {
-  "name": "mv5-2025",
+  "name": "real-time-dev",
   "private": true,
   "version": "5.5.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build; sed -i 's%/assets%./assets%' dist/index.html; tar -czf mv5-dev.tgz dist",
-    "build_osx": "vite build; sed -i '' 's%/assets%./assets%' dist/index.html; tar -czf mv5-dev.tgz dist",
+    "build_osx": "vite build; sed -i '' 's%/assets%./assets%' dist/index.html; tar --disable-copyfile -czf mv5-dev.tgz dist",
     "preview": "vite preview"
   },
   "devDependencies": {

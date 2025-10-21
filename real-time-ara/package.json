@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build; sed -i 's%/assets%./assets%' dist/index.html; tar -czf mv5-ara.tgz dist",
-    "build_osx": "vite build; sed -i '' 's%/assets%./assets%' dist/index.html; tar -czf mv5-ara.tgz dist",
+    "build_osx": "vite build; sed -i '' 's%/assets%./assets%' dist/index.html; tar --disable-copyfile -czf mv5-ara.tgz dist",
     "preview": "vite preview"
   },
   "devDependencies": {
