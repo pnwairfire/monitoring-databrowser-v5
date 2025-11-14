@@ -19,13 +19,10 @@
     airsis_geojson,
     wrcc_geojson,
   } from '../stores/monitor-data-store.js';
-
   import { pas, purpleair_geojson, patCart } from '../stores/purpleair-data-store.js';
-
   import { clarity_geojson } from '../stores/clarity-data-store.js';
-
   import { hms_fires_geojson, hms_smoke_geojson } from '../stores/hms-data-store.js';
-
+  import { inciweb_geojson } from "../stores/inciweb-data-store.js";
   import { mapLastUpdated } from '../stores/gui-store.js';
 
   import {
@@ -57,6 +54,7 @@
   // Utility functions
   import { getPurpleAirData } from '../js/utils-purpleair.js';
   import { replaceWindowHistory } from '../js/utils.js';
+  import { createInciwebLayer } from "../js/createInciwebLayer.js";
 
   let map;
   let refreshInterval;
@@ -146,6 +144,7 @@
     }
 
     // --- Watch all layers
+    watchLayer(inciweb_geojson, createInciwebLayer, "inciweb", map);
     watchLayer(hms_smoke_geojson, createHMSSmokeLayer, "hmsSmoke", map);
     watchLayer(hms_fires_geojson, createHMSFiresLayer_geojson, "hmsFires", map);
     watchLayer(clarity_geojson, createClarityLayer, "clarity", map);
@@ -159,6 +158,7 @@
 
     // Make layers toggleable
     L.control.layers(null, {
+      "InciWeb Fires": layers.inciweb,
       "HMS Fires": layers.hmsFires,
       "HMS Smoke": layers.hmsSmoke,
       "Clarity": layers.clarity,
@@ -507,7 +507,7 @@
    * @param {Object} geojson - A valid GeoJSON FeatureCollection of polygons.
    * @returns {L.GeoJSON} A styled Leaflet GeoJSON layer.
    */
-   function createHMSSmokeLayer(geojson) {
+  function createHMSSmokeLayer(geojson) {
     let this_layer = L.geoJSON(geojson, {
       style: (feature) => ({
         fillColor: 'gray',
@@ -621,5 +621,12 @@
 </div>
 
 <style>
+.inciweb-icon.active {
+  filter: drop-shadow(0 0 3px orange);
+}
 
+.inciweb-icon.inactive {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
 </style>

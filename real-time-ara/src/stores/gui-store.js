@@ -1,8 +1,8 @@
 import { readable, writable } from "svelte/store";
-import { DateTime } from 'luxon';
+import { DateTime } from "luxon";
 
-// Version 5.5.0 = v5 . package update refactor . HMS_FIRES_PBF_URL
-export const VERSION = readable("5.5.5");
+// Version 5.5.0 = v5 . package update refactor . Inciweb layer
+export const VERSION = readable("5.5.6");
 
 // Status messages
 export let error_message = writable("");
@@ -10,6 +10,7 @@ export let monitorCount = writable(0);
 export let purpleairCount = writable(0);
 export let clarityCount = writable(0);
 export let hmsFiresCount = writable(0);
+export let inciwebFireCount = writable(0);
 
 // GUI state for the leaflet map
 export let centerLon = writable(-100);

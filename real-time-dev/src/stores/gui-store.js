@@ -10,6 +10,7 @@ export let monitorCount = writable(0);
 export let purpleairCount = writable(0);
 export let clarityCount = writable(0);
 export let hmsFiresCount = writable(0);
+export let inciwebFireCount = writable(0);
 
 // GUI state for the leaflet map
 export let centerLon = writable(-100);

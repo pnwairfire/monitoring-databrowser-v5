@@ -10,6 +10,7 @@
     purpleairCount,
     clarityCount,
     hmsFiresCount,
+    inciwebFireCount,
     centerLon,
     centerLat,
     zoom,
@@ -31,6 +32,7 @@
   import { pas, patCart } from "./stores/purpleair-data-store.js";
   import { clarity, clarity_geojson } from "./stores/clarity-data-store.js";
   import { hms_fires_geojson, hms_smoke_geojson } from "./stores/hms-data-store.js";
+  import { inciweb_geojson } from "./stores/inciweb-data-store.js";
 
   // --- Components ---
   import NavBar from "./components/NavBar.svelte";
@@ -117,6 +119,7 @@
     pas.load?.();
     hms_fires_geojson.load?.();
     hms_smoke_geojson.load?.();
+		inciweb_geojson.load?.();
 
 		// Fetch exclusion IDs (async work)
    loadExclusionList(EXCLUSION_IDS_URL);
@@ -128,8 +131,9 @@
       wrcc_geojson.reload();
       pas.reload();
       clarity_geojson.reload();
-      hms_smoke_geojson.reload();
       hms_fires_geojson.reload();
+      hms_smoke_geojson.reload();
+			inciweb_geojson.reload();
 			const now = DateTime.now();
 			mapLastUpdated.set(now);
 			console.log(`${now.toFormat("yyyy-LL-dd HH:mm:ss ZZZ")} Data refresh complete.`);
@@ -189,13 +193,13 @@
 	{/if}
 
   {#await all_monitors.load()}
-		<p>Loading monitor data...</p>
+		<p>Loading data...</p>
 	{:then}
 
 		<!-- Current status -->
-		{#if $monitorCount + $purpleairCount + $clarityCount + $hmsFiresCount > 0}
+		{#if $monitorCount + $purpleairCount + $clarityCount + $hmsFiresCount + $inciwebFireCount > 0}
 			<p class="status">
-				Showing
+				Loaded
 				{#if $monitorCount > 0}
 					{$monitorCount} monitors
 					{#if $purpleairCount > 0 || $clarityCount > 0 || $hmsFiresCount > 0}, {/if}
@@ -210,11 +214,15 @@
 				{/if}
 				{#if $hmsFiresCount > 0}
 					{$hmsFiresCount} HMS fire detections
-				{/if}.
+					{#if $inciwebFireCount > 0}, {/if}
+				{/if}
+				{#if $inciwebFireCount > 0}
+					{$inciwebFireCount} InciWeb fires
+				{/if}
 			</p>
 		{/if}
 
-		{#if $monitorCount === 0 || $purpleairCount === 0 || $clarityCount === 0 || $hmsFiresCount === 0}
+		{#if $monitorCount === 0 || $purpleairCount === 0 || $clarityCount === 0 || $hmsFiresCount === 0 || $inciwebFireCount === 0}
 			<p class="status" style="font-style: italic">
 				Waiting for
 				{#if $monitorCount === 0}monitor data{/if}
@@ -226,6 +234,9 @@
 				{/if}
 				{#if $hmsFiresCount === 0}
 					{#if $monitorCount === 0 || $purpleairCount === 0 || $clarityCount === 0}, {/if}HMS fire data
+				{/if}
+				{#if $inciwebFireCount === 0}
+					{#if $monitorCount === 0 || $purpleairCount === 0 || $clarityCount === 0 || $hmsFiresCount === 0}, {/if}InciWeb fire data
 				{/if}...
 			</p>
 		{/if}

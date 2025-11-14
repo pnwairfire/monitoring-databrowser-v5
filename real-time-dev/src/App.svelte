@@ -10,6 +10,7 @@
     purpleairCount,
     clarityCount,
     hmsFiresCount,
+    inciwebFireCount,
     centerLon,
     centerLat,
     zoom,
@@ -192,13 +193,13 @@
 	{/if}
 
   {#await all_monitors.load()}
-		<p>Loading monitor data...</p>
+		<p>Loading data...</p>
 	{:then}
 
 		<!-- Current status -->
-		{#if $monitorCount + $purpleairCount + $clarityCount + $hmsFiresCount > 0}
+		{#if $monitorCount + $purpleairCount + $clarityCount + $hmsFiresCount + $inciwebFireCount > 0}
 			<p class="status">
-				Showing
+				Loaded
 				{#if $monitorCount > 0}
 					{$monitorCount} monitors
 					{#if $purpleairCount > 0 || $clarityCount > 0 || $hmsFiresCount > 0}, {/if}
@@ -213,11 +214,15 @@
 				{/if}
 				{#if $hmsFiresCount > 0}
 					{$hmsFiresCount} HMS fire detections
-				{/if}.
+					{#if $inciwebFireCount > 0}, {/if}
+				{/if}
+				{#if $inciwebFireCount > 0}
+					{$inciwebFireCount} InciWeb fires
+				{/if}
 			</p>
 		{/if}
 
-		{#if $monitorCount === 0 || $purpleairCount === 0 || $clarityCount === 0 || $hmsFiresCount === 0}
+		{#if $monitorCount === 0 || $purpleairCount === 0 || $clarityCount === 0 || $hmsFiresCount === 0 || $inciwebFireCount === 0}
 			<p class="status" style="font-style: italic">
 				Waiting for
 				{#if $monitorCount === 0}monitor data{/if}
@@ -229,6 +234,9 @@
 				{/if}
 				{#if $hmsFiresCount === 0}
 					{#if $monitorCount === 0 || $purpleairCount === 0 || $clarityCount === 0}, {/if}HMS fire data
+				{/if}
+				{#if $inciwebFireCount === 0}
+					{#if $monitorCount === 0 || $purpleairCount === 0 || $clarityCount === 0 || $hmsFiresCount === 0}, {/if}InciWeb fire data
 				{/if}...
 			</p>
 		{/if}
