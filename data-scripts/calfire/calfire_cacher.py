@@ -21,7 +21,7 @@
 # Environment variables (via .env or shell):
 #   CALFIRE_SOURCE_URL   (optional, override source URL)
 #   S3_BUCKET            (optional, default: airfire-data-exports)
-#   S3_PREFIX            (optional, default: calfire)
+#   S3_CALFIRE_PREFIX    (optional, default: calfire)
 #   AWS_REGION           (optional, region for boto3)
 #   PROCESS_NAME         (optional, default: calfire_cacher)
 #   OUTPUT_DIR           (optional, default: /home/ubuntu/data/calfire)
@@ -30,7 +30,7 @@
 import os
 import argparse
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from tempfile import NamedTemporaryFile
 import json
 
@@ -232,8 +232,8 @@ def parse_args():
     )
     parser.add_argument(
         "--prefix",
-        default=os.getenv("S3_PREFIX", "calfire"),
-        help="Destination S3 prefix (default: calfire or env S3_PREFIX).",
+        default=os.getenv("S3_CALFIRE_PREFIX", "calfire"),
+        help="Destination S3 prefix (default: calfire or env S3_CALFIRE_PREFIX).",
     )
     parser.add_argument(
         "--process-name",
@@ -267,7 +267,7 @@ def main():
 
     try:
         s3_client = get_s3_client()
-        now = datetime.utcnow().isoformat() + "Z"
+        now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         logger.info(f"Current UTC time: {now}")
 
         # Local cache file paths
