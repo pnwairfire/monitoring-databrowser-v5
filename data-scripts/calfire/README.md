@@ -1,30 +1,34 @@
 # calfire-cacher
 
+_Updated 2025-11-18_
+
+_Currently deployed on `data-monitoring_v3-c2`_
+
 ## Overview
 
 `calfire-cacher` is a lightweight Python utility designed to run periodically (via cron)
-to fetch CalFire’s public wildfire incident GeoJSON, split the dataset into 
+to fetch CalFire’s public wildfire incident GeoJSON, split the dataset into
 "all incidents" and "active incidents", and upload both files into an AWS S3 bucket.
 
 This tool follows the same structure and conventions as the `server-health-stats.py`
-script used elsewhere in your Monitoring and AirFire ecosystem. It uses:
+script used in airfire-system-status/server-health-stats/. It uses:
 
 - A dedicated Python virtual environment
 - A secure `.env` file for AWS credentials and runtime configuration
 - A Makefile-driven deployment and environment setup
 - Logging to `/app/logs/<process_name>_TRACE.log`
-- Standard modules used across your other automation scripts:
+- Standard modules including:
   `psutil`, `boto3`, `python-dotenv`, and `requests`
 
 The script:
 
-1. Downloads the CalFire GeoJSON from  
+1. Downloads the CalFire GeoJSON from
    `https://incidents.fire.ca.gov/umbraco/api/IncidentApi/GeoJsonList?inactive=true`
 
-2. Uploads the full FeatureCollection to  
+2. Uploads the full FeatureCollection to
    `s3://airfire-data-exports/calfire/incidents_all.geojson`
 
-3. Extracts only features where `properties.IsActive == true` and uploads them to  
+3. Extracts only features where `properties.IsActive == true` and uploads them to
    `s3://airfire-data-exports/calfire/incidents_active.geojson`
 
 4. Logs each run to `/app/logs/calfire_cacher_TRACE.log`
@@ -158,18 +162,18 @@ To validate GeoJSON:
 
 ## Security considerations
 
-- The `.env` file contains AWS credentials.  
+- The `.env` file contains AWS credentials.
   It **must** be owned by `ubuntu:ubuntu` with permissions `600`.
 
 - The deployed script is set to permissions `700` to prevent unauthorized execution.
 
-- The script writes logs to `/app/logs`.  
+- The script writes logs to `/app/logs`.
   Ensure this directory is writable only by the appropriate user.
 
-- If running on an EC2 instance with an attached IAM role, you may omit  
+- If running on an EC2 instance with an attached IAM role, you may omit
   AWS credentials in `.env` and rely solely on instance profile credentials.
 
-- Avoid storing large historical GeoJSON files unless necessary.  
+- Avoid storing large historical GeoJSON files unless necessary.
   S3 versioning can be enabled if historical copies are required.
 
 ## Summary
@@ -182,11 +186,11 @@ without CORS issues.
 It follows all conventions established by `server-health-stats.py`,
 including:
 
-- Virtual environment isolation  
-- Makefile-driven installation  
-- Secure credential handling  
-- S3-based data publishing  
-- Rich logging and traceability  
+- Virtual environment isolation
+- Makefile-driven installation
+- Secure credential handling
+- S3-based data publishing
+- Rich logging and traceability
 
 Once configured, the tool is fully automated and requires no further
 maintenance beyond updating AWS credentials when needed.

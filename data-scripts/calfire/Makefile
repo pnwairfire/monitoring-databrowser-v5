@@ -30,14 +30,14 @@ SCRIPT_DEST := $(INSTALL_DIR)/$(SCRIPT_NAME)
 # Optional environment file that may accompany the script
 ENV_DEST := $(INSTALL_DIR)/.env
 
-# Where the script writes its log output
-LOG_DIR := /app/logs
+# Where the script writes BOTH its log output and cached GeoJSON
+OUTPUT_DIR := /home/ubuntu/data/calfire
 
 # ---------------------------
 # Targets
 # ---------------------------
 
-.PHONY: all deploy check advise create-venv check-deps install-script create-log-dir check-python-libs set-permissions
+.PHONY: all deploy check advise create-venv check-deps install-script create-output-dir check-python-libs set-permissions
 
 # Default target: deploy and show crontab advice
 all: check deploy advise
@@ -49,7 +49,7 @@ check:
 	@test -x $(PYTHON) || { echo >&2 "ERROR: Python virtual environment not found at $(VENV_DIR). Please run 'make create-venv' first."; exit 1; }
 
 # Main deploy target that installs the script and prepares environment
-deploy: install-script create-log-dir check-python-libs set-permissions
+deploy: install-script create-output-dir check-python-libs set-permissions
 
 # Install the script file into the designated install directory
 install-script:
@@ -58,11 +58,11 @@ install-script:
 	cp $(SCRIPT_SRC) $(SCRIPT_DEST)
 	@echo "✅ Script installed successfully."
 
-# Ensure the log directory exists for script output
-create-log-dir:
-	@echo "Ensuring log directory $(LOG_DIR) exists..."
-	mkdir -p $(LOG_DIR)
-	@echo "✅ Log directory ready."
+# Ensure the output directory exists (for logs + cached GeoJSON)
+create-output-dir:
+	@echo "Ensuring output directory $(OUTPUT_DIR) exists..."
+	mkdir -p $(OUTPUT_DIR)
+	@echo "✅ Output directory ready."
 
 # Check that required Python libraries are present in the virtual environment
 check-python-libs:
@@ -95,7 +95,7 @@ advise:
 	@echo "#     CalFire incidents cacher"
 	@echo "################################################################################"
 	@echo ""
-	@echo "*/10 * * * * $(PYTHON) $(SCRIPT_DEST) --bucket airfire-data-exports --prefix calfire >> /var/log/calfire_cacher_cron.log 2>&1"
+	@echo "*/10 * * * * $(PYTHON) $(SCRIPT_DEST) --bucket airfire-data-exports --prefix calfire --output-dir $(OUTPUT_DIR) >> /var/log/calfire_cacher_cron.log 2>&1"
 	@echo ""
 
 # Confirm setup of python3-venv and Python installation
@@ -161,4 +161,3 @@ create-venv: check-deps
 	$(PIP) install psutil boto3 python-dotenv requests
 
 	@echo "✅ Virtual environment rebuilt and ready at $(VENV_DIR)."
-
