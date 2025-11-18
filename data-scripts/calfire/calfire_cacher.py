@@ -5,50 +5,42 @@
 # Fetch CalFire incidents GeoJSON, cache full and active-only versions locally,
 # and upload them to S3.
 #
-# - Source (default):
-#     https://incidents.fire.ca.gov/umbraco/api/IncidentApi/GeoJsonList?inactive=true
-# - Local cache (default OUTPUT_DIR or /home/ubuntu/data/calfire):
-#     {output_dir}/incidents_all.geojson
-#     {output_dir}/incidents_active.geojson
-# - Dest (S3):
-#     s3://{bucket}/{prefix}/incidents_all.geojson
-#     s3://{bucket}/{prefix}/incidents_active.geojson
+# All configuration values are intentionally hardcoded so that this script
+# does *not* respond to unrelated environment variables used by other tools.
 #
-# Logging:
-#   {output_dir}/{process_name}_TRACE.log
-#   (log file is trimmed to the last MAX_LOG_LINES lines on each run)
-#
-# Environment variables (via .env or shell):
-#   CALFIRE_SOURCE_URL   (optional, override source URL)
-#   S3_BUCKET            (optional, default: airfire-data-exports)
-#   S3_CALFIRE_PREFIX    (optional, default: calfire)
-#   AWS_REGION           (optional, region for boto3)
-#   PROCESS_NAME         (optional, default: calfire_cacher)
-#   OUTPUT_DIR           (optional, default: /home/ubuntu/data/calfire)
 # -----------------------------------------------------------------------------
 
 import os
-import argparse
 import logging
+import json
 from datetime import datetime, timezone
 from tempfile import NamedTemporaryFile
-import json
 
 import psutil
 import boto3
 import requests
-from dotenv import load_dotenv
+from dotenv import load_dotenv   # still used only for AWS credentials
+
+# -----------------------------------------------------------------------------
+# Hardcoded Configuration
+# -----------------------------------------------------------------------------
+
+CALFIRE_SOURCE_URL = (
+    "https://incidents.fire.ca.gov/umbraco/api/IncidentApi/GeoJsonList?inactive=true"
+)
+
+S3_BUCKET = "airfire-data-exports"
+S3_CALFIRE_PREFIX = "calfire"        # previously "clafire" but corrected
+PROCESS_NAME = "calfire_cacher"
+OUTPUT_DIR = "/home/ubuntu/data/calfire"
 
 MAX_LOG_LINES = 10000
 
+# -----------------------------------------------------------------------------
+# Logging
+# -----------------------------------------------------------------------------
 
 def setup_logging(process_name: str, log_dir: str) -> logging.Logger:
-    """
-    Configure logging to file and stdout.
-
-    Log file pattern: {log_dir}/{process_name}_TRACE.log
-    Also trims the log file to the last MAX_LOG_LINES lines if it exists.
-    """
     os.makedirs(log_dir, exist_ok=True)
     log_path = os.path.join(log_dir, f"{process_name}_TRACE.log")
 
@@ -61,19 +53,19 @@ def setup_logging(process_name: str, log_dir: str) -> logging.Logger:
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    # File handler (TRACE-level details)
+    # Log file
     fh = logging.FileHandler(log_path)
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(formatter)
     logger.addHandler(fh)
 
-    # Console handler (INFO+ for journald/syslog/docker logs)
+    # Console (INFO only)
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
-    # Trim existing log file to last MAX_LOG_LINES lines
+    # Trim log file
     if os.path.exists(log_path):
         try:
             with open(log_path, "r") as f:
@@ -92,23 +84,21 @@ def setup_logging(process_name: str, log_dir: str) -> logging.Logger:
     return logger
 
 
+# -----------------------------------------------------------------------------
+# Utility Functions
+# -----------------------------------------------------------------------------
+
 def get_s3_client():
-    """
-    Return a boto3 S3 client, letting environment config drive credentials/region.
-    """
+    """Return a boto3 S3 client, using AWS credentials from .env or OS env."""
     session_kwargs = {}
     region = os.getenv("AWS_REGION")
     if region:
         session_kwargs["region_name"] = region
-
     session = boto3.Session(**session_kwargs)
     return session.client("s3")
 
 
 def fetch_calfire_geojson(url: str, logger: logging.Logger) -> dict:
-    """
-    Fetch raw CalFire GeoJSON from the given URL and return it as a dict.
-    """
     logger.info(f"Fetching CalFire GeoJSON from {url}")
     try:
         resp = requests.get(url, timeout=60)
@@ -122,16 +112,12 @@ def fetch_calfire_geojson(url: str, logger: logging.Logger) -> dict:
 
 
 def subset_active_incidents(geojson: dict, logger: logging.Logger) -> dict:
-    """
-    Given a CalFire FeatureCollection, return a new FeatureCollection
-    containing only active incidents (properties.IsActive == True).
-    """
     if not isinstance(geojson, dict) or geojson.get("type") != "FeatureCollection":
-        logger.warning("Input GeoJSON is not a FeatureCollection; returning empty.")
+        logger.warning("Input GeoJSON not a FeatureCollection; returning empty.")
         return {"type": "FeatureCollection", "features": []}
 
     features = geojson.get("features", [])
-    active_features = []
+    active = []
 
     for feat in features:
         try:
@@ -140,20 +126,17 @@ def subset_active_incidents(geojson: dict, logger: logging.Logger) -> dict:
             if isinstance(is_active, str):
                 is_active = is_active.lower() == "true"
             if is_active:
-                active_features.append(feat)
+                active.append(feat)
         except Exception as e:
-            logger.debug(f"Skipping feature due to error checking IsActive: {e}")
+            logger.debug(f"Skipping feature due to error: {e}")
 
     logger.info(
-        f"Subset active incidents: {len(active_features)} of {len(features)} features remain."
+        f"Subset active incidents: {len(active)} of {len(features)} features remain."
     )
-    return {"type": "FeatureCollection", "features": active_features}
+    return {"type": "FeatureCollection", "features": active}
 
 
 def write_geojson_atomic(path: str, data: dict, logger: logging.Logger):
-    """
-    Atomically write pretty-printed GeoJSON to a local file.
-    """
     directory = os.path.dirname(path)
     os.makedirs(directory, exist_ok=True)
 
@@ -171,8 +154,7 @@ def write_geojson_atomic(path: str, data: dict, logger: logging.Logger):
         os.replace(tmp_name, path)
         logger.info(f"Wrote GeoJSON to {path}")
     except Exception as e:
-        logger.exception(f"Failed to write GeoJSON to {path}: {e}")
-        # Clean up tmp file if something went wrong
+        logger.exception(f"Failed writing {path}: {e}")
         if tmp_file is not None:
             try:
                 os.remove(tmp_file.name)
@@ -181,16 +163,7 @@ def write_geojson_atomic(path: str, data: dict, logger: logging.Logger):
         raise
 
 
-def upload_json_to_s3(
-    s3_client,
-    local_path: str,
-    bucket: str,
-    key: str,
-    logger: logging.Logger,
-):
-    """
-    Upload an existing local file (GeoJSON) to S3.
-    """
+def upload_to_s3(s3_client, local_path: str, bucket: str, key: str, logger: logging.Logger):
     logger.info(f"Uploading {local_path} to s3://{bucket}/{key}")
     try:
         s3_client.upload_file(local_path, bucket, key)
@@ -201,98 +174,55 @@ def upload_json_to_s3(
 
 
 def log_system_stats(logger: logging.Logger):
-    """
-    Log basic system stats via psutil for trace/debugging.
-    """
     cpu_percent = psutil.cpu_percent(interval=0.1)
     mem = psutil.virtual_memory()
     logger.debug(
         f"System stats: CPU {cpu_percent}%, "
-        f"Mem used {mem.percent}% ({mem.used / (1024 ** 3):.2f} GiB / "
-        f"{mem.total / (1024 ** 3):.2f} GiB)"
+        f"Mem used {mem.percent}% ({mem.used / (1024**3):.2f} GiB / "
+        f"{mem.total / (1024**3):.2f} GiB)"
     )
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Fetch CalFire GeoJSON, cache locally, and upload full/active subsets to S3."
-    )
-    parser.add_argument(
-        "--source-url",
-        default=os.getenv(
-            "CALFIRE_SOURCE_URL",
-            "https://incidents.fire.ca.gov/umbraco/api/IncidentApi/GeoJsonList?inactive=true",
-        ),
-        help="CalFire GeoJSON source URL (default: env CALFIRE_SOURCE_URL or official URL).",
-    )
-    parser.add_argument(
-        "--bucket",
-        default=os.getenv("S3_BUCKET", "airfire-data-exports"),
-        help="Destination S3 bucket (default: airfire-data-exports or env S3_BUCKET).",
-    )
-    parser.add_argument(
-        "--prefix",
-        default=os.getenv("S3_CALFIRE_PREFIX", "calfire"),
-        help="Destination S3 prefix (default: calfire or env S3_CALFIRE_PREFIX).",
-    )
-    parser.add_argument(
-        "--process-name",
-        default=os.getenv("PROCESS_NAME", "calfire_cacher"),
-        help="Process name for logging (default: calfire_cacher or env PROCESS_NAME).",
-    )
-    parser.add_argument(
-        "--output-dir",
-        default=os.getenv("OUTPUT_DIR", "/home/ubuntu/data/calfire"),
-        help="Local directory for cached GeoJSON and logs (default: /home/ubuntu/data/calfire or env OUTPUT_DIR).",
-    )
-    return parser.parse_args()
-
+# -----------------------------------------------------------------------------
+# Main Logic
+# -----------------------------------------------------------------------------
 
 def main():
-    load_dotenv()
+    load_dotenv()  # Only used for AWS credentials
 
-    args = parse_args()
-    os.makedirs(args.output_dir, exist_ok=True)
-
-    logger = setup_logging(args.process_name, log_dir=args.output_dir)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    logger = setup_logging(PROCESS_NAME, OUTPUT_DIR)
 
     logger.info("Starting CalFire cacher job.")
     log_system_stats(logger)
 
-    logger.debug(f"Configuration: source_url={args.source_url}")
-    logger.debug(
-        f"Configuration: bucket={args.bucket}, prefix={args.prefix}, "
-        f"output_dir={args.output_dir}"
-    )
-
     try:
-        s3_client = get_s3_client()
+        s3 = get_s3_client()
         now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         logger.info(f"Current UTC time: {now}")
 
-        # Local cache file paths
-        local_all_path = os.path.join(args.output_dir, "incidents_all.geojson")
-        local_active_path = os.path.join(args.output_dir, "incidents_active.geojson")
+        # Local paths
+        all_path = os.path.join(OUTPUT_DIR, "incidents_all.geojson")
+        active_path = os.path.join(OUTPUT_DIR, "incidents_active.geojson")
 
         # 1. Fetch full GeoJSON
-        geojson_all = fetch_calfire_geojson(args.source_url, logger)
+        geojson_all = fetch_calfire_geojson(CALFIRE_SOURCE_URL, logger)
 
-        # 2. Write and upload full incidents file
-        write_geojson_atomic(local_all_path, geojson_all, logger)
-        key_all = f"{args.prefix}/incidents_all.geojson"
-        upload_json_to_s3(s3_client, local_all_path, args.bucket, key_all, logger)
+        # 2. Write & upload all
+        write_geojson_atomic(all_path, geojson_all, logger)
+        upload_to_s3(s3, all_path, S3_BUCKET, f"{S3_CALFIRE_PREFIX}/incidents_all.geojson", logger)
 
-        # 3. Subset to active incidents
+        # 3. Subset active
         geojson_active = subset_active_incidents(geojson_all, logger)
 
-        # 4. Write and upload active incidents file
-        write_geojson_atomic(local_active_path, geojson_active, logger)
-        key_active = f"{args.prefix}/incidents_active.geojson"
-        upload_json_to_s3(s3_client, local_active_path, args.bucket, key_active, logger)
+        # 4. Write & upload active
+        write_geojson_atomic(active_path, geojson_active, logger)
+        upload_to_s3(s3, active_path, S3_BUCKET, f"{S3_CALFIRE_PREFIX}/incidents_active.geojson", logger)
 
         logger.info("CalFire cacher job completed successfully.")
+
     except Exception as e:
-        logger.error(f"CalFire cacher job failed: {e}")
+        logger.error(f"CalFire cacher job FAILED: {e}")
         raise
 
 
