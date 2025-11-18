@@ -95,7 +95,7 @@ advise:
 	@echo "#     CalFire incidents cacher"
 	@echo "################################################################################"
 	@echo ""
-	@echo "*/10 * * * * $(PYTHON) $(SCRIPT_DEST) --bucket airfire-data-exports --prefix calfire --output-dir $(OUTPUT_DIR) >> /var/log/calfire_cacher_cron.log 2>&1"
+	@echo "*/10 * * * * $(PYTHON) $(SCRIPT_DEST) >> /var/log/calfire_cacher_cron.log 2>&1"
 	@echo ""
 
 # Confirm setup of python3-venv and Python installation
