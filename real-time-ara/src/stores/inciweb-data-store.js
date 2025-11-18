@@ -73,6 +73,7 @@ function inciwebToGeoJSON(jsonArray) {
 // ----- configuration ---------------------------------------------------------
 
 const INCIWEB_URL = "https://inciweb.wildfire.gov/api/map_data";
+
 export const inciwebLoadTime = writable(0);
 
 // ----- store -----------------------------------------------------------------
@@ -108,7 +109,7 @@ export const inciweb_geojson = asyncReadable(
       inciwebLoadTime.set(elapsed);
       inciwebFireCount.set(geojson.features.length);
       console.log(
-        `Loaded Inciweb data in ${elapsed} s (${geojson.features.length} features)`
+        `Loaded ${geojson.features.length} Inciweb features in ${elapsed} seconds.`
       );
 
       return geojson;
