@@ -14,7 +14,6 @@
     hovered_monitor_id,
     selected_monitor_ids,
     selected_purpleair_ids,
-    selected_clarity_ids,
     mapLastUpdated,
   } from "./stores/gui-store.js";
 
@@ -26,7 +25,6 @@
   } from "./stores/monitor-data-store.js";
 
   import { pas, patCart } from "./stores/purpleair-data-store.js";
-  import { clarity, clarity_geojson } from "./stores/clarity-data-store.js";
 
   // --- Components ---
   import NavBar from "./components/NavBar.svelte";
@@ -53,12 +51,9 @@
   if (urlParams.centerlon !== undefined) $centerLon = urlParams.centerlon;
   if (urlParams.zoom !== undefined) $zoom = urlParams.zoom;
 
-  // --- Apply initial monitor/clarity selections (after data loads) ---
+  // --- Apply initial monitor selections (after data loads) ---
   $: if (urlParams.monitors && $all_monitors) {
     $selected_monitor_ids = urlParams.monitors;
-  }
-  $: if (urlParams.clarity && $clarity && $clarity_geojson) {
-    $selected_clarity_ids = urlParams.clarity;
   }
 
   // --- PurpleAir handling ---
@@ -96,8 +91,6 @@
     airnow_geojson.load?.();
     airsis_geojson.load?.();
     wrcc_geojson.load?.();
-    clarity.load?.();
-    clarity_geojson.load?.();
     pas.load?.();
 
 		// Fetch exclusion IDs (async work)
@@ -109,7 +102,6 @@
       airsis_geojson.reload();
       wrcc_geojson.reload();
       pas.reload();
-      clarity_geojson.reload();
 			const now = DateTime.now();
 			mapLastUpdated.set(now);
 			console.log(`${now.toFormat("yyyy-LL-dd HH:mm:ss ZZZ")} Data refresh complete.`);
@@ -134,9 +126,6 @@
     }
     if ($selected_purpleair_ids?.length) {
       params.set("purpleair", $selected_purpleair_ids.join(","));
-    }
-    if ($selected_clarity_ids?.length) {
-      params.set("clarity", $selected_clarity_ids.join(","));
     }
 
     const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -186,7 +175,7 @@
 		{/if}
 
 		<!-- Leaflet Map ---------------------------------------------------------->
-		{#if $airnow_geojson && $airsis_geojson && $wrcc_geojson && $clarity_geojson && $pas}
+		{#if $airnow_geojson && $airsis_geojson && $wrcc_geojson && $pas}
 		<div >
 			<LeafletMap width="1200px" height="800px"/>
 		</div>

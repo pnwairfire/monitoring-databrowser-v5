@@ -8,10 +8,6 @@ export const VERSION = readable("5.5.7");
 export const error_message = writable("");
 export const monitorCount = writable(0);
 export const purpleairCount = writable(0);
-export const clarityCount = writable(0);
-export const hmsFiresCount = writable(0);
-export const inciwebFireCount = writable(0);
-export const calfireFireCount = writable(0);
 
 // GUI state for the leaflet map
 export let centerLon = writable(-100);
@@ -28,14 +24,9 @@ export let hovered_purpleair_id = writable("");
 export let selected_purpleair_ids = writable([]);
 export let unselected_purpleair_id = writable("");
 
-export let hovered_clarity_id = writable("");
-export let selected_clarity_ids = writable([]);
-export let unselected_clarity_id = writable("");
-
 export let map_update_needed = writable(false);
 
 export let use_hovered_purpleair = writable(false);
-export let use_hovered_clarity = writable(false);
 
 export let current_slide = writable("all");
 
@@ -73,18 +64,10 @@ export const loadedStatusText = derived(
   [
     monitorCount,
     purpleairCount,
-    clarityCount,
-    hmsFiresCount,
-    inciwebFireCount,
-    calfireFireCount,
   ],
   ([
     $monitorCount,
     $purpleairCount,
-    $clarityCount,
-    $hmsFiresCount,
-    $inciwebFireCount,
-    $calfireFireCount,
   ]) => {
     const parts = [];
 
@@ -93,18 +76,6 @@ export const loadedStatusText = derived(
     }
     if ($purpleairCount > 0) {
       parts.push(`${$purpleairCount} PurpleAir sensors`);
-    }
-    if ($clarityCount > 0) {
-      parts.push(`${$clarityCount} Clarity sensors`);
-    }
-    if ($hmsFiresCount > 0) {
-      parts.push(`${$hmsFiresCount} HMS fire detections`);
-    }
-    if ($inciwebFireCount > 0) {
-      parts.push(`${$inciwebFireCount} InciWeb incidents`);
-    }
-    if ($calfireFireCount > 0) {
-      parts.push(`${$calfireFireCount} CalFire incidents`);
     }
 
     if (parts.length === 0) return "";
@@ -125,18 +96,10 @@ export const waitingStatusText = derived(
   [
     monitorCount,
     purpleairCount,
-    clarityCount,
-    hmsFiresCount,
-    inciwebFireCount,
-    calfireFireCount,
   ],
   ([
     $monitorCount,
     $purpleairCount,
-    $clarityCount,
-    $hmsFiresCount,
-    $inciwebFireCount,
-    $calfireFireCount,
   ]) => {
     const waiting = [];
 
@@ -145,18 +108,6 @@ export const waitingStatusText = derived(
     }
     if ($purpleairCount === 0) {
       waiting.push("PurpleAir data");
-    }
-    if ($clarityCount === 0) {
-      waiting.push("Clarity data");
-    }
-    if ($hmsFiresCount === 0) {
-      waiting.push("HMS fire data");
-    }
-    if ($inciwebFireCount === 0) {
-      waiting.push("InciWeb fire data");
-    }
-    if ($calfireFireCount === 0) {
-      waiting.push("CalFire fire data");
     }
 
     if (waiting.length === 0) return "";
