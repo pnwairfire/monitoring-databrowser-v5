@@ -26,7 +26,6 @@
     exclusion_ids,
     hovered_monitor_id,
     selected_monitor_ids,
-    unselected_monitor_id,
   } from '../stores/gui-store.js';
 
   // Plotting helper functions
@@ -165,11 +164,6 @@
       replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
     })
 
-    // Ensure "hovered" plot is not shown after leaving the map
-    map.on('mouseout', function () {
-      $hovered_monitor_id = "";
-    });
-
     // Ensure HMS polygons and fire points are at the bottom
     enforceLayerGroupOrder();
   }
@@ -242,37 +236,6 @@
     }
 
     replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
-  }
-
-  /* ----- Other functions -------------------------------------------------- */
-
-  // Minimal helper: walk any Layer/FeatureGroup/GeoJSON tree
-  function forEachLeaf(layerOrGroup, fn) {
-    if (layerOrGroup && typeof layerOrGroup.eachLayer === 'function') {
-      layerOrGroup.eachLayer(child => forEachLeaf(child, fn));
-    } else if (layerOrGroup) {
-      fn(layerOrGroup);
-    }
-  }
-
-  // Watcher for map-external monitor deselect events (LayerGroup-aware)
-  $: if ($unselected_monitor_id !== "") {
-    if (layers?.airnow) {
-      forEachLeaf(layers.airnow, (layer) => {
-        // Only shape markers created by createMonitorLayer
-        if (layer instanceof L.ShapeMarker &&
-            layer.feature?.properties?.deviceDeploymentID === $unselected_monitor_id) {
-          layer.setStyle({ weight: 1 });
-        }
-      });
-    }
-
-    // Clear the flag and update history
-    $unselected_monitor_id = "";
-    replaceWindowHistory(
-      $centerLat, $centerLon, $zoom,
-      $selected_monitor_ids
-    );
   }
 
 </script>

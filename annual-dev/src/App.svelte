@@ -11,9 +11,7 @@
     centerLon,
     centerLat,
     zoom,
-    hovered_monitor_id,
     selected_monitor_ids,
-    mapLastUpdated,
   } from "./stores/gui-store.js";
 
   import {
@@ -30,12 +28,6 @@
   import {
     parseWindowQueryParams,
   } from "./js/utils.js";
-
-	// Loaders
-  import { loadExclusionList } from "./js/utils-loaders.js";
-
-  const EXCLUSION_IDS_URL =
-    "https://raw.githubusercontent.com/pnwairfire/monitoring-v5-CONFIG/refs/heads/main/exclusion_ids.json";
 
   // --- Parse URL params once on startup ---
   const urlParams = parseWindowQueryParams();
@@ -55,21 +47,6 @@
     // Initial load
     airnow_geojson.load?.();
 
-		// Fetch exclusion IDs (async work)
-   loadExclusionList(EXCLUSION_IDS_URL);
-
-    // Refresh data every 5 minutes
-    const refreshInterval = setInterval(() => {
-      airnow_geojson.reload();
-			const now = DateTime.now();
-			mapLastUpdated.set(now);
-			console.log(`${now.toFormat("yyyy-LL-dd HH:mm:ss ZZZ")} Data refresh complete.`);
-    }, 10 * 60 * 1000);
-
-		// Cleanup when component is destroyed
-		return () => {
-			clearInterval(refreshInterval);
-		};
   });
 
   // --- Keep URL in sync with app state ---
@@ -91,10 +68,6 @@
   // Reactively update URL whenever relevant state changes
   $: updateUrl();
 
-  // --- Helpers ---
-  function unselectHovered() {
-    $hovered_monitor_id = "";
-  }
 </script>
 
 <main>
