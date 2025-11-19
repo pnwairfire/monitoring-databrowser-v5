@@ -16,10 +16,7 @@
   // Stores
   import {
     airnow_geojson,
-    airsis_geojson,
-    wrcc_geojson,
   } from '../stores/monitor-data-store.js';
-  import { pas, purpleair_geojson, patCart } from '../stores/purpleair-data-store.js';
   import { mapLastUpdated } from '../stores/gui-store.js';
 
   import {
@@ -28,23 +25,16 @@
     zoom,
     exclusion_ids,
     hovered_monitor_id,
-    hovered_purpleair_id,
     selected_monitor_ids,
-    selected_purpleair_ids,
     unselected_monitor_id,
-    unselected_purpleair_id,
-    use_hovered_purpleair,
-    current_slide,
   } from '../stores/gui-store.js';
 
   // Plotting helper functions
   import {
     monitorPropertiesToIconOptions,
-    purpleairPropertiesToIconOptions,
   } from '../js/utils-map.js';
 
   // Utility functions
-  import { getPurpleAirData } from '../js/utils-purpleair.js';
   import { replaceWindowHistory } from '../js/utils.js';
 
   let map;
@@ -56,10 +46,7 @@
 
   // Enforce stacking order (bottom to top)
   function enforceLayerGroupOrder() {
-    layers.purpleair?.bringToFront?.();
     layers.airnow?.bringToFront?.();
-    layers.airsis?.bringToFront?.();
-    layers.wrcc?.bringToFront?.();
   }
 
   /**
@@ -131,23 +118,17 @@
     }
 
     // --- Watch all layers
-    watchLayer(purpleair_geojson, createPurpleAirLayer, "purpleair", map);
     watchLayer(airnow_geojson, createMonitorLayer, "airnow", map);
-    watchLayer(airsis_geojson, createMonitorLayer, "airsis", map);
-    watchLayer(wrcc_geojson, createMonitorLayer, "wrcc", map);
 
     // Kick off initial load of all data that hasn't been loaded in App.svelte
     mapLastUpdated.set(DateTime.now());
 
     // Make layers toggleable
     L.control.layers(null, {
-      "PurpleAir": layers.purpleair,
       "AirNow": layers.airnow,
-      "AIRSIS": layers.airsis,
-      "WRCC": layers.wrcc,
     }).addTo(map);
 
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
 
     // ----- Add lastUpdated custom control ------------------------------------
 
@@ -171,29 +152,22 @@
 
     // ----- Add event listeners to the map ------------------------------------
 
-    // Force selected monitors/sensors to show hourly plot when interacting with the map
-    map.on("mouseover", function() {
-      $current_slide = "hourly";
-    })
-
     // Update browser URL when panning
     map.on("moveend", function() {
       $centerLat = map.getCenter().lat;
       $centerLon = map.getCenter().lng;
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
     })
 
     // Update browser URL when zooming
     map.on("zoomend", function() {
       $zoom = map.getZoom();
-      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+      replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
     })
 
     // Ensure "hovered" plot is not shown after leaving the map
     map.on('mouseout', function () {
       $hovered_monitor_id = "";
-      $hovered_purpleair_id = "";
-      $use_hovered_purpleair = false;
     });
 
     // Ensure HMS polygons and fire points are at the bottom
@@ -239,7 +213,6 @@
       // Icon behavior
       onEachFeature: function (feature, layer) {
         layer.on('mouseover', function (e) {
-          $use_hovered_purpleair = false;
           $hovered_monitor_id = feature.properties.deviceDeploymentID;
         });
         layer.on('mouseout', function (e) {
@@ -268,95 +241,7 @@
       e.target.setStyle({ weight: 3 });
     }
 
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
-  }
-
-  /* ----- PurpleAir functions ---------------------------------------------- */
-
-  /**
-   * Creates a Leaflet GeoJSON layer for PurpleAir sensors with latency filtering and interactivity.
-   *
-   * @param {Object} geojson - A GeoJSON FeatureCollection of PurpleAir sensor points.
-   * @returns {L.GeoJSON} A Leaflet layer containing styled markers and interactive behavior.
-   */
-  function createPurpleAirLayer(geojson) {
-    const this_layer = L.geoJSON(geojson, {
-
-      // Icon appearance
-      pointToLayer: function (feature, latlng) {
-        const props = feature.properties;
-        const id = String(props.deviceDeploymentID);
-
-        // Exclusion rules
-        const isExcluded =
-          $exclusion_ids.has(id) ||  // Skip runtime exclusion list
-          parseInt(props.latency) >= 24 * 3; // Skip stale monitors
-
-        if (isExcluded) return;
-
-        const marker = L.shapeMarker(latlng, purpleairPropertiesToIconOptions(props));
-        const isSelected = $selected_purpleair_ids.includes(id);
-        marker.setStyle({
-          opacity: isSelected ? 1.0 : 0.2,
-          weight: isSelected ? 2 : 1
-        });
-
-        return marker;
-      },
-
-      // Define interactive behavior
-      onEachFeature: function (feature, layer) {
-        layer.on('mouseover', () => {
-          $hovered_purpleair_id = feature.properties.deviceDeploymentID;
-          $use_hovered_purpleair = true;
-        });
-        layer.on('mouseout', () => {
-          $hovered_purpleair_id = "";
-          $use_hovered_purpleair = false;
-        });
-        layer.on('click', (e) => {
-          purpleairIconClick(e);
-        });
-      }
-    });
-
-    return this_layer;
-  }
-
-  /**
-   * Handles click events on PurpleAir sensor markers.
-   * Loads and stores time series data if selected, and updates map and URL state.
-   *
-   * @param {Object} e - Leaflet event triggered by marker click.
-   */
-  async function purpleairIconClick(e) {
-    const id = e.target.feature.properties.deviceDeploymentID;
-    const isSelected = $selected_purpleair_ids.includes(id);
-
-    if (!isSelected) {
-      // Load and add time series data if not already in the cart
-      if (!$patCart.items.some(item => item.id === id)) {
-        console.log("Downloading PurpleAir data for id =", id);
-        const purpleairData = await getPurpleAirData(id);
-        patCart.addItem({ id, data: purpleairData });
-      } else {
-        console.log("pat id:", id, "is already loaded.");
-      }
-
-      // Update selected IDs (immutable update)
-      $selected_purpleair_ids = [id, ...$selected_purpleair_ids];
-      e.target.setStyle({ opacity: 1.0, weight: 2 });
-
-    } else {
-      // Deselect and update state
-      $selected_purpleair_ids = $selected_purpleair_ids.filter((x) => x !== id);
-      e.target.setStyle({ opacity: 0.2, weight: 1 });
-
-      // Optional: consider removing time series from patCart here
-      // patCart.removeItem({ id });
-    }
-
-    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids, $selected_purpleair_ids);
+    replaceWindowHistory($centerLat, $centerLon, $zoom, $selected_monitor_ids);
   }
 
   /* ----- Other functions -------------------------------------------------- */
@@ -381,46 +266,12 @@
         }
       });
     }
-    if (layers?.airsis) {
-      forEachLeaf(layers.airsis, (layer) => {
-        if (layer instanceof L.ShapeMarker &&
-            layer.feature?.properties?.deviceDeploymentID === $unselected_monitor_id) {
-          layer.setStyle({ weight: 1 });
-        }
-      });
-    }
-    if (layers?.wrcc) {
-      forEachLeaf(layers.wrcc, (layer) => {
-        if (layer instanceof L.ShapeMarker &&
-            layer.feature?.properties?.deviceDeploymentID === $unselected_monitor_id) {
-          layer.setStyle({ weight: 1 });
-        }
-      });
-    }
 
     // Clear the flag and update history
     $unselected_monitor_id = "";
     replaceWindowHistory(
       $centerLat, $centerLon, $zoom,
-      $selected_monitor_ids, $selected_purpleair_ids
-    );
-  }
-
-  // Watcher for map-external PurpleAir deselect events
-  $: if ($unselected_purpleair_id !== "") {
-    if (layers?.purpleair) {
-      forEachLeaf(layers.purpleair, (layer) => {
-        if (layer instanceof L.ShapeMarker &&
-            layer.feature?.properties?.deviceDeploymentID === $unselected_purpleair_id) {
-          layer.setStyle({ opacity: 0.2, weight: 1 });
-        }
-      });
-    }
-    // Clear the flag and update history
-    $unselected_purpleair_id = "";
-    replaceWindowHistory(
-      $centerLat, $centerLon, $zoom,
-      $selected_monitor_ids, $selected_purpleair_ids
+      $selected_monitor_ids
     );
   }
 

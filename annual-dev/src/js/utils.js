@@ -10,16 +10,12 @@
  * @param {number | null | undefined} centerlon
  * @param {number | null | undefined} zoom
  * @param {string[] | string | null | undefined} monitor_ids
- * @param {string[] | string | null | undefined} clarity_ids
- * @param {string[] | string | null | undefined} purpleair_ids
  */
 export function replaceWindowHistory(
   centerlat,
   centerlon,
   zoom,
-  monitor_ids,
-  clarity_ids,
-  purpleair_ids
+  monitor_ids
 ) {
   const params = new URLSearchParams();
 
@@ -45,12 +41,8 @@ export function replaceWindowHistory(
   };
 
   const monitors = normList(monitor_ids);
-  const purpleair = normList(purpleair_ids);
-  const clarity = normList(clarity_ids);
 
   if (monitors.length) params.set("monitors", monitors.join(","));
-  if (purpleair.length) params.set("purpleair", purpleair.join(","));
-  if (clarity.length) params.set("clarity", clarity.join(","));
 
   const base = window.location.origin + window.location.pathname;
   const qs = params.toString();
@@ -68,9 +60,7 @@ export function replaceWindowHistory(
  *   centerlat?: number,
  *   centerlon?: number,
  *   zoom?: number,
- *   monitors?: string[],
- *   purpleair?: string[],
- *   clarity?: string[]
+ *   monitors?: string[]
  * }}
  */
 export function parseWindowQueryParams() {
@@ -102,30 +92,6 @@ export function parseWindowQueryParams() {
   if (params.has("monitors")) {
     result.monitors = toList(params.get("monitors"));
   }
-  if (params.has("purpleair")) {
-    result.purpleair = toList(params.get("purpleair"));
-  }
-  if (params.has("clarity")) {
-    result.clarity = toList(params.get("clarity"));
-  }
 
   return result;
-}
-
-
-// Create data-service URL
-export function createDataServiceUrl(ids = []) {
-  const baseUrl = "https://tools.airfire.org/monitor-data/v2/data";
-  const monitorids = ids.reduce((a, o) => a + "," + o);
-  const url = baseUrl + "?" + "monitorids=" + ids;
-  return url;
-}
-
-// Create aqi-nowcast-service URL
-// https://tools.airfire.org/monitor-custom/v2/dailyhourlybarplot?outputfiletype=pdf&lookbackdays=10&monitors=f30ef89ce91eb5b4_840160150002
-export function createAQINowCastServiceUrl(ids = []) {
-  const baseUrl = "https://tools.airfire.org/monitor-custom/v2/dailyhourlybarplot";
-  const monitorids = ids.reduce((a, o) => a + "," + o);
-  const url = baseUrl + "?" + "monitorids=" + ids + "&days=10&filetype=pdf";
-  return url;
 }

@@ -7,7 +7,6 @@ export const VERSION = readable("5.5.7");
 // Status messages
 export const error_message = writable("");
 export const monitorCount = writable(0);
-export const purpleairCount = writable(0);
 
 // GUI state for the leaflet map
 export let centerLon = writable(-100);
@@ -20,15 +19,7 @@ export let hovered_monitor_id = writable("");
 export let selected_monitor_ids = writable([]);
 export let unselected_monitor_id = writable("");
 
-export let hovered_purpleair_id = writable("");
-export let selected_purpleair_ids = writable([]);
-export let unselected_purpleair_id = writable("");
-
 export let map_update_needed = writable(false);
-
-export let use_hovered_purpleair = writable(false);
-
-export let current_slide = writable("all");
 
 /**
  * IDs of monitors that should be excluded from display.
@@ -63,19 +54,14 @@ function formatList(items) {
 export const loadedStatusText = derived(
   [
     monitorCount,
-    purpleairCount,
   ],
   ([
     $monitorCount,
-    $purpleairCount,
   ]) => {
     const parts = [];
 
     if ($monitorCount > 0) {
       parts.push(`${$monitorCount} monitors`);
-    }
-    if ($purpleairCount > 0) {
-      parts.push(`${$purpleairCount} PurpleAir sensors`);
     }
 
     if (parts.length === 0) return "";
@@ -95,19 +81,14 @@ export const loadedStatusText = derived(
 export const waitingStatusText = derived(
   [
     monitorCount,
-    purpleairCount,
   ],
   ([
     $monitorCount,
-    $purpleairCount,
   ]) => {
     const waiting = [];
 
     if ($monitorCount === 0) {
       waiting.push("monitor data");
-    }
-    if ($purpleairCount === 0) {
-      waiting.push("PurpleAir data");
     }
 
     if (waiting.length === 0) return "";

@@ -13,18 +13,13 @@
     zoom,
     hovered_monitor_id,
     selected_monitor_ids,
-    selected_purpleair_ids,
     mapLastUpdated,
   } from "./stores/gui-store.js";
 
   import {
     all_monitors,
     airnow_geojson,
-    airsis_geojson,
-    wrcc_geojson,
   } from "./stores/monitor-data-store.js";
-
-  import { pas, patCart } from "./stores/purpleair-data-store.js";
 
   // --- Components ---
   import NavBar from "./components/NavBar.svelte";
@@ -37,7 +32,6 @@
   } from "./js/utils.js";
 
 	// Loaders
-  import { getPurpleAirData } from "./js/utils-purpleair.js";
   import { loadExclusionList } from "./js/utils-loaders.js";
 
   const EXCLUSION_IDS_URL =
@@ -56,42 +50,10 @@
     $selected_monitor_ids = urlParams.monitors;
   }
 
-  // --- PurpleAir handling ---
-  async function loadPurpleAirData(idList) {
-    for (const id of idList) {
-      // Skip if already loaded
-      if ($patCart.items.some((item) => item.id === id)) {
-        console.log(`PurpleAir id ${id} already loaded`);
-        continue;
-      }
-
-      try {
-        console.log(`Downloading PurpleAir data for id = ${id}`);
-        const purpleairData = await getPurpleAirData(id);
-        patCart.addItem({ id, data: purpleairData });
-      } catch (err) {
-        console.error(`Failed to load PurpleAir id ${id}:`, err);
-      }
-    }
-    console.log("patCart.count =", $patCart.count);
-  }
-
-  // Apply PurpleAir selections once stores are ready
-  $: if (urlParams.purpleair && $pas) {
-    const idList = urlParams.purpleair;
-    if (idList.length > 0) {
-      loadPurpleAirData(idList);
-      $selected_purpleair_ids = idList;
-    }
-  }
-
   // --- Initial load + refresh ---
   onMount(() => {
     // Initial load
     airnow_geojson.load?.();
-    airsis_geojson.load?.();
-    wrcc_geojson.load?.();
-    pas.load?.();
 
 		// Fetch exclusion IDs (async work)
    loadExclusionList(EXCLUSION_IDS_URL);
@@ -99,9 +61,6 @@
     // Refresh data every 5 minutes
     const refreshInterval = setInterval(() => {
       airnow_geojson.reload();
-      airsis_geojson.reload();
-      wrcc_geojson.reload();
-      pas.reload();
 			const now = DateTime.now();
 			mapLastUpdated.set(now);
 			console.log(`${now.toFormat("yyyy-LL-dd HH:mm:ss ZZZ")} Data refresh complete.`);
@@ -123,9 +82,6 @@
 
     if ($selected_monitor_ids?.length) {
       params.set("monitors", $selected_monitor_ids.join(","));
-    }
-    if ($selected_purpleair_ids?.length) {
-      params.set("purpleair", $selected_purpleair_ids.join(","));
     }
 
     const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -175,7 +131,7 @@
 		{/if}
 
 		<!-- Leaflet Map ---------------------------------------------------------->
-		{#if $airnow_geojson && $airsis_geojson && $wrcc_geojson && $pas}
+		{#if $airnow_geojson}
 		<div >
 			<LeafletMap width="1200px" height="800px"/>
 		</div>

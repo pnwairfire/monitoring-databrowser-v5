@@ -20,14 +20,10 @@ export const airnowLoadTime = writable(null);
 
 // GeoJSON files with monitor locations and metadata
 const AIRNOW_LATEST_GEOJSON = "https://airfire-data-exports.s3.us-west-2.amazonaws.com/monitoring/v2/latest/geojson/mv4_airnow_PM2.5_latest.geojson";
-const AIRSIS_LATEST_GEOJSON = "https://airfire-data-exports.s3.us-west-2.amazonaws.com/monitoring/v2/latest/geojson/mv4_airsis_PM2.5_latest.geojson";
-const WRCC_LATEST_GEOJSON = "https://airfire-data-exports.s3.us-west-2.amazonaws.com/monitoring/v2/latest/geojson/mv4_wrcc_PM2.5_latest.geojson";
 
 // ----- geojson ---------------------------------------------------------------
 
 export const airnow_geojson = loadGeojson(AIRNOW_LATEST_GEOJSON, "airnow");
-export const airsis_geojson = loadGeojson(AIRSIS_LATEST_GEOJSON, "airsis");
-export const wrcc_geojson = loadGeojson(WRCC_LATEST_GEOJSON, "wrcc");
 
 // ----- time series -----------------------------------------------------------
 
@@ -55,51 +51,11 @@ export const airnow = asyncReadable(
   { reloadable: true }
 );
 
-// Reloadable AIRSIS data
-export const airsis = asyncReadable(
-  new Monitor(),
-  async () => {
-    const monitor = new Monitor();
-    try {
-      await monitor.loadLatest("airsis");
-    } catch (err) {
-      error_message.set("Failed to load AIRSIS monitor data");
-      const err_msg = `loadLatest("airsis") failed: ${err.message}`;
-      console.error(err_msg);
-      throw new Error(err_msg);
-    }
-    console.log(`loaded airsis monitor data`);
-    return monitor;
-  },
-  { reloadable: true }
-);
-
-// Reloadable WRCC data
-export const wrcc = asyncReadable(
-  new Monitor(),
-  async () => {
-    const monitor = new Monitor();
-    try {
-      await monitor.loadLatest("wrcc");
-    } catch (err) {
-      error_message.set("Failed to load WRCC monitor data");
-      const err_msg = `loadLatest("wrcc") failed: ${err.message}`;
-      console.error(err_msg);
-      throw new Error(err_msg);
-    }
-    console.log(`loaded wrcc monitor data`);
-    return monitor;
-  },
-  { reloadable: true }
-);
-
 // All monitors combined (changes whenever any underlying data changes)
 export const all_monitors = derived(
-  [airnow, airsis, wrcc],
-  ([$airnow, $airsis, $wrcc]) => {
-    let all_monitors = $airnow.combine($airsis).combine($wrcc).dropEmpty();
-    // Reduce to the last 168 hours to match PurpleAir data
-    all_monitors.data = all_monitors.data.slice(-168);
+  [airnow],
+  ([$airnow]) => {
+    let all_monitors = $airnow.dropEmpty();
     monitorCount.set(all_monitors.count());
     return all_monitors;
   }
