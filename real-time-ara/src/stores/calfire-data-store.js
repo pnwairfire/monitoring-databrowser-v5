@@ -113,7 +113,7 @@ function calfireToGeoJSON(calfireGeoJSON) {
 // ----- configuration ---------------------------------------------------------
 
 const CALFIRE_URL =
-  "https://incidents.fire.ca.gov/umbraco/api/IncidentApi/GeoJsonList?inactive=false";
+  "https://airfire-data-exports.s3.us-west-2.amazonaws.com/calfire/incidents_active.geojson";
 
 export const calfireLoadTime = writable(0);
 

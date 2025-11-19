@@ -23,6 +23,7 @@
   import { clarity_geojson } from '../stores/clarity-data-store.js';
   import { hms_fires_geojson, hms_smoke_geojson } from '../stores/hms-data-store.js';
   import { inciweb_geojson } from "../stores/inciweb-data-store.js";
+  import { calfire_geojson } from "../stores/calfire-data-store.js";
   import { mapLastUpdated } from '../stores/gui-store.js';
 
   import {
@@ -55,6 +56,7 @@
   import { getPurpleAirData } from '../js/utils-purpleair.js';
   import { replaceWindowHistory } from '../js/utils.js';
   import { createInciwebLayer } from "../js/createInciwebLayer.js";
+  import { createCalfireLayer } from "../js/createCalfireLayer.js";
 
   let map;
   let refreshInterval;
@@ -68,6 +70,8 @@
     layers.hmsSmoke?.bringToBack?.();
     layers.hmsFires?.bringToBack?.();
 
+    layers.inciwebFires?.bringToFront?.();
+    layers.calfireFires?.bringToFront?.();
     layers.clarity?.bringToFront?.();
     layers.purpleair?.bringToFront?.();
     layers.airnow?.bringToFront?.();
@@ -145,6 +149,7 @@
 
     // --- Watch all layers
     watchLayer(inciweb_geojson, createInciwebLayer, "inciweb", map);
+    watchLayer(calfire_geojson, createCalfireLayer, "calfire", map);
     watchLayer(hms_smoke_geojson, createHMSSmokeLayer, "hmsSmoke", map);
     watchLayer(hms_fires_geojson, createHMSFiresLayer_geojson, "hmsFires", map);
     watchLayer(clarity_geojson, createClarityLayer, "clarity", map);
@@ -159,6 +164,7 @@
     // Make layers toggleable
     L.control.layers(null, {
       "InciWeb Fires": layers.inciweb,
+      "CalFire Fires": layers.calfire,
       "HMS Fires": layers.hmsFires,
       "HMS Smoke": layers.hmsSmoke,
       "Clarity": layers.clarity,
@@ -621,12 +627,4 @@
 </div>
 
 <style>
-.inciweb-icon.active {
-  filter: drop-shadow(0 0 3px orange);
-}
-
-.inciweb-icon.inactive {
-  opacity: 0.5;
-  filter: grayscale(100%);
-}
 </style>

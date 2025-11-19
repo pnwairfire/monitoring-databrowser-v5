@@ -101,10 +101,10 @@ export const loadedStatusText = derived(
       parts.push(`${$hmsFiresCount} HMS fire detections`);
     }
     if ($inciwebFireCount > 0) {
-      parts.push(`${$inciwebFireCount} InciWeb fires`);
+      parts.push(`${$inciwebFireCount} InciWeb incidents`);
     }
     if ($calfireFireCount > 0) {
-      parts.push(`${$calfireFireCount} CalFire fires`);
+      parts.push(`${$calfireFireCount} CalFire incidents`);
     }
 
     if (parts.length === 0) return "";

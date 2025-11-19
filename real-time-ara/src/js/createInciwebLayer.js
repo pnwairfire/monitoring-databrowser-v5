@@ -1,5 +1,12 @@
 import L from "leaflet";
 
+// --- local helper -----------------------------------------------------------
+
+function formatNumber(n) {
+  const num = Number(n);
+  return Number.isFinite(num) ? num.toLocaleString("en-US") : n;
+}
+
 /**
  * Create a Leaflet layer for Inciweb fire incidents.
  *
@@ -44,7 +51,7 @@ export function createInciwebLayer(geojson) {
             ${p.changed ? `<strong>Updated:</strong> ${p.changed}<br>` : ""}
             ${
               p.size
-                ? `<strong>Size:</strong> ${p.size} ${p.measurement_type || ""}<br>`
+                ? `<strong>Size:</strong> ${formatNumber(p.size)} ${p.measurement_type || ""}<br>`
                 : ""
             }
             ${
