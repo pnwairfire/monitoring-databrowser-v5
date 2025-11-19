@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { asyncReadable, derived, writable } from "@square/svelte-store";
 import Monitor from "air-monitor";
 
-import { error_message, monitorCount } from "./gui-store.js";
+import { error_message, monitorCount, selected_date } from "./gui-store.js";
 import { loadGeojson } from "../js/utils-loaders.js";
 
 // NOTE:  The @square/svelte-store replacement for svelte-store is
@@ -44,20 +44,23 @@ export const airnow = asyncReadable(
   { reloadable: true }
 );
 
-// All monitors combined (changes whenever any underlying data changes)
-export const all_monitors = derived(
-  [airnow],
-  ([$airnow]) => {
-    if (!$airnow) {
-      monitorCount.set(0);
+// AirNow subset generated whenever a new date is selected
+export const airnow_selected = derived(
+  [airnow, selected_date],
+  ([$airnow, $selected_date]) => {
+    if (!$airnow) return null;
+
+    try {
+      const monitorSubset = subsetAirnowByDate($airnow, $selected_date);
+      return monitorSubset;
+    } catch (err) {
+      const msg = `Failed to subset AirNow monitor data: ${err.message}`;
+      console.error(msg);
+      error_message.set(msg);
       return null;
     }
-    let all_monitors = $airnow.dropEmpty();
-    monitorCount.set(all_monitors.count());
-    return all_monitors;
   }
 );
-
 // ----- geojson generated from Monitor ----------------------------------------
 //
 // This stays in sync automatically:

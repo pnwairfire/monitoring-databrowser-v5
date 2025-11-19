@@ -12,10 +12,11 @@
     centerLat,
     zoom,
     selected_monitor_ids,
+		selected_date,
   } from "./stores/gui-store.js";
 
   import {
-    all_monitors,
+    airnow,
     airnow_geojson,
   } from "./stores/monitor-data-store.js";
 
@@ -38,7 +39,7 @@
   if (urlParams.zoom !== undefined) $zoom = urlParams.zoom;
 
   // --- Apply initial monitor selections (after data loads) ---
-  $: if (urlParams.monitors && $all_monitors) {
+  $: if (urlParams.monitors && $airnow) {
     $selected_monitor_ids = urlParams.monitors;
   }
 
@@ -76,6 +77,7 @@
 		<img class="logo" src="images/forestservicelogo-inverted.svg"
 		     alt="US Forest Service logo">
 		<span class="mv5">Monitoring v{$VERSION} &mdash; Annual</span>
+		<input type="date" bind:value={$selected_date} />
 	</NavBar>
 
 	<div class="airfire-alerts" style="display: none"></div>
@@ -86,7 +88,7 @@
 		</AlertBox>
 	{/if}
 
-  {#await all_monitors.load()}
+  {#await airnow.load()}
 		<p>Loading data...</p>
 	{:then}
 
@@ -106,7 +108,7 @@
 		<!-- Leaflet Map ---------------------------------------------------------->
 		{#if $airnow_geojson}
 		<div >
-			<LeafletMap width="1200px" height="800px"/>
+			<LeafletMap width="1200px" height="600px"/>
 		</div>
 		{/if}
 
@@ -128,8 +130,19 @@
 		font-size: 24px;
 		font-family: "Source Sans Pro", "Helvetica", sans-serif;
 		padding-left: 10px;
-		vertical-align: text-top;
   }
+
+	input[type="date"] {
+    font-family: "Source Sans Pro", "Helvetica", sans-serif;
+    font-size: 16px;             /* slightly smaller than .mv5 (24px) */
+    padding: 2px 4px;
+    margin-left: auto;           /* pushes input to the right */
+    margin-right: 20px;          /* right margin */
+  }
+
+	input[type="date"]:hover {
+		border-color: #aaa;
+	}
 
 	p.status {
 		text-align: left;

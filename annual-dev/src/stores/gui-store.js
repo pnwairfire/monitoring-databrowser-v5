@@ -9,17 +9,22 @@ export const error_message = writable("");
 export const monitorCount = writable(0);
 
 // GUI state for the leaflet map
-export let centerLon = writable(-100);
-export let centerLat = writable(40);
-export let zoom = writable(4);
+export const centerLon = writable(-100);
+export const centerLat = writable(40);
+export const zoom = writable(4);
 export const mapLastUpdated = writable(null); // or writable(DateTime.now())
 
 // GUI state for user selections
-export let hovered_monitor_id = writable("");
-export let selected_monitor_ids = writable([]);
-export let unselected_monitor_id = writable("");
+export const hovered_monitor_id = writable("");
+export const selected_monitor_ids = writable([]);
+export const unselected_monitor_id = writable("");
 
-export let map_update_needed = writable(false);
+// Selected date for the main date picker
+// Stored as "YYYY-MM-DD" so it binds cleanly to <input type="date">
+export const selected_date = writable(DateTime.now().toISODate()); // using the browsers's timezone
+// // //export const selected_date = writable(DateTime.utc().toISODate()); // Strict UTC semantics
+
+export const map_update_needed = writable(false);
 
 /**
  * IDs of monitors that should be excluded from display.
