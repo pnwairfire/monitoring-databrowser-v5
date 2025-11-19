@@ -23,3 +23,20 @@ export function monitorPropertiesToIconOptions(properties) {
   };
   return options;
 }
+
+// Icon style
+export function monitorPropertiesToIconOptions_2(properties) {
+  const latency = parseInt(properties.last_latency);
+  const options = {
+    radius: properties.deploymentType == "Temporary" ? 7 : 8,
+    shape:
+      properties["deploymentType"] == "Temporary" ? "triangle-up" : "circle",
+    fillColor:
+      latency > 4 ? "#bbb" : pm25ToColor(Number(properties.last_pm25)),
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8,
+  };
+  return options;
+}

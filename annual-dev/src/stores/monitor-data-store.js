@@ -18,13 +18,6 @@ import { loadGeojson } from "../js/utils-loaders.js";
 
 export const airnowLoadTime = writable(null);
 
-// GeoJSON files with monitor locations and metadata
-const AIRNOW_LATEST_GEOJSON = "https://airfire-data-exports.s3.us-west-2.amazonaws.com/monitoring/v2/latest/geojson/mv4_airnow_PM2.5_latest.geojson";
-
-// ----- geojson ---------------------------------------------------------------
-
-export const airnow_geojson = loadGeojson(AIRNOW_LATEST_GEOJSON, "airnow");
-
 // ----- time series -----------------------------------------------------------
 
 // Reloadable AirNow data
@@ -55,8 +48,38 @@ export const airnow = asyncReadable(
 export const all_monitors = derived(
   [airnow],
   ([$airnow]) => {
+    if (!$airnow) {
+      monitorCount.set(0);
+      return null;
+    }
     let all_monitors = $airnow.dropEmpty();
     monitorCount.set(all_monitors.count());
     return all_monitors;
+  }
+);
+
+// ----- geojson generated from Monitor ----------------------------------------
+//
+// This stays in sync automatically:
+// - when `airnow` reloads via asyncReadable
+// - `all_monitors` recomputes
+// - this derived store recomputes and Leaflet sees updated GeoJSON.
+
+export const airnow_geojson = derived(
+  [airnow],
+  ([$airnow]) => {
+    if (!$airnow || typeof $airnow.createGeoJSON !== "function") {
+      return null;
+    }
+
+    try {
+      const nonEmpty = $airnow.dropEmpty();
+      return nonEmpty.createGeoJSON();
+    } catch (err) {
+      const msg = `Failed to create AirNow GeoJSON: ${err.message}`;
+      console.error(msg);
+      error_message.set(msg);
+      return null;
+    }
   }
 );

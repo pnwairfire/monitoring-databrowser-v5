@@ -30,7 +30,7 @@
 
   // Plotting helper functions
   import {
-    monitorPropertiesToIconOptions,
+    monitorPropertiesToIconOptions_2,
   } from '../js/utils-map.js';
 
   // Utility functions
@@ -197,7 +197,7 @@
 
         if (isExcluded) return;
 
-        const marker = L.shapeMarker(latlng, monitorPropertiesToIconOptions(props));
+        const marker = L.shapeMarker(latlng, monitorPropertiesToIconOptions_2(props));
         const isSelected = $selected_monitor_ids.includes(id);
         marker.setStyle({ weight: isSelected ? 3 : 1 });
 
