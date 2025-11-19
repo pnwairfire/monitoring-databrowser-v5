@@ -1,5 +1,9 @@
 # monitoring-databrowser-v5
 
+_Last updated on 2025-11-19_
+
+--------------------------------------------------------------------------------
+
 This directory contains one (or more) Svelte apps that together make up the
 monitoring v5 website. These are each built using Svelte. For
 more information about Svelte, see https://svelte.dev.
@@ -23,7 +27,7 @@ At the command line, download source code and install npm packages with:
 ```
 git clone git@github.com:pnwairfire/monitoring-databrowser-v5.git
 ...
-cd real-time
+cd real-time-EXAMPLE
 npm install
 ```
 
@@ -31,7 +35,7 @@ To run the app interactively, you need to be in the `real-time/`
 subdirectory:
 
 ```
-cd real-time
+cd real-time-EXAMPLE
 npm run dev
 ```
 
@@ -49,7 +53,7 @@ At the command line:
 npm init vite
 # choose framework: Svelte
 # choose variant: JavaScript
-cd real-time
+cd real-time-EXAMPLE
 npm install
 npm run dev
 ```
