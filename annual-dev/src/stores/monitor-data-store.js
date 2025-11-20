@@ -111,7 +111,7 @@ export const airnow_selected = derived(
       if (typeof $lookback_days === "number" && $lookback_days > 0) {
         // e.g. lookback_days = 1 → just the selected day
         //      lookback_days = 7 → 7-day window ending on selected date
-        startdate = enddate.minus({ days: $lookback_days - 1 }).startOf("day");
+        startdate = enddate.minus({ days: $lookback_days - 1 });
       }
 
       const timezone = "UTC"; // adjust if your Monitor data uses a different zone
