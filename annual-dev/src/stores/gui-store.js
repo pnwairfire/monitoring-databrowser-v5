@@ -19,10 +19,17 @@ export const hovered_monitor_id = writable("");
 export const selected_monitor_ids = writable([]);
 export const unselected_monitor_id = writable("");
 
-// Selected date for the main date picker
-// Stored as "YYYY-MM-DD" so it binds cleanly to <input type="date">
-export const selected_date = writable(DateTime.now().toISODate()); // using the browsers's timezone
-// // //export const selected_date = writable(DateTime.utc().toISODate()); // Strict UTC semantics
+// GUI state for playback
+export const is_playing = writable(false);
+export const play_speed_ms = writable(1000);  // 1 seconds per hour
+
+
+// Selected date and time for the main date picker
+// Stored as "YYYY-MM-DDTHH:mm" for <input type="datetime-local">
+export const selected_datetime = writable(
+  DateTime.local().startOf("hour")
+    .toISO({ suppressSeconds: true, suppressMilliseconds: true, includeOffset: false })
+);
 export const lookback_days = writable(10);
 
 export const map_update_needed = writable(false);

@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { asyncReadable, derived, writable } from "@square/svelte-store";
 import Monitor from "air-monitor";
 
-import { error_message, monitorCount, selected_date, lookback_days } from "./gui-store.js";
+import { error_message, monitorCount, selected_datetime, lookback_days } from "./gui-store.js";
 import { loadGeojson } from "../js/utils-loaders.js";
 
 // NOTE:  The @square/svelte-store replacement for svelte-store is
@@ -47,23 +47,25 @@ export const airnow = asyncReadable(
 
 // AirNow subset generated whenever a new date or lookback window is selected
 export const airnow_selected = derived(
-  [airnow, selected_date, lookback_days],
-  ([$airnow, $selected_date, $lookback_days]) => {
+  [airnow, selected_datetime, lookback_days],
+  ([$airnow, $selected_datetime, $lookback_days]) => {
     // No base monitor yet → no subset yet
     if (!$airnow || typeof $airnow.filterDatetime !== "function") {
       return null;
     }
 
     try {
-      // If no selected date, use "today" in UTC as a fallback
-      const enddate = ($selected_date
-        ? DateTime.fromISO($selected_date, { zone: "utc" })
-        : DateTime.utc()
-      ).endOf("day");
+      // If no selected datetime, fall back to "now" in local time
+      const dtLocal = $selected_datetime
+        ? DateTime.fromISO($selected_datetime)       // interpreted in local zone
+        : DateTime.local();
 
-      if (!enddate.isValid) {
-        throw new Error(`Invalid selected_date: ${$selected_date}`);
+      if (!dtLocal.isValid) {
+        throw new Error(`Invalid selected_datetime: ${$selected_datetime}`);
       }
+
+      // Convert to UTC for filtering, since your monitor data are in UTC
+      const enddate = dtLocal.toUTC();
 
       // Compute startdate from lookback_days (if provided and > 0)
       let startdate = null;

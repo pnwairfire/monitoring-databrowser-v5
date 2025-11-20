@@ -12,7 +12,9 @@
     centerLat,
     zoom,
     selected_monitor_ids,
-		selected_date,
+		selected_datetime,
+    is_playing,
+    play_speed_ms
   } from "./stores/gui-store.js";
 
   import {
@@ -69,6 +71,34 @@
   // Reactively update URL whenever relevant state changes
   $: updateUrl();
 
+  // Playback controls
+  let playbackTimer;
+
+  $: {
+    // Clean up previous timer
+    if (playbackTimer) {
+      clearInterval(playbackTimer);
+      playbackTimer = null;
+    }
+
+    // Set a new timer only if playing
+    if ($is_playing) {
+      playbackTimer = setInterval(() => {
+        const dt = DateTime.fromISO($selected_datetime);
+
+        if (!dt.isValid) return;
+
+        // Increment by 1 hour
+        const next = dt.plus({ hours: 1 });
+
+        // Set new value (remains in local time)
+        selected_datetime.set(
+          next.toISO({ suppressSeconds: true, suppressMilliseconds: true, includeOffset: false })
+        );
+      }, $play_speed_ms);
+    }
+  }
+
 </script>
 
 <main>
@@ -77,7 +107,15 @@
 		<img class="logo" src="images/forestservicelogo-inverted.svg"
 		     alt="US Forest Service logo">
 		<span class="mv5">Monitoring v{$VERSION} &mdash; Annual</span>
-		<input type="date" bind:value={$selected_date} />
+		<input
+      type="datetime-local"
+      bind:value={$selected_datetime}
+      step="3600"
+    />
+
+    <button on:click={() => is_playing.update(x => !x)}>
+      { $is_playing ? "Pause" : "Play" }
+    </button>
 	</NavBar>
 
 	<div class="airfire-alerts" style="display: none"></div>
@@ -132,7 +170,7 @@
 		padding-left: 10px;
   }
 
-	input[type="date"] {
+	input[type="datetime-local"] {
     font-family: "Source Sans Pro", "Helvetica", sans-serif;
     font-size: 16px;             /* slightly smaller than .mv5 (24px) */
     padding: 2px 4px;
@@ -140,7 +178,7 @@
     margin-right: 20px;          /* right margin */
   }
 
-	input[type="date"]:hover {
+	input[type="datetime-local"]:hover {
 		border-color: #aaa;
 	}
 
