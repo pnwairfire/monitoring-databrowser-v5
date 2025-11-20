@@ -26,6 +26,8 @@
 
   // --- Components ---
   import NavBar from "./components/NavBar.svelte";
+  import YearBoundDatetimePicker from "./components/YearBoundDatetimePicker.svelte";
+
   import AlertBox from "./components/AlertBox.svelte";
   import LeafletMap from "./components/LeafletMap.svelte";
 
@@ -117,15 +119,12 @@
 		<img class="logo" src="images/forestservicelogo-inverted.svg"
 		     alt="US Forest Service logo">
 		<span class="mv5">Monitoring v{$VERSION} &mdash; Annual</span>
-		<input
-      type="datetime-local"
-      bind:value={$selected_datetime}
-      step="3600"
-    />
-
-    <button id="play_pause" on:click={() => is_playing.update(x => !x)}>
-      { $is_playing ? "Pause" : "Play" }
-    </button>
+    <div class="nav-controls">
+      <YearBoundDatetimePicker years={[2022, 2023, 2024, 2025]} />
+      <button id="play_pause" on:click={() => is_playing.update(x => !x)}>
+        { $is_playing ? "Pause" : "Play" }
+      </button>
+    </div>
 	</NavBar>
 
 	<div class="airfire-alerts" style="display: none"></div>
@@ -228,25 +227,20 @@
 		padding-left: 10px;
   }
 
-	input[type="datetime-local"] {
-    font-family: "Source Sans Pro", "Helvetica", sans-serif;
-    font-size: 16px;             /* slightly smaller than .mv5 (24px) */
-    padding: 2px 4px;
-    margin-left: auto;           /* pushes input to the right */
-    margin-right: 20px;          /* right margin */
-  }
-
-	input[type="datetime-local"]:hover {
-		border-color: #aaa;
-	}
-
 	p.status {
 		text-align: left;
 		margin: 10px 0 0 10px;
 		font-size: 0.8rem;
 	}
 
-  button#play_pause {
+  .nav-controls {
+    margin-left: auto;              /* pushes this block to the right */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;                    /* space between picker and button */
+  }
+
+  #play_pause {
     padding: 0.3em 1.2em;
     width: 5em;
     /*

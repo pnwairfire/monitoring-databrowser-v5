@@ -1,9 +1,16 @@
 
 import { DateTime } from 'luxon';
-import { asyncReadable, derived, writable } from "@square/svelte-store";
+import { asyncReadable, derived, writable, get } from "@square/svelte-store";
 import Monitor from "air-monitor";
 
-import { error_message, monitorCount, selected_datetime, lookback_days } from "./gui-store.js";
+import {
+  error_message,
+  monitorCount,
+  selected_datetime,
+  lookback_days,
+  selected_year,
+} from "./gui-store.js";
+
 import { loadGeojson } from "../js/utils-loaders.js";
 
 // NOTE:  The @square/svelte-store replacement for svelte-store is
@@ -27,9 +34,12 @@ export const airnow = asyncReadable(
     const monitor = new Monitor();
     const start = DateTime.now();
 
+    // Read the currently selected year from the store
+    const year = Number(get(selected_year)) || 2025;
+
     try {
       // await monitor.loadLatest("airnow");
-      await monitor.loadAnnual("2024");
+      await monitor.loadAnnual(year);
 
       // --- Reset selected_datetime based on newly loaded data --------------
       try {
@@ -52,21 +62,21 @@ export const airnow = asyncReadable(
             if (isoForInput) {
               selected_datetime.set(isoForInput);
               console.log(
-                `selected_datetime updated to latest AirNow timestamp: ${isoForInput}`
+                `selected_datetime set to latest monitor datetime for ${year}: ${isoForInput}`
               );
             }
           }
         } else {
-          console.warn("AirNow monitor has no datetime values; leaving selected_datetime unchanged.");
+          console.warn("mMnitor for year ${year} has no datetime values; leaving selected_datetime unchanged.");
         }
       } catch (e) {
-        console.warn("Unable to update selected_datetime from AirNow monitor:", e);
+        console.warn("Unable to update selected_datetime from monitor:", e);
       }
       // ---------------------------------------------------------------------
 
     } catch (err) {
       error_message.set("Failed to load AirNow monitor data");
-      const err_msg = `loadLatest("airnow") failed: ${err.message}`;
+      const err_msg = `loadAnnual(${year}) failed: ${err.message}`;
       console.error(err_msg);
       throw new Error(err_msg);
     }
@@ -75,7 +85,7 @@ export const airnow = asyncReadable(
     const elapsed = end.diff(start, "seconds").seconds;
     const rounded = Math.round(10 * elapsed) / 10;
     airnowLoadTime.set(rounded);
-    console.log(`loaded airnow monitor data in ${rounded} seconds`);
+    console.log(`loaded monitor data for ${year} in ${rounded} seconds`);
 
     return monitor;
   },
@@ -120,6 +130,8 @@ export const airnow_selected = derived(
       const monitorSubset = $airnow
         .filterDatetime(startdate, enddate, timezone)
         .dropEmpty();
+
+      monitorCount.set(monitorSubset.count());
 
       return monitorSubset;
     } catch (err) {
