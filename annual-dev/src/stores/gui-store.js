@@ -23,6 +23,7 @@ export const unselected_monitor_id = writable("");
 // Stored as "YYYY-MM-DD" so it binds cleanly to <input type="date">
 export const selected_date = writable(DateTime.now().toISODate()); // using the browsers's timezone
 // // //export const selected_date = writable(DateTime.utc().toISODate()); // Strict UTC semantics
+export const lookback_days = writable(10);
 
 export const map_update_needed = writable(false);
 
