@@ -23,6 +23,7 @@ export const unselected_monitor_id = writable("");
 export const is_playing = writable(false);
 export const play_speed_ms = writable(1000);  // 1 seconds per hour
 
+export let current_slide = writable("all");
 
 // Selected date and time for the main date picker
 // Stored as "YYYY-MM-DDTHH:mm" for <input type="datetime-local">

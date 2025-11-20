@@ -25,24 +25,63 @@ export const airnow = asyncReadable(
   new Monitor(),
   async () => {
     const monitor = new Monitor();
-    let start = DateTime.now();
+    const start = DateTime.now();
+
     try {
-      await monitor.loadLatest("airnow");
+      // await monitor.loadLatest("airnow");
+      await monitor.loadAnnual("2024");
+
+      // --- Reset selected_datetime based on newly loaded data --------------
+      try {
+        const dts = monitor.getDatetime();   // array of luxon DateTime objects
+        if (Array.isArray(dts) && dts.length > 0) {
+          // Latest by milliseconds
+          const latestUtc = dts.reduce(
+            (max, dt) => (dt.toMillis() > max.toMillis() ? dt : max),
+            dts[0]
+          );
+
+          if (latestUtc && latestUtc.isValid) {
+            const latestLocal = latestUtc.toLocal();
+            const isoForInput = latestLocal.toISO({
+              suppressSeconds: true,
+              suppressMilliseconds: true,
+              includeOffset: false    // required for datetime-local
+            });
+
+            if (isoForInput) {
+              selected_datetime.set(isoForInput);
+              console.log(
+                `selected_datetime updated to latest AirNow timestamp: ${isoForInput}`
+              );
+            }
+          }
+        } else {
+          console.warn("AirNow monitor has no datetime values; leaving selected_datetime unchanged.");
+        }
+      } catch (e) {
+        console.warn("Unable to update selected_datetime from AirNow monitor:", e);
+      }
+      // ---------------------------------------------------------------------
+
     } catch (err) {
       error_message.set("Failed to load AirNow monitor data");
       const err_msg = `loadLatest("airnow") failed: ${err.message}`;
       console.error(err_msg);
       throw new Error(err_msg);
     }
-    let end = DateTime.now();
-    let elapsed = end.diff(start, 'seconds').seconds;
-    let rounded = Math.round(10 * elapsed) / 10;
+
+    const end = DateTime.now();
+    const elapsed = end.diff(start, "seconds").seconds;
+    const rounded = Math.round(10 * elapsed) / 10;
     airnowLoadTime.set(rounded);
     console.log(`loaded airnow monitor data in ${rounded} seconds`);
+
     return monitor;
   },
   { reloadable: true }
 );
+
 
 
 // AirNow subset generated whenever a new date or lookback window is selected
@@ -102,7 +141,7 @@ export const airnow_selected = derived(
 //
 // This stays in sync automatically:
 // - when `airnow` reloads via asyncReadable
-// - `all_monitors` recomputes
+// - `airnow_selected` recomputes
 // - this derived store recomputes and Leaflet sees updated GeoJSON.
 
 export const airnow_geojson = derived(

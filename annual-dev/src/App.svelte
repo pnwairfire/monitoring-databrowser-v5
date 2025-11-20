@@ -14,11 +14,13 @@
     selected_monitor_ids,
 		selected_datetime,
     is_playing,
-    play_speed_ms
+    play_speed_ms,
+    current_slide,
   } from "./stores/gui-store.js";
 
   import {
     airnow,
+    airnow_selected,
     airnow_geojson,
   } from "./stores/monitor-data-store.js";
 
@@ -26,6 +28,15 @@
   import NavBar from "./components/NavBar.svelte";
   import AlertBox from "./components/AlertBox.svelte";
   import LeafletMap from "./components/LeafletMap.svelte";
+
+  import RemoveRowButton from "./components/RemoveRowButton.svelte";
+  import SlideAdvance from "./components/SlideAdvance.svelte";
+  import MetadataBox from "./components/MetadataBox.svelte";
+  import MiniMap from "./components/MiniMap.svelte";
+  import TimeseriesPlot from "./components/TimeseriesPlot.svelte";
+  import HourlyBarplot from "./components/HourlyBarplot.svelte";
+  import DailyBarplot from "./components/DailyBarplot.svelte";
+  import DiurnalPlot from "./components/DiurnalPlot.svelte";
 
   // --- Utilities ---
   import {
@@ -113,7 +124,7 @@
       step="3600"
     />
 
-    <button on:click={() => is_playing.update(x => !x)}>
+    <button id="play_pause" on:click={() => is_playing.update(x => !x)}>
       { $is_playing ? "Pause" : "Play" }
     </button>
 	</NavBar>
@@ -150,6 +161,55 @@
 		</div>
 		{/if}
 
+    		<hr>
+
+		<!-- Selected Monitors ---------------------------------------------------->
+		<!-- <div class="flex-row">
+			<span class="selected-devices">Selected Monitors:</span>
+			<span class="selected-devices-count">{$selected_monitor_ids.length} monitors</span>
+			<div id="service-links">
+				<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">Temporary Only</a>
+				{#if $selected_monitor_ids.length > 0}
+				<a target="_blank" rel="noreferrer" href="{createDataServiceUrl($selected_monitor_ids)}">CSV File</a>
+				<a target="_blank" rel="noreferrer" href="{createAQINowCastServiceUrl($selected_monitor_ids)}">AQI-NowCast</a>
+				{/if}
+			</div>
+		</div> -->
+
+		<hr>
+
+		{#if $airnow_selected}
+			{#each $selected_monitor_ids as id, i}
+
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<div class="flex-row">
+					<RemoveRowButton id={id}/>
+					<MetadataBox element_id="row{i}_metadata" width="300px" height="200px" id={id}/>
+					<div class="flex-row">
+						{#if $current_slide === "all"}
+							<div class="flex-row">
+								<MiniMap element_id="row{i}_map" width="200px" height="180px" id={id}/>
+								<TimeseriesPlot element_id="row{i}_small_timeseries" width="200px" height="200px" id={id} size="small"/>
+								<DailyBarplot element_id="row{i}_small_daily" width="200px" height="200px" id={id} size="small"/>
+								<DiurnalPlot element_id="row{i}_small_diurnal" width="200px" height="200px" id={id} size="small"/>
+							</div>
+						{:else if $current_slide === "timeseries"}
+							<TimeseriesPlot element_id="row{i}_timeseries" width="800px" height="200px" id={id} size="large"/>
+						{:else if $current_slide === "hourly"}
+							<HourlyBarplot element_id="row{i}_hourly" width="800px" height="200px" id={id} size="large"/>
+						{:else if $current_slide === "daily"}
+							<DailyBarplot element_id="row{i}_daily" width="800px" height="200px" id={id} size="large"/>
+						{:else if $current_slide === "diurnal"}
+							<DiurnalPlot element_id="row{i}_diurnal" width="800px" height="200px" id={id} size="large"/>
+						{/if}
+						<SlideAdvance element_id="row{i}_slideAdvance"/>
+					</div>
+				</div>
+
+			{/each}
+		{/if}
+
+
   {:catch}
 		<p style="color: red">An error occurred</p>
 	{/await}
@@ -157,7 +217,7 @@
 </main>
 
 <style>
-	  img.logo {
+	img.logo {
 		vertical-align: middle;
 		height: 35px;
 		width: 35px;
@@ -187,4 +247,27 @@
 		margin: 10px 0 0 10px;
 		font-size: 0.8rem;
 	}
+
+  button#play_pause {
+    padding: 0.3em 1.2em;
+    width: 5em;
+    /*
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    */
+  }
+
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;  /* or center, if you prefer */
+    gap: 0.5rem;              /* space between button and box */
+    margin: 0.25rem 0;
+  }
 </style>
