@@ -21,7 +21,7 @@ export const unselected_monitor_id = writable("");
 
 // GUI state for playback
 export const is_playing = writable(false);
-export const play_speed_ms = writable(1000);  // 1 seconds per hour
+export const play_speed_ms = writable(500);  // milliseconds per hour
 
 export let current_slide = writable("all");
 

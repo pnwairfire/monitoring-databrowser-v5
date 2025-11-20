@@ -38,36 +38,60 @@ export const airnow = asyncReadable(
     const year = Number(get(selected_year)) || 2025;
 
     try {
-      // await monitor.loadLatest("airnow");
       await monitor.loadAnnual(year);
 
-      // --- Reset selected_datetime based on newly loaded data --------------
+      // --- Adjust selected_datetime to keep same month/day/hour, new year ---
       try {
-        const dts = monitor.getDatetime();   // array of luxon DateTime objects
-        if (Array.isArray(dts) && dts.length > 0) {
-          // Latest by milliseconds
-          const latestUtc = dts.reduce(
-            (max, dt) => (dt.toMillis() > max.toMillis() ? dt : max),
-            dts[0]
-          );
+        const currentIso = get(selected_datetime); // "YYYY-MM-DDTHH:mm"
+        let updatedIso = null;
 
-          if (latestUtc && latestUtc.isValid) {
-            const latestLocal = latestUtc.toLocal();
-            const isoForInput = latestLocal.toISO({
+        if (currentIso) {
+          const currentLocal = DateTime.fromISO(currentIso); // interpreted in local zone
+          if (currentLocal.isValid) {
+            const newLocal = currentLocal.set({ year });
+
+            updatedIso = newLocal.toISO({
               suppressSeconds: true,
               suppressMilliseconds: true,
-              includeOffset: false    // required for datetime-local
+              includeOffset: false, // required for <input type="datetime-local">
             });
-
-            if (isoForInput) {
-              selected_datetime.set(isoForInput);
-              console.log(
-                `selected_datetime set to latest monitor datetime for ${year}: ${isoForInput}`
-              );
-            }
           }
+        }
+
+        if (updatedIso) {
+          selected_datetime.set(updatedIso);
+          console.log(
+            `selected_datetime moved to year ${year} with same month/day/hour: ${updatedIso}`
+          );
         } else {
-          console.warn("mMnitor for year ${year} has no datetime values; leaving selected_datetime unchanged.");
+          // Fallback: if we didn't have a valid previous datetime, use latest available
+          const dts = monitor.getDatetime(); // array of Luxon DateTime
+          if (Array.isArray(dts) && dts.length > 0) {
+            const latestUtc = dts.reduce(
+              (max, dt) => (dt.toMillis() > max.toMillis() ? dt : max),
+              dts[0]
+            );
+
+            if (latestUtc && latestUtc.isValid) {
+              const latestLocal = latestUtc.toLocal();
+              const isoForInput = latestLocal.toISO({
+                suppressSeconds: true,
+                suppressMilliseconds: true,
+                includeOffset: false,
+              });
+
+              if (isoForInput) {
+                selected_datetime.set(isoForInput);
+                console.log(
+                  `selected_datetime set to latest monitor datetime for ${year}: ${isoForInput}`
+                );
+              }
+            }
+          } else {
+            console.warn(
+              `Monitor for year ${year} has no datetime values; leaving selected_datetime unchanged.`
+            );
+          }
         }
       } catch (e) {
         console.warn("Unable to update selected_datetime from monitor:", e);
