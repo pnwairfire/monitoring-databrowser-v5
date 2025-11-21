@@ -13,6 +13,7 @@
     zoom,
     selected_monitor_ids,
 		selected_datetime,
+    lookback_days,
     is_playing,
     play_speed_ms,
     current_slide,
@@ -38,6 +39,17 @@
   import HourlyBarplot from "./components/HourlyBarplot.svelte";
   import DailyBarplot from "./components/DailyBarplot.svelte";
   import DiurnalPlot from "./components/DiurnalPlot.svelte";
+
+  // Define the preset 'lookback_days' options
+  const options = [
+    { label: "7 days",   value: 7 },
+    { label: "10 days",  value: 10 },
+    { label: "2 weeks",  value: 14 },
+    { label: "3 weeks",  value: 21 },
+    { label: "4 weeks",  value: 28 },
+    { label: "6 weeks",  value: 42 },
+    { label: "8 weeks",  value: 56 }
+  ];
 
   // --- Utilities ---
   import {
@@ -162,17 +174,25 @@
     		<hr>
 
 		<!-- Selected Monitors ---------------------------------------------------->
-		<!-- <div class="flex-row">
+		<div class="flex-row">
 			<span class="selected-devices">Selected Monitors:</span>
 			<span class="selected-devices-count">{$selected_monitor_ids.length} monitors</span>
-			<div id="service-links">
+			<!-- <div id="service-links">
 				<a target="_blank" rel="noreferrer" href="https://airfire-monitoring-guis.s3.us-west-2.amazonaws.com/ara/v5/real-time-temporary/index.html">Temporary Only</a>
 				{#if $selected_monitor_ids.length > 0}
 				<a target="_blank" rel="noreferrer" href="{createDataServiceUrl($selected_monitor_ids)}">CSV File</a>
 				<a target="_blank" rel="noreferrer" href="{createAQINowCastServiceUrl($selected_monitor_ids)}">AQI-NowCast</a>
 				{/if}
-			</div>
-		</div> -->
+			</div> -->
+
+      <div class="lookback-container">
+        <select bind:value={$lookback_days}>
+          {#each options as o}
+            <option value={o.value}>{o.label}</option>
+          {/each}
+        </select>
+      </div>
+		</div>
 
 		<hr>
 
@@ -253,6 +273,25 @@
     cursor: pointer;
     transition: border-color 0.25s;
     */
+  }
+
+  /* Float right inside any flex container */
+  .lookback-container {
+    margin-left: auto;        /* pushes selector to the right */
+    display: flex;
+    align-items: center;
+  }
+
+  .lookback-container select {
+    font-family: "Source Sans Pro", "Helvetica", sans-serif;
+    font-size: 16px;
+    padding: 2px 4px;
+    border: 1px solid #666;
+    border-radius: 4px;
+  }
+
+  .lookback-container select:hover {
+    border-color: #aaa;
   }
 
   .flex-row {

@@ -12,7 +12,6 @@
 
   // Stores
   import { airnow_selected } from '../stores/monitor-data-store.js';
-  import { mapLastUpdated } from "../stores/gui-store.js";
 
   // Highcharts for plotting
   import Highcharts from 'highcharts';

@@ -6,6 +6,7 @@ import Monitor from "air-monitor";
 import {
   error_message,
   monitorCount,
+  selected_monitor_ids,
   selected_datetime,
   lookback_days,
   selected_year,
@@ -154,6 +155,34 @@ export const airnow_selected = derived(
       const monitorSubset = $airnow
         .filterDatetime(startdate, enddate, timezone)
         .dropEmpty();
+
+      // -------- prune selected_monitor_ids that no longer exist in this subset
+      try {
+        const validIDs = monitorSubset.getIDs(); // array of deviceDeploymentIDs
+
+        selected_monitor_ids.update((ids) => {
+          if (!Array.isArray(ids) || !ids.length) return ids;
+
+          const validSet = new Set(validIDs);
+          const kept = ids.filter((id) => validSet.has(id));
+          const removed = ids.filter((id) => !validSet.has(id));
+
+          if (removed.length > 0) {
+            console.warn(
+              `Removing ${removed.length} selected monitor(s) with no data in the current time window:`,
+              removed
+            );
+            error_message.set(
+              `Removed ${removed.length} selected monitor(s) that have no data in the current time window.`
+            );
+          }
+
+          return kept;
+        });
+      } catch (e) {
+        console.warn("Failed to reconcile selected_monitor_ids with monitorSubset:", e);
+      }
+      // ----------------------------------------------------------------------
 
       monitorCount.set(monitorSubset.count());
 
