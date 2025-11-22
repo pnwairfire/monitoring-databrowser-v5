@@ -39,7 +39,17 @@ export const airnow = asyncReadable(
     const year = Number(get(selected_year)) || 2025;
 
     try {
-      await monitor.loadAnnual(year);
+      //await monitor.loadAnnual(year);
+      // // // async loadCustom(baseName, baseUrl, useAllColumns = true) {
+      // // // const metaURL = `${baseUrl}/${baseName}_meta.csv`;
+      // // // const dataURL = `${baseUrl}/${baseName}_data.csv`;
+
+      // // // https://airfire-data-exports.s3.us-west-2.amazonaws.com/monitoring/v2/mini_data/airnow_PM2.5_2022_mini_meta.csv
+
+
+      const baseUrl = "https://airfire-data-exports.s3.us-west-2.amazonaws.com/monitoring/v2/mini_data";
+      const baseName = `airnow_PM2.5_${year}_mini`;
+      await monitor.loadCustom(baseName, baseUrl)
 
       // --- Adjust selected_datetime to keep same month/day/hour, new year ---
       try {

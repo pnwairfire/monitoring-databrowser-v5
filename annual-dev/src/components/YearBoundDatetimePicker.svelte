@@ -3,7 +3,7 @@
   import { airnow } from "../stores/monitor-data-store.js";
 
   // Years the user can pick from (tweak as needed)
-  export let years = [2023, 2024, 2025];
+  export let years = [2022, 2023, 2024, 2025];
 
   // Ensure the store has a sensible default within the allowed list
   $: {

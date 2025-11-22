@@ -26,7 +26,7 @@ export const play_speed_ms = writable(500);  // milliseconds per hour
 export let current_slide = writable("all");
 
 // Selected year (used for annual AirNow loads)
-export const selected_year = writable(2024);
+export const selected_year = writable(2025);
 
 // Selected date and time for the main date picker
 // Stored as "YYYY-MM-DDTHH:mm" for <input type="datetime-local">
