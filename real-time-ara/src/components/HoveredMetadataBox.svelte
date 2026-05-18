@@ -44,23 +44,24 @@ function monitorIdToCurrentStatus(id) {
   //   "last_latency": "1",
   //   "yesterday_PM2.5_avg": "1.9"
 
-  let dataIngestSource = $all_monitors.getMetadata(id, 'dataIngestSource');
+  let dataIngestSource =
+    $all_monitors.getMetadata(id, 'dataIngestSource')?.toLowerCase();
 
   let features =
-    dataIngestSource === "AirNow" ?
-    $airnow_geojson.features :
-    dataIngestSource === "AIRSIS" ?
-    $airsis_geojson.features :
-    dataIngestSource === "WRCC" ?
-    $wrcc_geojson.features :
-    console.log("dataIngestSource: " + dataIngestSource + " was not recognized.");
+    dataIngestSource === "airnow" ?
+      $airnow_geojson.features :
+    dataIngestSource === "airsis" ?
+      $airsis_geojson.features :
+    dataIngestSource === "wrcc" ?
+      $wrcc_geojson.features :
+      console.log("dataIngestSource: " + dataIngestSource + " was not recognized.");
 
   let currentStatus;
   features.forEach(o => {
     if ( o.properties.deviceDeploymentID === id ) currentStatus = o.properties;
   });
 
-  if (dataIngestSource === "AirNow") {
+  if (dataIngestSource === "airnow") {
     currentStatus.dataIngestUnitID = currentStatus.AQSID;
   }
 

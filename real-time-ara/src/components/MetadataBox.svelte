@@ -98,7 +98,7 @@
     ID:&nbsp;&nbsp;{id}<br>
     AQSID:&nbsp;&nbsp;{$all_monitors.getMetadata(id, 'AQSID')}<br>
     Source:&nbsp;&nbsp;{$all_monitors.getMetadata(id, 'dataIngestSource')}
-    {#if $all_monitors.getMetadata(id, 'dataIngestSource') === 'AirNow' }
+    {#if $all_monitors.getMetadata(id, 'dataIngestSource').toLowerCase() === 'airnow' }
       <a class="qc-report" target="_blank" rel=noreferrer href="{create_airnow_qc_report_url(id)}">QC</a>
     {:else}
       <a class="qc-report" target="_blank" rel=noreferrer href="{create_temp_qc_report_url(id)}">QC</a>
